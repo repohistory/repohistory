@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import NavBar from '@/components/NavBar';
 import Providers from './providers';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -17,8 +18,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} min-h-screen bg-black`}>
-        <Providers>{children}</Providers>
+      <body className={`${inter.className} min-h-screen bg-[#0d1117]`}>
+        <Providers>
+          <NavBar />
+          {children}
+        </Providers>
       </body>
     </html>
   );
