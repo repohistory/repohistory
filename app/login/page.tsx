@@ -1,28 +1,34 @@
 'use client';
 
-import useLogin from '@/hooks/useLogin';
-import { Button } from '@nextui-org/button';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { setCookie } from 'nookies';
+import { Button } from '@nextui-org/button';
+import useLogin from '@/hooks/useLogin';
 
 export default function LoginPage() {
   const searchParams = useSearchParams();
-  const code = searchParams.get('code');
+  const router = useRouter();
   const login = useLogin();
+  const code = searchParams.get('code');
 
   useEffect(() => {
     (async () => {
       if (code) {
         const { data, error } = await login(code);
         if (!error) {
-          console.log(data.access_token);
+          setCookie(null, 'access_token', data.access_token, {
+            maxAge: 3600,
+            path: '/',
+          });
+          router.push('/');
         } else {
-          console.log(error);
+          alert(error);
         }
       }
     })();
-  }, [code, login]);
+  }, [code, login, router]);
 
   return (
     <div className="flex flex-col items-center gap-10">
