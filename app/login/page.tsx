@@ -1,5 +1,6 @@
 'use client';
 
+import useLogin from '@/hooks/useLogin';
 import { Button } from '@nextui-org/button';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -8,28 +9,20 @@ import { useEffect } from 'react';
 export default function LoginPage() {
   const searchParams = useSearchParams();
   const code = searchParams.get('code');
+  const login = useLogin();
 
   useEffect(() => {
-    if (code) {
-      (async () => {
-        const response = await fetch(
-          `https://github.com/login/oauth/access_token?${new URLSearchParams({
-            code,
-            client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
-            client_secret: process.env.NEXT_PUBLIC_CLIENT_SECRET,
-          })}`,
-          {
-            headers: {
-              Accept: 'application/json',
-            },
-            method: 'POST',
-          },
-        );
-        const data = await response.json();
-        console.log(data.access_token);
-      })();
-    }
-  }, [code]);
+    (async () => {
+      if (code) {
+        const { data, error } = await login(code);
+        if (!error) {
+          console.log(data.access_token);
+        } else {
+          console.log(error);
+        }
+      }
+    })();
+  }, [code, login]);
 
   return (
     <div className="flex flex-col items-center gap-10">
