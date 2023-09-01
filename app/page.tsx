@@ -1,26 +1,33 @@
-import Chart from '@/components/Chart';
-import clonesData from '@/data/clones';
+'use client';
 
-const data = {
-  labels: clonesData.clones.map((clone) =>
-    clone.timestamp.slice(5, 10).replace('-', '/'),
-  ),
-  datasets: [
-    {
-      label: 'Clones',
-      data: clonesData.clones.map((clone) => clone.count),
-      borderColor: '#238636',
-      backgroundColor: '#238636',
-    },
-    {
-      label: 'Unique Cloners',
-      data: clonesData.clones.map((clone) => clone.uniques),
-      borderColor: '#1f6feb',
-      backgroundColor: '#1f6feb',
-    },
-  ],
-};
+import Link from 'next/link';
+import { Card, CardHeader, CardBody, Divider } from '@nextui-org/react';
+import useRepos from '@/hooks/useRepos';
+import Star from '@/components/Icons/Star';
 
 export default function HomePage() {
-  return <Chart title="Git clones" data={data} />;
+  const repos = useRepos();
+
+  return (
+    <div className="mx-auto grid w-3/4 gap-10 py-10 xl:grid-cols-3">
+      {repos.map((repo: any) => (
+        <Link href={`/repo/${repo.id}`} key={repo.id}>
+          <Card
+            className="h-56 rounded-md border border-[#30363d] bg-[#161b22] text-white
+              transition-all duration-1000 ease-linear hover:scale-105"
+          >
+            <CardHeader className="flex justify-between text-lg font-semibold">
+              {repo.name}
+              <div className="flex items-center gap-1 text-sm font-normal text-[#7d8590]">
+                <Star />
+                {repo.stargazers_count}
+              </div>
+            </CardHeader>
+            <Divider className="bg-[#30363d]" />
+            <CardBody>{repo.description}</CardBody>
+          </Card>
+        </Link>
+      ))}
+    </div>
+  );
 }

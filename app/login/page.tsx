@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { setCookie } from 'nookies';
-import { Button } from '@nextui-org/button';
+import { Button } from '@nextui-org/react';
 import useLogin from '@/hooks/useLogin';
 
 export default function LoginPage() {
