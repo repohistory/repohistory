@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'repohistory',
-  description: 'View traffic history of your repository',
+  description: "View your GitHub repository's traffic history",
 };
 
 export default function RootLayout({

@@ -33,11 +33,11 @@ export default function LoginPage() {
   return (
     <div className="flex flex-col items-center gap-10">
       <div>
-        <h1 className="pt-36 text-center text-7xl font-bold text-white">
+        <h1 className="pt-36 text-center text-6xl font-bold text-white md:text-7xl">
           repohistory
         </h1>
-        <h2 className="mt-4 text-center text-lg text-white">
-          View traffic history of your repository
+        <h2 className="mt-4 text-center text-base text-white md:text-lg">
+          View your GitHub repository&rsquo;s traffic history
         </h2>
       </div>
       <div>
@@ -47,6 +47,7 @@ export default function LoginPage() {
               {
                 client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
                 redirect_url: 'http://localhost:3000/login',
+                scope: 'repo',
               },
             )}`}
           >

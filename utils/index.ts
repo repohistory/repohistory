@@ -7,6 +7,8 @@ export default async function fetcher(url: string) {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${cookies.access_token}`,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
     },
   });
 

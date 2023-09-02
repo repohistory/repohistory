@@ -12,9 +12,9 @@ export default function useRepos() {
     return [];
   }
 
-  const sortedData = repos
-    .filter((repo: any) => repo.stargazers_count > 1)
-    .sort((a: any, b: any) => b.stargazers_count - a.stargazers_count);
+  const sortedData = repos.sort(
+    (a: any, b: any) => b.stargazers_count - a.stargazers_count,
+  );
 
   return sortedData;
 }
