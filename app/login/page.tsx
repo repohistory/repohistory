@@ -46,7 +46,7 @@ export default function LoginPage() {
             href={`https://github.com/login/oauth/authorize?${new URLSearchParams(
               {
                 client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
-                redirect_url: 'http://localhost:3000/login',
+                redirect_url: 'http://repohistory.com/login',
                 scope: 'repo',
               },
             )}`}
