@@ -4,7 +4,7 @@ import useInstallation from './useInstallation';
 
 export default function useRepos() {
   const installations = useInstallation();
-  const [repos, setRepos] = useState([]);
+  const [repos, setRepos] = useState<[] | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -18,6 +18,10 @@ export default function useRepos() {
       setRepos(data.repositories);
     })();
   }, [installations]);
+
+  if (repos === null) {
+    return null;
+  }
 
   const sortedData = repos.sort(
     (a: any, b: any) => b.stargazers_count - a.stargazers_count,

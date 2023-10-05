@@ -13,7 +13,7 @@ export default function RepoPage({ params }: { params: { fullname: string } }) {
   return (
     <div className="mx-5 py-10 sm:mx-10">
       <div className="text-center text-2xl font-semibold text-white">
-        {owner}/{repo}
+        <a href={`https://github.com/${owner}/${repo}`}>{owner}/{repo}</a>
       </div>
       {clonesTraffic && (
         <Chart
@@ -25,15 +25,21 @@ export default function RepoPage({ params }: { params: { fullname: string } }) {
             datasets: [
               {
                 label: 'Clones',
+                pointHitRadius: 40,
+                pointHoverRadius: 5,
                 data: clonesTraffic.clones.map((clone: any) => clone.count),
-                borderColor: '#238636',
-                backgroundColor: '#238636',
+                borderColor: '#38bc88',
+                backgroundColor: '#38bc88',
+                tension: 0.35,
               },
               {
                 label: 'Unique Cloners',
+                pointHitRadius: 40,
+                pointHoverRadius: 5,
                 data: clonesTraffic.clones.map((clone: any) => clone.uniques),
-                borderColor: '#1f6feb',
-                backgroundColor: '#1f6feb',
+                borderColor: '#1d73f8',
+                backgroundColor: '#1d73f8',
+                tension: 0.35,
               },
             ],
           }}
@@ -49,15 +55,21 @@ export default function RepoPage({ params }: { params: { fullname: string } }) {
             datasets: [
               {
                 label: 'Views',
+                pointHitRadius: 40,
+                pointHoverRadius: 5,
                 data: viewsTraffic.views.map((view: any) => view.count),
-                borderColor: '#238636',
-                backgroundColor: '#238636',
+                borderColor: '#38bc88',
+                backgroundColor: '#38bc88',
+                tension: 0.35,
               },
               {
                 label: 'Unique visitors',
+                pointHitRadius: 40,
+                pointHoverRadius: 5,
                 data: viewsTraffic.views.map((view: any) => view.uniques),
-                borderColor: '#1f6feb',
-                backgroundColor: '#1f6feb',
+                borderColor: '#1d73f8',
+                backgroundColor: '#1d73f8',
+                tension: 0.35,
               },
             ],
           }}

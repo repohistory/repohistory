@@ -36,7 +36,7 @@ interface Props {
 
 export default function Chart({ title, data }: Props) {
   return (
-    <div className="mx-auto mt-10 max-w-3xl rounded-medium border border-[#30363D] bg-[#161b22] p-5">
+    <div className="mx-auto mt-10 max-w-3xl rounded-medium border border-[#30363D] bg-[#ffffff09] p-5">
       <h1 className="mb-5 text-center text-lg font-semibold text-white">
         {title}
       </h1>
