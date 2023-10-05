@@ -1,7 +1,7 @@
 async function login(code: string) {
   try {
     const response = await fetch(
-      'http://localhost:3000/api/get-access-token',
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/get-access-token`,
       {
         headers: {
           Accept: 'application/json',
