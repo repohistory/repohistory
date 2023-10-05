@@ -22,7 +22,7 @@ export default function LoginPage() {
             maxAge: 3600,
             path: '/',
           });
-          router.push('/');
+          router.refresh();
         } else {
           alert(error);
         }
