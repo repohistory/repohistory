@@ -1,16 +1,23 @@
-import useSWR from 'swr';
 import fetcher from '@/utils';
+import { useEffect, useState } from 'react';
+import useInstallation from './useInstallation';
 
 export default function useRepos() {
-  const {
-    data: repos,
-    error,
-    isLoading,
-  } = useSWR('https://api.github.com/user/repos', fetcher);
+  const installations = useInstallation();
+  const [repos, setRepos] = useState([]);
 
-  if (error || isLoading) {
-    return [];
-  }
+  useEffect(() => {
+    (async () => {
+      if (!installations[0]) {
+        return;
+      }
+
+      const data = await fetcher(
+        `https://api.github.com/user/installations/${installations[0].id}/repositories`,
+      );
+      setRepos(data.repositories);
+    })();
+  }, [installations]);
 
   const sortedData = repos.sort(
     (a: any, b: any) => b.stargazers_count - a.stargazers_count,

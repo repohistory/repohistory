@@ -1,16 +1,13 @@
 async function login(code: string) {
   try {
     const response = await fetch(
-      `https://github.com/login/oauth/access_token?${new URLSearchParams({
-        code,
-        client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
-        client_secret: process.env.NEXT_PUBLIC_CLIENT_SECRET,
-      })}`,
+      'http://localhost:3000/api/get-access-token',
       {
         headers: {
           Accept: 'application/json',
         },
         method: 'POST',
+        body: JSON.stringify({ code })
       },
     );
     const data = await response.json();

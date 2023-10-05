@@ -17,6 +17,7 @@ export default function LoginPage() {
     (async () => {
       if (code) {
         const { data, error } = await login(code);
+        console.log(data);
         if (!error) {
           setCookie(null, 'access_token', data.access_token, {
             maxAge: 3600,
@@ -46,8 +47,6 @@ export default function LoginPage() {
             href={`https://github.com/login/oauth/authorize?${new URLSearchParams(
               {
                 client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
-                redirect_url: 'http://repohistory.com/login',
-                scope: 'repo',
               },
             )}`}
           >
