@@ -17,7 +17,7 @@ export default function HomePage() {
   const skeletons = Array.from({ length: 9 }, (_, index) => (
     <Skeleton
       key={index}
-      className="h-56 rounded-md border border-[#ffffff20] bg-[#ffffff09] dark"
+      className="h-56 rounded-md border border-[#ffffff20] bg-[#ffffff09]"
     />
   ));
 
@@ -28,8 +28,8 @@ export default function HomePage() {
         : repos.map((repo: any) => (
             <Link href={`${repo.full_name}`} key={repo.id}>
               <Card
-                className="h-56 rounded-md border border-[#ffffff20] bg-[#ffffff09] text-white
-              transition-all duration-1000 ease-linear hover:scale-105"
+                className="h-56 rounded-md border border-[#ffffff20] bg-[#ffffff] bg-opacity-5
+                  text-white transition-all duration-1000 ease-linear hover:bg-opacity-10"
               >
                 <CardHeader className="flex justify-between text-lg font-semibold">
                   {repo.name}
