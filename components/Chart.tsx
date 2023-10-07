@@ -4,19 +4,17 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend,
 } from 'chart.js';
-import { Line } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend,
@@ -24,6 +22,11 @@ ChartJS.register(
 
 const options = {
   responsive: true,
+  scales: {
+    x: {
+      stacked: true,
+    },
+  },
 };
 
 interface Props {
@@ -36,11 +39,11 @@ interface Props {
 
 export default function Chart({ title, data }: Props) {
   return (
-    <div className="mx-auto mt-10 max-w-3xl rounded-medium border border-[#30363D] bg-[#ffffff09] p-5">
+    <div className="mt-10 w-full max-w-3xl rounded-medium border border-[#30363D] bg-[#ffffff09] p-5 xl:w-1/2">
       <h1 className="mb-5 text-center text-lg font-semibold text-white">
         {title}
       </h1>
-      <Line options={options} data={data} />;
+      <Bar options={options} data={data} />;
     </div>
   );
 }

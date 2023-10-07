@@ -35,10 +35,10 @@ export default function LoginPage() {
     <div className="flex flex-col items-center gap-10">
       <div>
         <h1 className="pt-36 text-center text-6xl font-bold text-white md:text-7xl">
-          repohistory
+          Track repository&rsquo;s history
         </h1>
         <h2 className="mt-4 text-center text-base text-white md:text-lg">
-          View your GitHub repository&rsquo;s traffic history
+          Analyze and track your GitHub repository traffic history with repohistory.
         </h2>
       </div>
       <div>

@@ -14,6 +14,7 @@ import {
   DropdownTrigger,
   Link,
 } from '@nextui-org/react';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 export default function NavBar() {
@@ -25,7 +26,10 @@ export default function NavBar() {
     <Navbar isBordered className="bg-[#000000a0]">
       <NavbarBrand>
         <Link href="/" className="text-lg font-bold text-white">
-          repohistory
+          <Image width={25} height={25} alt="logo" src="/repohistory.png" unoptimized />
+          <h1 className="ml-2">
+            repohistory
+          </h1>
         </Link>
       </NavbarBrand>
       <NavbarContent justify="end">
