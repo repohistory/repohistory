@@ -22,7 +22,7 @@ export default function LoginPage() {
             maxAge: 3600,
             path: '/',
           });
-          router.push('/');
+          router.push('/dashboard');
           router.refresh();
         } else {
           alert(error);
@@ -33,28 +33,21 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col items-center gap-10">
-      <div>
-        <h1 className="pt-36 text-center text-6xl font-bold text-white md:text-7xl">
-          Track repository&rsquo;s history
-        </h1>
-        <h2 className="mt-4 text-center text-base text-white md:text-lg">
-          Analyze and track your GitHub repository traffic history with repohistory.
-        </h2>
-      </div>
-      <div>
-        <Button className="bg-[#1f6feb] text-white">
-          <Link
-            href={`https://github.com/login/oauth/authorize?${new URLSearchParams(
-              {
-                client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
-                redirect_uri: process.env.NEXT_PUBLIC_SITE_URL,
-              },
-            )}`}
-          >
-            GitHub Login
-          </Link>
-        </Button>
-      </div>
+      <Button
+        isLoading={code !== null}
+        className="mt-52"
+        color="default"
+        radius="sm"
+        size="lg"
+        variant="flat"
+        as={Link}
+        href={`https://github.com/login/oauth/authorize?${new URLSearchParams({
+          client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
+          redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL}/login`,
+        })}`}
+      >
+        GitHub Login
+      </Button>
     </div>
   );
 }

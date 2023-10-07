@@ -3,6 +3,7 @@
 import Chart from '@/components/Chart';
 import useClonesTraffic from '@/hooks/useClonesTraffic';
 import useViewsTraffic from '@/hooks/useViewsTraffic';
+import { Link } from '@nextui-org/react';
 
 export default function RepoPage({ params }: { params: { fullname: string } }) {
   const owner = params.fullname[0];
@@ -12,11 +13,16 @@ export default function RepoPage({ params }: { params: { fullname: string } }) {
 
   return (
     <div className="mx-auto py-10 sm:mx-10">
-      <div className="text-center text-2xl font-semibold text-white">
-        <a href={`https://github.com/${owner}/${repo}`}>
-          {owner}/{repo}
-        </a>
-      </div>
+      <Link
+        showAnchorIcon
+        isExternal
+        size="lg"
+        color="foreground"
+        href={`https://github.com/${owner}/${repo}`}
+        className="font-bold"
+      >
+        {owner}/{repo}
+      </Link>
       <div className="flex flex-col items-center justify-center gap-10 xl:flex-row">
         {clonesTraffic && (
           <Chart

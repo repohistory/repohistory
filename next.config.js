@@ -15,6 +15,17 @@ const nextConfig = {
       },
       {
         source: '/',
+        has: [
+          {
+            type: 'cookie',
+            key: 'access_token',
+          },
+        ],
+        permanent: false,
+        destination: '/dashboard',
+      },
+      {
+        source: '/dashboard/:path*',
         missing: [{ type: 'cookie', key: 'access_token' }],
         permanent: false,
         destination: '/login',

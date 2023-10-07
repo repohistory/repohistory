@@ -1,7 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import NavBar from '@/components/NavBar';
+import NavbarWrapper from '@/components/NavbarWrapper';
 import Providers from './providers';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -22,7 +22,7 @@ export default function RootLayout({
         className={`${inter.className} min-h-screen bg-[#17191c] dark scrollbar-hide`}
       >
         <Providers>
-          <NavBar />
+          <NavbarWrapper />
           {children}
         </Providers>
       </body>

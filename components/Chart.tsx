@@ -39,7 +39,10 @@ interface Props {
 
 export default function Chart({ title, data }: Props) {
   return (
-    <div className="mt-10 w-full max-w-3xl rounded-medium border border-[#30363D] bg-[#ffffff09] p-5 xl:w-1/2">
+    <div
+      className="mt-10 w-full max-w-3xl rounded-medium
+        border border-[#30363D] bg-[#ffffff09] p-5 xl:w-1/2"
+    >
       <h1 className="mb-5 text-center text-lg font-semibold text-white">
         {title}
       </h1>
