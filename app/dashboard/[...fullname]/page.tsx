@@ -37,6 +37,8 @@ export default function RepoPage({ params }: { params: { fullname: string } }) {
       <div className="flex flex-col items-center justify-center gap-10 xl:flex-row">
         <Chart
           title="Git Clones"
+          primaryLabel="Unique Cloners"
+          secondaryLabel="Clones"
           data={{
             labels: clonesTraffic?.clones.map((clone: any) =>
               clone.timestamp.slice(5, 10).replace('-', '/'),
@@ -62,13 +64,15 @@ export default function RepoPage({ params }: { params: { fullname: string } }) {
         />
         <Chart
           title="Visitors"
+          primaryLabel="Unique Visitors"
+          secondaryLabel="Views"
           data={{
             labels: viewsTraffic?.views.map((view: any) =>
               view.timestamp.slice(5, 10).replace('-', '/'),
             ),
             datasets: [
               {
-                label: 'Unique visitors',
+                label: 'Unique Visitors',
                 data: viewsTraffic?.views.map((view: any) => view.uniques),
                 backgroundColor: '#62C3F8',
                 borderWidth: 0,
