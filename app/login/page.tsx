@@ -6,6 +6,8 @@ import { useEffect } from 'react';
 import { setCookie } from 'nookies';
 import { Button } from '@nextui-org/react';
 import useLogin from '@/hooks/useLogin';
+import NavbarWrapper from '@/components/NavbarWrapper';
+import Spinner from '@/components/Icons/Spinner';
 
 export default function LoginPage() {
   const searchParams = useSearchParams();
@@ -32,22 +34,31 @@ export default function LoginPage() {
   }, [code, login, router]);
 
   return (
-    <div className="flex flex-col items-center gap-10">
-      <Button
-        isLoading={code !== null}
-        className="mt-52"
-        color="default"
-        radius="sm"
-        size="lg"
-        variant="flat"
-        as={Link}
-        href={`https://github.com/login/oauth/authorize?${new URLSearchParams({
-          client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
-          redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL}/login`,
-        })}`}
-      >
-        Continue with GitHub
-      </Button>
-    </div>
+    <>
+      <NavbarWrapper />
+      <h1 className="pt-36 text-center text-4xl font-bold leading-tight text-white">
+        Login to repohistory
+      </h1>
+      <div className="flex flex-col items-center gap-10">
+        <Button
+          spinner={<Spinner />}
+          isLoading={code !== null}
+          className="mt-10"
+          color="default"
+          radius="sm"
+          size="lg"
+          variant="bordered"
+          as={Link}
+          href={`https://github.com/login/oauth/authorize?${new URLSearchParams(
+            {
+              client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
+              redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL}/login`,
+            },
+          )}`}
+        >
+          Continue with GitHub
+        </Button>
+      </div>
+    </>
   );
 }

@@ -17,7 +17,7 @@ export default function Dashboard() {
   const skeletons = Array.from({ length: 9 }, (_, index) => (
     <Skeleton
       key={index}
-      className="h-56 rounded-md border border-[#ffffff20] bg-[#ffffff] bg-opacity-5"
+      className="h-56 rounded-md border border-[#ffffff20]"
     />
   ));
 
@@ -30,8 +30,8 @@ export default function Dashboard() {
               <Card
               isPressable
               disableRipple
-                className="h-56 rounded-md border border-[#33373a] bg-[#1e2124] 
-                  text-white hover:bg-[#33373aa0] transition-all duration-400"
+                className="h-56 rounded-md border border-[#202225] bg-[#111111] 
+                  text-white hover:bg-[#222222] transition-all duration-400"
               >
                 <CardHeader className="flex justify-between text-lg font-semibold">
                   {repo.name}

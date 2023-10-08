@@ -18,8 +18,8 @@ const config: Config = {
         dark: {
           colors: {
             default: {
-              foreground: '#ffffff',
-              DEFAULT: '#000000',
+              foreground: '#000000',
+              DEFAULT: '#ffffff',
             },
             primary: {
               foreground: '#000000',

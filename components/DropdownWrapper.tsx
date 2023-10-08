@@ -15,12 +15,12 @@ export default function DropdownWrapper() {
   return (
     <Dropdown
       placement="bottom-end"
-      className="border border-[#333333] bg-[#13131a]"
+      className="border border-[#202225] bg-[#121212]"
     >
       <DropdownTrigger>
         <Avatar
           as="button"
-          className="border border-[#ffffff00] transition-transform"
+          className="border border-[#202225] transition-transform"
           src={user?.avatar_url}
         />
       </DropdownTrigger>
