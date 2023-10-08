@@ -28,8 +28,10 @@ export default function Dashboard() {
         : repos.map((repo: any) => (
             <Link href={`/dashboard/${repo.full_name}`} key={repo.id}>
               <Card
+              isPressable
+              disableRipple
                 className="h-56 rounded-md border border-[#33373a] bg-[#1e2124] 
-                  text-white"
+                  text-white hover:bg-[#33373aa0] transition-all duration-400"
               >
                 <CardHeader className="flex justify-between text-lg font-semibold">
                   {repo.name}

@@ -46,7 +46,7 @@ export default function LoginPage() {
           redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL}/login`,
         })}`}
       >
-        GitHub Login
+        Continue with GitHub
       </Button>
     </div>
   );

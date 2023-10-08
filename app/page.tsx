@@ -3,10 +3,10 @@
 import { Button } from '@nextui-org/react';
 import Link from 'next/link';
 
-export default function HomePage() {
+export default function LandingPage() {
   return (
     <div className="flex flex-col items-center gap-4">
-      <h1 className="pt-36 text-center text-6xl font-bold text-white md:text-7xl">
+      <h1 className="leading-tight pt-36 text-center text-6xl font-bold text-white md:text-7xl">
         Track your repo&rsquo;s history.
       </h1>
       <h2 className="text-center text-base text-stone-400 md:text-xl">
