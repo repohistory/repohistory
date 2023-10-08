@@ -7,7 +7,8 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'repohistory',
-  description: "View your GitHub repository's traffic history",
+  description:
+    'Analyze and track your GitHub repository traffic history longer than 14 days with repohistory.',
 };
 
 export default function RootLayout({
@@ -20,9 +21,7 @@ export default function RootLayout({
       <body
         className={`${inter.className} min-h-screen bg-black dark scrollbar-hide`}
       >
-        <Providers>
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
