@@ -11,7 +11,10 @@ export default function RepoPage({ params }: { params: { fullname: string } }) {
   const viewsTraffic = useViewsTraffic(owner, repo);
 
   return (
-    <div className="mx-5 flex flex-col items-center justify-center gap-10 py-10 sm:mx-10 xl:flex-row">
+    <div
+      className="mx-5 flex flex-col items-center justify-center gap-10
+        py-10 sm:mx-10 xl:flex-row"
+    >
       <Chart
         title="Git Clones"
         primaryLabel="Unique Cloners"

@@ -15,10 +15,25 @@ export default function Dashboard() {
   const repos = useRepos();
 
   const skeletons = Array.from({ length: 9 }, (_, index) => (
-    <Skeleton
+    <Card
       key={index}
-      className="h-56 rounded-md border border-[#ffffff20]"
-    />
+      isPressable
+      disableRipple
+      className="h-56 w-full rounded-md border border-[#202225] bg-[#111111] 
+      text-white transition-all duration-400 hover:bg-[#222222]"
+    >
+      <CardHeader className="flex justify-between text-lg font-semibold">
+        <Skeleton className="h-full w-32 rounded-md" />
+        <div className="flex items-center gap-1 text-sm font-normal text-[#ffffffa0]">
+          <Star />
+          <Skeleton className="rounded-md">000</Skeleton>
+        </div>
+      </CardHeader>
+      <Divider className="bg-[#33373a]" />
+      <CardBody>
+        <Skeleton className="h-20 w-full rounded-md" />
+      </CardBody>
+    </Card>
   ));
 
   return (
