@@ -1,5 +1,3 @@
-'use client';
-
 import { Navbar, NavbarBrand, Link } from '@nextui-org/react';
 import Image from 'next/image';
 
