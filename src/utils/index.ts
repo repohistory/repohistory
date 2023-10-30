@@ -19,3 +19,43 @@ export default async function fetcher(url: string) {
   const data = await res.json();
   return data;
 }
+
+export function parseCSV(csvString: string): {
+  time: string[];
+  clonesTotal: number[];
+  clonesUnique: number[];
+  viewsTotal: number[];
+  viewsUnique: number[];
+} {
+  const time: string[] = [];
+  const clonesTotal: number[] = [];
+  const clonesUnique: number[] = [];
+  const viewsTotal: number[] = [];
+  const viewsUnique: number[] = [];
+
+  const lines = csvString.split('\n');
+
+  // Remove the header line
+  const headers = lines.shift()?.split(',');
+
+  if (headers) {
+    lines.forEach((line) => {
+      const values = line.split(',');
+      if (values.length === headers.length) {
+        time.push(values[0].split(' ')[0]);
+        clonesTotal.push(parseInt(values[1], 10));
+        clonesUnique.push(parseInt(values[2], 10));
+        viewsTotal.push(parseInt(values[3], 10));
+        viewsUnique.push(parseInt(values[4], 10));
+      }
+    });
+  }
+
+  return {
+    time,
+    clonesTotal,
+    clonesUnique,
+    viewsTotal,
+    viewsUnique,
+  };
+}
