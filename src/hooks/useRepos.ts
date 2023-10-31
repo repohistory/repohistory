@@ -1,31 +1,18 @@
 import fetcher from '@/utils';
-import { useEffect, useState } from 'react';
-import useInstallation from './useInstallation';
+import useSWR from 'swr';
 
 export default function useRepos() {
-  const installations = useInstallation();
-  const [repos, setRepos] = useState<[] | null>(null);
+  const owner = 'm4xshen';
+  const dataRepo = 'github-status';
+  const branch = 'github-repo-stats';
+  const { data, error, isLoading } = useSWR(
+    `https://api.github.com/repos/${owner}/${dataRepo}/git/trees/${branch}?recursive=1`,
+    fetcher,
+  );
 
-  useEffect(() => {
-    (async () => {
-      if (!installations[0]) {
-        return;
-      }
-
-      const data = await fetcher(
-        `https://api.github.com/user/installations/${installations[0].id}/repositories`,
-      );
-      setRepos(data.repositories);
-    })();
-  }, [installations]);
-
-  if (repos === null) {
+  if (error || isLoading) {
     return null;
   }
 
-  const sortedData = repos.sort(
-    (a: any, b: any) => b.stargazers_count - a.stargazers_count,
-  );
-
-  return sortedData;
+  return data.tree.filter((d: any) => /^[^/]+\/[^/]+$/.test(d.path));
 }

@@ -41,7 +41,7 @@ export default function Dashboard() {
       {repos === null
         ? skeletons
         : repos.map((repo: any) => (
-            <Link href={`/dashboard/${repo.full_name}`} key={repo.id}>
+            <Link href={`/dashboard/${repo.path}`} key={repo.path}>
               <Card
                 isPressable
                 disableRipple
@@ -49,14 +49,14 @@ export default function Dashboard() {
                   text-white transition-all duration-400 hover:bg-[#222222]"
               >
                 <CardHeader className="flex justify-between text-lg font-semibold">
-                  {repo.name}
+                  {repo.path}
                   <div className="flex items-center gap-1 text-sm font-normal text-[#ffffffa0]">
                     <Star />
-                    {repo.stargazers_count}
+                    {/* repo.stargazers_count */}
                   </div>
                 </CardHeader>
                 <Divider className="bg-[#33373a]" />
-                <CardBody>{repo.description}</CardBody>
+                <CardBody>{/* repo.description */}</CardBody>
               </Card>
             </Link>
           ))}
