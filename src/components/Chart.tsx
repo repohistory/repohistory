@@ -1,6 +1,6 @@
 'use client';
 
-import { Chip } from '@nextui-org/react';
+import { Chip, Spinner } from '@nextui-org/react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -42,7 +42,7 @@ interface Props {
   data: {
     labels: string[];
     datasets: any[];
-  };
+  } | null;
 }
 
 export default function Chart({
@@ -55,10 +55,14 @@ export default function Chart({
     <div className="mt-10 flex w-full flex-col gap-3">
       <h1 className="text-lg font-semibold text-white">{title}</h1>
       <div
-        className="max-w-3xl rounded-medium 
+        className="flex max-w-3xl flex-col items-center rounded-medium
           border border-[#202225] bg-[#111111] p-5"
       >
-        <Bar options={options} data={data} />
+        {data ? (
+          <Bar options={options} data={data} />
+        ) : (
+          <Spinner color="primary" className="py-10" />
+        )}
         <div className="mt-1 flex justify-center">
           <Chip
             color="primary"

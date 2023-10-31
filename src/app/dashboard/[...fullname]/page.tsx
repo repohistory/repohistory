@@ -50,22 +50,18 @@ export default function RepoPage({ params }: { params: { fullname: string } }) {
       className="mx-5 flex flex-col items-center justify-center gap-10
         py-10 sm:mx-10 xl:flex-row"
     >
-      {clonesData ? (
-        <Chart
-          title="Git Clones"
-          primaryLabel="Unique Cloners"
-          secondaryLabel="Clones"
-          data={clonesData}
-        />
-      ) : null}
-      {viewsData ? (
-        <Chart
-          title="Visitors"
-          primaryLabel="Unique Visitors"
-          secondaryLabel="Views"
-          data={viewsData}
-        />
-      ) : null}
+      <Chart
+        title="Git Clones"
+        primaryLabel="Unique Cloners"
+        secondaryLabel="Clones"
+        data={clonesData}
+      />
+      <Chart
+        title="Visitors"
+        primaryLabel="Unique Visitors"
+        secondaryLabel="Views"
+        data={viewsData}
+      />
     </div>
   );
 }
