@@ -52,14 +52,14 @@ export default function Chart({
   data,
 }: Props) {
   return (
-    <div className="mt-10 w-full flex flex-col gap-3">
+    <div className="mt-10 flex w-full flex-col gap-3">
       <h1 className="text-lg font-semibold text-white">{title}</h1>
       <div
         className="max-w-3xl rounded-medium 
           border border-[#202225] bg-[#111111] p-5"
       >
-        <Bar options={options} data={data} />;
-        <div className="flex justify-center">
+        <Bar options={options} data={data} />
+        <div className="mt-1 flex justify-center">
           <Chip
             color="primary"
             variant="dot"

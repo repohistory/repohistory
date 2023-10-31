@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import {
   Skeleton,
   Card,
@@ -10,6 +9,7 @@ import {
 } from '@nextui-org/react';
 import useRepos from '@/hooks/useRepos';
 import Star from '@/components/Icons/Star';
+import RepoCard from '@/components/RepoCard';
 
 export default function Dashboard() {
   const repos = useRepos();
@@ -23,7 +23,7 @@ export default function Dashboard() {
       text-white transition-all duration-400 hover:bg-[#222222]"
     >
       <CardHeader className="flex justify-between text-lg font-semibold">
-        <Skeleton className="h-full w-32 rounded-md" />
+        <Skeleton className="h-full w-32 rounded-md">path</Skeleton>
         <div className="flex items-center gap-1 text-sm font-normal text-[#ffffffa0]">
           <Star />
           <Skeleton className="rounded-md">000</Skeleton>
@@ -31,7 +31,10 @@ export default function Dashboard() {
       </CardHeader>
       <Divider className="bg-[#33373a]" />
       <CardBody>
-        <Skeleton className="h-20 w-full rounded-md" />
+        <div className="flex flex-col gap-3">
+          <Skeleton className="h-[1rem] rounded-md" />
+          <Skeleton className="h-[1rem] w-1/2 rounded-md" />
+        </div>
       </CardBody>
     </Card>
   ));
@@ -41,24 +44,7 @@ export default function Dashboard() {
       {repos === null
         ? skeletons
         : repos.map((repo: any) => (
-            <Link href={`/dashboard/${repo.path}`} key={repo.path}>
-              <Card
-                isPressable
-                disableRipple
-                className="h-56 w-full rounded-md border border-[#202225] bg-[#111111] 
-                  text-white transition-all duration-400 hover:bg-[#222222]"
-              >
-                <CardHeader className="flex justify-between text-lg font-semibold">
-                  {repo.path}
-                  <div className="flex items-center gap-1 text-sm font-normal text-[#ffffffa0]">
-                    <Star />
-                    {/* repo.stargazers_count */}
-                  </div>
-                </CardHeader>
-                <Divider className="bg-[#33373a]" />
-                <CardBody>{/* repo.description */}</CardBody>
-              </Card>
-            </Link>
+            <RepoCard path={repo.path} key={repo.path} />
           ))}
     </div>
   );
