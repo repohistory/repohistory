@@ -10,11 +10,7 @@ export default function Dashboard() {
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <div className="mx-auto grid w-3/4 gap-10 py-10 md:grid-cols-2 xl:grid-cols-3">
-      {dataRepo === null ? (
-        <Skeletons />
-      ) : (
-        <RepoCards dataRepo={dataRepo} />
-      )}
+      {dataRepo === null ? <Skeletons /> : <RepoCards dataRepo={dataRepo} />}
     </div>
   );
 }

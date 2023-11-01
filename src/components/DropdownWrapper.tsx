@@ -7,6 +7,7 @@ import {
   DropdownItem,
   DropdownTrigger,
 } from '@nextui-org/react';
+import Link from 'next/link';
 
 export default function DropdownWrapper() {
   const user = useUser();
@@ -32,6 +33,9 @@ export default function DropdownWrapper() {
         <DropdownItem key="profile" className="h-14 gap-2">
           <p className="font-semibold">{user?.name}</p>
           <p className="font-semibold">@{user?.login}</p>
+        </DropdownItem>
+        <DropdownItem key="settings" href="/dashboard/settings" as={Link}>
+          Settings
         </DropdownItem>
         <DropdownItem key="logout" color="danger" onClick={logout}>
           Log Out
