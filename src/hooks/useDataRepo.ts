@@ -19,5 +19,9 @@ export default function useDataRepo() {
     })();
   }, [installations]);
 
-  return dataRepo;
+  if (installations.length === 0) {
+    return { dataRepo: null, error: true };
+  }
+
+  return { dataRepo, error: null };
 }
