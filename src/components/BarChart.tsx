@@ -45,17 +45,17 @@ interface Props {
   } | null;
 }
 
-export default function Chart({
+export default function BarChart({
   title,
   primaryLabel,
   secondaryLabel,
   data,
 }: Props) {
   return (
-    <div className="mt-10 flex w-full flex-col gap-3">
+    <div className="flex w-full flex-col gap-3 px-5 sm:max-w-2xl sm:px-0">
       <h1 className="text-lg font-semibold text-white">{title}</h1>
       <div
-        className="flex max-w-3xl flex-col items-center rounded-medium
+        className="flex flex-col items-center rounded-medium
           border border-[#202225] bg-[#111111] p-5"
       >
         {data ? (

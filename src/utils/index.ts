@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 import { parseCookies } from 'nookies';
 
 export default async function fetcher(url: string) {
@@ -20,42 +21,19 @@ export default async function fetcher(url: string) {
   return data;
 }
 
-export function parseCSV(csvString: string): {
-  time: string[];
-  clonesTotal: number[];
-  clonesUnique: number[];
-  viewsTotal: number[];
-  viewsUnique: number[];
-} {
-  const time: string[] = [];
-  const clonesTotal: number[] = [];
-  const clonesUnique: number[] = [];
-  const viewsTotal: number[] = [];
-  const viewsUnique: number[] = [];
+export function parseCSV(csvString: string): any[][] {
+  const rows = csvString.trim().split('\n');
+  const headers = rows[0].split(',');
 
-  const lines = csvString.split('\n');
+  const columnData: any[][] = Array.from({ length: headers.length }, () => []);
 
-  // Remove the header line
-  const headers = lines.shift()?.split(',');
-
-  if (headers) {
-    lines.forEach((line) => {
-      const values = line.split(',');
-      if (values.length === headers.length) {
-        time.push(values[0].split(' ')[0]);
-        clonesTotal.push(parseInt(values[1], 10));
-        clonesUnique.push(parseInt(values[2], 10));
-        viewsTotal.push(parseInt(values[3], 10));
-        viewsUnique.push(parseInt(values[4], 10));
-      }
-    });
+  for (let i = 1; i < rows.length; i++) {
+    const columns = rows[i].split(',');
+    columnData[0].push(columns[0].split(' ')[0]);
+    for (let j = 1; j < columns.length; j++) {
+      columnData[j].push(parseInt(columns[j], 10));
+    }
   }
 
-  return {
-    time,
-    clonesTotal,
-    clonesUnique,
-    viewsTotal,
-    viewsUnique,
-  };
+  return columnData;
 }

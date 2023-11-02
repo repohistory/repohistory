@@ -1,6 +1,8 @@
 'use client';
 
-import Chart from '@/components/Chart';
+import BarChart from '@/components/BarChart';
+import LineChart from '@/components/LineChart';
+import useStargazers from '@/hooks/useStargazers';
 import useTraffic from '@/hooks/useTraffic';
 import { parseCSV } from '@/utils';
 import { useEffect, useState } from 'react';
@@ -11,6 +13,7 @@ export default function RepoPage({ params }: { params: { fullname: string } }) {
   const traffic = useTraffic(owner, repo);
   const [clonesData, setClonesData] = useState<any>(null);
   const [viewsData, setViewsData] = useState<any>(null);
+  const stargazers = useStargazers(owner, repo);
 
   const datasets = (label: string, data: any[], color: string) => ({
     label,
@@ -25,8 +28,10 @@ export default function RepoPage({ params }: { params: { fullname: string } }) {
       return;
     }
 
-    const { time, clonesTotal, clonesUnique, viewsTotal, viewsUnique } =
-      parseCSV(atob(traffic.content));
+    const data = parseCSV(atob(traffic.content));
+
+    const time = data[0];
+    const [, clonesTotal, clonesUnique, viewsTotal, viewsUnique] = data;
 
     setClonesData({
       labels: time,
@@ -46,22 +51,25 @@ export default function RepoPage({ params }: { params: { fullname: string } }) {
   }, [traffic]);
 
   return (
-    <div
-      className="mx-5 flex flex-col items-center justify-center gap-10
-        py-10 sm:mx-10 xl:flex-row"
-    >
-      <Chart
-        title="Git Clones"
-        primaryLabel="Unique Cloners"
-        secondaryLabel="Clones"
-        data={clonesData}
-      />
-      <Chart
-        title="Visitors"
-        primaryLabel="Unique Visitors"
-        secondaryLabel="Views"
-        data={viewsData}
-      />
+    <div>
+      <div
+        className="my-10 mb-5 mt-10 flex flex-col flex-wrap items-center
+          justify-center gap-10 sm:mx-10 xl:flex-row"
+      >
+        <BarChart
+          title="Git Clones"
+          primaryLabel="Unique Cloners"
+          secondaryLabel="Clones"
+          data={clonesData}
+        />
+        <BarChart
+          title="Visitors"
+          primaryLabel="Unique Visitors"
+          secondaryLabel="Views"
+          data={viewsData}
+        />
+        <LineChart title="Stargazers" data={stargazers} />
+      </div>
     </div>
   );
 }
