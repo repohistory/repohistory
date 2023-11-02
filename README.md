@@ -12,4 +12,4 @@ Dashboard | Traffic Detail
 
 1. Setup [github-repo-stats action](https://github.com/marketplace/actions/github-repo-stats)
 2. Install [repohistory GitHub App](https://github.com/apps/repohistory/installations/new)
-3. Select "Only select repohistories" and choose your data repository
+3. Select "Only select repositories" and choose your data repository
