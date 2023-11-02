@@ -37,6 +37,7 @@ export default function useTraffic(owner: string, repo: string) {
         datasets('Unique Cloners', clonesUnique, '#62C3F8'),
         datasets('Clones', clonesTotal, '#315C72'),
       ],
+      total: clonesTotal.reduce((sum, clones) => sum + clones, 0),
     });
 
     setViewsData({
@@ -45,6 +46,7 @@ export default function useTraffic(owner: string, repo: string) {
         datasets('Unique Visitors', viewsUnique, '#62C3F8'),
         datasets('Views', viewsTotal, '#315C72'),
       ],
+      total: viewsTotal.reduce((sum, views) => sum + views, 0),
     });
   }, [data]);
 

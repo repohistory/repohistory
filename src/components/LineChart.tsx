@@ -47,7 +47,7 @@ interface Props {
 
 export default function LineChart({ title, data }: Props) {
   return (
-    <div className="flex w-full max-w-2xl basis-full flex-col gap-3 px-5 sm:px-0">
+    <div className="flex w-full max-w-4xl flex-col gap-3 px-5 sm:px-0">
       <h1 className="text-lg font-semibold text-white">{title}</h1>
       <div
         className="flex flex-col items-center rounded-medium
