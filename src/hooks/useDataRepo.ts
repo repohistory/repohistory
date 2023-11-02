@@ -3,11 +3,11 @@ import fetcher from '@/utils';
 import useInstallation from './useInstallation';
 
 export default function useDataRepo() {
-  const installations = useInstallation();
+  const { installations, error } = useInstallation();
   const [dataRepo, setDataRepo] = useState(null);
 
   useEffect(() => {
-    if (!installations[0]) {
+    if (!installations || !installations[0]) {
       return;
     }
 
@@ -19,7 +19,7 @@ export default function useDataRepo() {
     })();
   }, [installations]);
 
-  if (installations.length === 0) {
+  if (error) {
     return { dataRepo: null, error: true };
   }
 

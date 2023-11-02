@@ -8,9 +8,13 @@ export default function useInstallation() {
     isLoading,
   } = useSWR('https://api.github.com/user/installations', fetcher);
 
-  if (error || isLoading) {
-    return [];
+  if (error || data?.total_count === 0) {
+    return  { installations: null, error: true }
   }
 
-  return (data.installations)
+  if (isLoading) {
+    return  { installations: null, error: null }
+  }
+
+  return  { installations: data.installations, error: null }
 }

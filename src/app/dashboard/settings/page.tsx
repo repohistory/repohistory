@@ -5,7 +5,7 @@ import useBranches from '@/hooks/useBranches';
 import useDataRepo from '@/hooks/useDataRepo';
 
 export default function SettingsPage() {
-  const dataRepo: any = useDataRepo();
+  const { dataRepo }: { dataRepo: any } = useDataRepo();
   const branches = useBranches(dataRepo?.full_name ?? []);
 
   return (

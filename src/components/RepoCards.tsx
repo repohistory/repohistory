@@ -16,8 +16,17 @@ export default function RepoCards({ dataRepo }: { dataRepo: any }) {
   if (error) {
     return (
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-white">
-        Make sure you select the right branch for your data repo at{' '}
-        <Link href="/dashboard/settings">settings page</Link>.
+        Make sure you select:
+        <ol className="ml-5 list-decimal">
+          <li>
+            correct data repository on <Link target='_blank' href="https://github.com/apps/repohistory/installations/new">
+              GitHub
+            </Link>
+          </li>
+          <li>
+            correct branch for your data repository at <Link href="/dashboard/settings">settings page</Link>.
+          </li>
+        </ol>
       </div>
     );
   }
