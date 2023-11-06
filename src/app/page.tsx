@@ -1,7 +1,7 @@
 'use client';
 
 import NavbarWrapper from '@/components/NavbarWrapper';
-import { Button } from '@nextui-org/react';
+import { Button, Image } from '@nextui-org/react';
 import Link from 'next/link';
 
 export default function LandingPage() {
@@ -27,6 +27,12 @@ export default function LandingPage() {
         >
           Get Started
         </Button>
+        <Image
+          className="mx-auto my-10 border border-[#202225]"
+          width="80%"
+          alt="screenshot of repohistory"
+          src="https://github.com/repohistory/repohistory/assets/74842863/b722d95d-3c41-4ee4-9d9c-d8b6e621b6f9"
+        />
       </div>
     </>
   );
