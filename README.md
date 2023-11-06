@@ -2,7 +2,7 @@
 
 Analyze and track your GitHub repository traffic history longer than 14 days
 
-![image](https://github.com/repohistory/repohistory/assets/74842863/8a056cd2-0894-40a2-9d60-3ce1c6e577b2)
+![image](https://github.com/repohistory/repohistory/assets/74842863/a3dae207-56ab-4e51-8faf-9b8ec54f616f)
 
 
 ## Get Started
