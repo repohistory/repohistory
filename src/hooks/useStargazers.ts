@@ -23,12 +23,13 @@ export default function useStargazers(owner: string, repo: string) {
       labels: time,
       datasets: [
         {
+          fill: true,
           pointRadius: 0,
           pointHitRadius: 30,
           label: 'Stargazers',
           data: counts,
           borderColor: '#62C3F8',
-          backgroundColor: '#62C3F8',
+          backgroundColor: '#62C3F810',
           tension: 0.5,
         },
       ],

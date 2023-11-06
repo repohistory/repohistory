@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function NavbarWrapper() {
   return (
-    <Navbar isBordered height="4.5rem" className="bg-black">
+    <Navbar isBordered height="4.0rem" className="bg-black">
       <NavbarBrand>
         <Link
           href="/"

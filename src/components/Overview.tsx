@@ -24,7 +24,7 @@ export default function Overview({
 
   return (
     <div
-      className="flex flex-col gap-3 rounded-medium border
+      className="flex flex-col gap-4 rounded-medium border
         border-[#202225] bg-[#111111] p-5 text-white xl:w-1/3"
     >
       <h1 className="text-3xl font-bold">{repoName}</h1>
@@ -46,13 +46,13 @@ export default function Overview({
       <div className="mt-8 flex justify-center gap-10">
         <div>
           <div className="text-center font-semibold ">Total Clones</div>
-          <div className="text-center text-5xl font-bold">
+          <div className="text-center text-4xl font-bold">
             {clonesData?.total}
           </div>
         </div>
         <div>
           <div className="text-center font-semibold">Total Views</div>
-          <div className="text-center text-5xl font-bold">
+          <div className="text-center text-4xl font-bold">
             {viewsData?.total}
           </div>
         </div>

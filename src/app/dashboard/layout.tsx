@@ -25,7 +25,7 @@ export default function DashboardLayout({
     <>
       <Navbar
         isBordered
-        height="4.5rem"
+        height="4.0rem"
         className="border-[#202225]"
         classNames={{
           base: 'justify-between',
@@ -36,8 +36,8 @@ export default function DashboardLayout({
       >
         <Link href="/" className="hover:opacity-100">
           <Image
-            width={35}
-            height={35}
+            width={30}
+            height={30}
             alt="logo"
             src="/repohistory.png"
             unoptimized

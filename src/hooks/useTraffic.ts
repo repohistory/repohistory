@@ -7,7 +7,8 @@ const datasets = (label: string, data: any[], color: string) => ({
   data,
   backgroundColor: color,
   borderRadius: 999,
-  barThickness: 10,
+  barPercentage: 0.7,
+  maxBarThickness: 10,
 });
 
 export default function useTraffic(owner: string, repo: string) {
