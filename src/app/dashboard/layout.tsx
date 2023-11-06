@@ -26,7 +26,7 @@ export default function DashboardLayout({
       <Navbar
         isBordered
         height="4.5rem"
-        className="border-[#202225] bg-[#121212]"
+        className="border-[#202225]"
         classNames={{
           base: 'justify-between',
           wrapper: `max-w-full ${

@@ -13,8 +13,10 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="mx-auto grid w-3/4 gap-10 py-10 md:grid-cols-2 xl:grid-cols-3">
-      {dataRepo === null ? <Skeletons /> : <RepoCards dataRepo={dataRepo} />}
+    <div className="flex w-full justify-center px-5 py-5 sm:py-10 md:px-10 lg:px-20 ">
+      <div className="grid w-full gap-5 md:grid-cols-2 xl:grid-cols-3">
+        {dataRepo === null ? <Skeletons /> : <RepoCards dataRepo={dataRepo} />}
+      </div>
     </div>
   );
 }

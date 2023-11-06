@@ -52,37 +52,32 @@ export default function BarChart({
   data,
 }: Props) {
   return (
-    <div className="flex w-full flex-col gap-3 px-5 sm:max-w-2xl sm:px-0">
+    <div className="flex flex-col items-center rounded-medium border border-[#202225] bg-[#111111] p-5 xl:w-1/2">
       <h1 className="text-lg font-semibold text-white">{title}</h1>
-      <div
-        className="flex flex-col items-center rounded-medium
-          border border-[#202225] bg-[#111111] p-5"
-      >
-        {data ? (
-          <Bar options={options} data={data} />
-        ) : (
-          <Spinner color="primary" className="py-10" />
-        )}
-        <div className="mt-1 flex justify-center">
-          <Chip
-            color="primary"
-            variant="dot"
-            classNames={{
-              base: 'border-none',
-            }}
-          >
-            {primaryLabel}
-          </Chip>
-          <Chip
-            color="secondary"
-            variant="dot"
-            classNames={{
-              base: 'border-none',
-            }}
-          >
-            {secondaryLabel}
-          </Chip>
-        </div>
+      {data ? (
+        <Bar options={options} data={data} />
+      ) : (
+        <Spinner color="primary" className="py-10" />
+      )}
+      <div className="mt-1 flex justify-center">
+        <Chip
+          color="primary"
+          variant="dot"
+          classNames={{
+            base: 'border-none',
+          }}
+        >
+          {primaryLabel}
+        </Chip>
+        <Chip
+          color="secondary"
+          variant="dot"
+          classNames={{
+            base: 'border-none',
+          }}
+        >
+          {secondaryLabel}
+        </Chip>
       </div>
     </div>
   );
