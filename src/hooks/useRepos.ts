@@ -14,9 +14,9 @@ function isDataRepo(data: any) {
   return false;
 }
 
-export default function useRepos(dataRepo: any, branch: string) {
+export default function useRepos(dataRepo: string, branch: string) {
   const { data, error, isLoading } = useSWR(
-    `https://api.github.com/repos/${dataRepo.full_name}/git/trees/${branch}?recursive=true`,
+    `https://api.github.com/repos/${dataRepo}/git/trees/${branch}?recursive=true`,
     fetcher,
   );
 

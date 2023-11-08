@@ -15,7 +15,7 @@ export default function useDataRepo() {
       const data = await fetcher(
         `https://api.github.com/user/installations/${installation.id}/repositories`,
       );
-      setDataRepo(data.repositories[0]);
+      setDataRepo(data.repositories[0].full_name);
     })();
   }, [installation]);
 

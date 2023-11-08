@@ -1,15 +1,20 @@
 import useSWR from 'swr';
 import fetcher, { parseCSV } from '@/utils';
 import { useEffect, useState } from 'react';
+import { parseCookies } from 'nookies';
+import useDataRepo from './useDataRepo';
 
 export default function useStargazers(owner: string, repo: string) {
-  const dataRepo = 'github-status';
-  const branch = 'github-repo-stats';
+  const { dataRepo } = useDataRepo();
+  const cookies = parseCookies();
+  const branch = cookies.repohistoryBranch ?? 'github-repo-stats';
 
   const [stargazers, setStargazers] = useState<any>(null);
 
   const { data, error, isLoading } = useSWR(
-    `https://api.github.com/repos/${owner}/${dataRepo}/contents/${owner}/${repo}/ghrs-data/stargazers.csv?ref=${branch}`,
+    dataRepo
+      ? `https://api.github.com/repos/${dataRepo}/contents/${owner}/${repo}/ghrs-data/stargazers.csv?ref=${branch}`
+      : null,
     fetcher,
   );
 
