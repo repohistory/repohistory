@@ -18,7 +18,7 @@ export default function useInstallation() {
   }
 
   const installation = data.installations.find(
-    (i: any) => i.account.login === user.login,
+    (i: any) => i.account.login === user?.login,
   );
 
   return { installation, error: null };
