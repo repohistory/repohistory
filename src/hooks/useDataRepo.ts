@@ -3,21 +3,21 @@ import fetcher from '@/utils';
 import useInstallation from './useInstallation';
 
 export default function useDataRepo() {
-  const { installations, error } = useInstallation();
+  const { installation, error } = useInstallation();
   const [dataRepo, setDataRepo] = useState(null);
 
   useEffect(() => {
-    if (!installations || !installations[0]) {
+    if (!installation) {
       return;
     }
 
     (async () => {
       const data = await fetcher(
-        `https://api.github.com/user/installations/${installations[0].id}/repositories`,
+        `https://api.github.com/user/installations/${installation.id}/repositories`,
       );
       setDataRepo(data.repositories[0]);
     })();
-  }, [installations]);
+  }, [installation]);
 
   if (error) {
     return { dataRepo: null, error: true };
