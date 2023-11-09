@@ -12,7 +12,10 @@ export default function BranchSelector({ branches }: { branches: any[] }) {
 
   return (
     <Select
-      className="w-64 text-white"
+      classNames={{
+        base: 'w-64 text-white',
+        trigger: 'bg-[#222222]',
+      }}
       label="branch of your data repo"
       defaultSelectedKeys={[branch]}
       onChange={(e) => {
