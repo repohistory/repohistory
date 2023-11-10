@@ -1,4 +1,6 @@
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { Octokit } from 'octokit';
 
 // eslint-disable-next-line import/prefer-default-export
 export async function POST(request: Request) {
@@ -19,6 +21,23 @@ export async function POST(request: Request) {
   );
 
   const data = await res.json();
+  const userOctokit = new Octokit({
+    auth: data.access_token,
+  });
+  const { data: user } = await userOctokit.request('GET /user', {
+    headers: {
+      'X-GitHub-Api-Version': '2022-11-28',
+    },
+  });
 
-  return NextResponse.json(data);
+  cookies().set('access_token', data.access_token, {
+    httpOnly: true,
+    path: '/',
+  });
+  cookies().set('user_id', user.id.toString(), {
+    httpOnly: true,
+    path: '/',
+  });
+
+  return new NextResponse(data);
 }
