@@ -2,6 +2,7 @@ import RepoCard from '@/components/RepoCard';
 import { fetchInstallationId } from '@/utils/dbHelpers';
 import { cookies } from 'next/headers';
 import { App } from 'octokit';
+import nookies from 'nookies';
 
 const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY?.replace(/\\n/g, '\n');
 const app = new App({
@@ -12,6 +13,9 @@ const app = new App({
 export default async function Dashboard() {
   const userId = cookies().get('user_id')?.value ?? '';
   const installationId = await fetchInstallationId(userId);
+
+  const test = nookies.get();
+  console.log(test)
 
   const octokit = await app.getInstallationOctokit(installationId);
   const response = await octokit.request('GET /installation/repositories');

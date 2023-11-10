@@ -9,12 +9,11 @@ import {
 } from '@nextui-org/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { destroyCookie } from 'nookies';
 
 export default function DropdownWrapper() {
   const user = useUser();
-  // const router = useRouter();
-  // const logout = useLogout(router);
+  const router = useRouter();
+  const logout = useLogout(router);
 
   return (
     <Dropdown
@@ -40,15 +39,7 @@ export default function DropdownWrapper() {
         <DropdownItem key="settings" href="/dashboard/settings" as={Link}>
           Settings
         </DropdownItem>
-        <DropdownItem key="logout" color="danger" onClick={() => {
-          // TODO: Fix logout
-          destroyCookie(null, 'access_token', {
-            path: '/',
-          });
-          destroyCookie(null, 'user_id', {
-            path: '/',
-          });
-        }}>
+        <DropdownItem key="logout" color="danger" onClick={logout}>
           Log Out
         </DropdownItem>
       </DropdownMenu>

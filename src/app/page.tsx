@@ -1,5 +1,3 @@
-'use client';
-
 import NavbarWrapper from '@/components/NavbarWrapper';
 import { Button, Image } from '@nextui-org/react';
 import Link from 'next/link';

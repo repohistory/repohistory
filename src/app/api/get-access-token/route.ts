@@ -31,11 +31,9 @@ export async function POST(request: Request) {
   });
 
   cookies().set('access_token', data.access_token, {
-    httpOnly: true,
     path: '/',
   });
   cookies().set('user_id', user.id.toString(), {
-    httpOnly: true,
     path: '/',
   });
 
