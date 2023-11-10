@@ -1,33 +1,35 @@
 import Fork from '@/components/Icons/Fork';
 import Issue from '@/components/Icons/Issue';
 import Star from '@/components/Icons/Star';
-import useRepo from '@/hooks/useRepo';
+import { fetchInstallationId } from '@/utils/dbHelpers';
+import { cookies } from 'next/headers';
+import { App } from 'octokit';
 
-export default function Overview({
-  params,
-  repoName,
-  clonesData,
-  viewsData,
-}: {
-  params: {
-    fullname: string;
-  };
-  repoName: string;
-  clonesData: {
-    total: number;
-  };
-  viewsData: {
-    total: number;
-  };
-}) {
-  const repo = useRepo(`${params.fullname[0]}/${params.fullname[1]}`);
+const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY?.replace(/\\n/g, '\n');
+const app = new App({
+  appId: process.env.NEXT_PUBLIC_APP_ID,
+  privateKey,
+});
+
+export default async function Overview({ id }: { id: string }) {
+  const userId = cookies().get('user_id')?.value ?? '';
+  const installationId = await fetchInstallationId(userId);
+
+  const octokit = await app.getInstallationOctokit(installationId);
+  const { data: repo } = await octokit.request('GET /repos/{owner}/{repo}', {
+    owner: 'm4xshen',
+    repo: 'hardtime.nvim',
+    headers: {
+      'X-GitHub-Api-Version': '2022-11-28',
+    },
+  });
 
   return (
     <div
       className="flex flex-col gap-4 rounded-medium border
         border-[#202225] bg-[#111111] p-5 text-white xl:w-1/3"
     >
-      <h1 className="text-3xl font-bold">{repoName}</h1>
+      <h1 className="text-3xl font-bold">{repo?.name}</h1>
       <div>{repo?.description}</div>
       <div className="flex gap-5">
         <div className="flex items-center gap-2">
@@ -46,15 +48,11 @@ export default function Overview({
       <div className="mt-8 flex justify-center gap-10">
         <div>
           <div className="text-center font-semibold ">Total Clones</div>
-          <div className="text-center text-4xl font-bold">
-            {clonesData?.total}
-          </div>
+          <div className="text-center text-4xl font-bold">999</div>
         </div>
         <div>
           <div className="text-center font-semibold">Total Views</div>
-          <div className="text-center text-4xl font-bold">
-            {viewsData?.total}
-          </div>
+          <div className="text-center text-4xl font-bold">999</div>
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ import { setCookie } from 'nookies';
 import useLogin from '@/hooks/useLogin';
 import { Button } from '@nextui-org/react';
 import Spinner from '@/components/Icons/Spinner';
+import { Octokit } from 'octokit';
 
 export default function LoginButton({ code }: { code: string | null }) {
   const router = useRouter();
@@ -20,10 +21,20 @@ export default function LoginButton({ code }: { code: string | null }) {
 
       const { data, error } = await login(code);
       if (!error) {
+        const userOctokit = new Octokit({
+          auth: data.access_token,
+        });
+        const { data: user } = await userOctokit.request('GET /user');
+
         setCookie(null, 'access_token', data.access_token, {
           maxAge: 3600,
           path: '/',
         });
+        setCookie(null, 'user_id', user.id.toString(), {
+          maxAge: 3600,
+          path: '/',
+        });
+
         router.push('/dashboard');
       } else {
         console.error(error);

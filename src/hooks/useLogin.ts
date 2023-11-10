@@ -11,6 +11,7 @@ async function login(code: string) {
       },
     );
     const data = await response.json();
+
     if (data.error) {
       throw data.error;
     }

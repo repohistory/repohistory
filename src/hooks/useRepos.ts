@@ -1,46 +1,24 @@
 import fetcher from '@/utils';
 import useSWR from 'swr';
 
-function isDataRepo(data: any) {
-  // eslint-disable-next-line no-restricted-syntax
-  for (const item of data.tree) {
-    const pathParts = item.path.split('/');
+// function isDataRepo(data: any) {
+//   // eslint-disable-next-line no-restricted-syntax
+//   for (const item of data.tree) {
+//     const pathParts = item.path.split('/');
+//
+//     if (pathParts.length >= 4 && pathParts[2] === 'ghrs-data') {
+//       return true;
+//     }
+//   }
+//
+//   return false;
+// }
 
-    if (pathParts.length >= 4 && pathParts[2] === 'ghrs-data') {
-      return true;
-    }
-  }
+export default function useRepos(userId: number) {
+  // TODO: use sql to get the repos list from a user id
+  // const octokit = await app.getInstallationOctokit(installationId);
+  // const response = await octokit.request('GET /installation/repositories');
+  // const { repositories } = response.data;
 
-  return false;
-}
-
-export default function useRepos(dataRepo: string, branch: string) {
-  const { data, error, isLoading } = useSWR(
-    `https://api.github.com/repos/${dataRepo}/git/trees/${branch}?recursive=true`,
-    fetcher,
-  );
-
-  if (data?.message) {
-    return { repos: null, error: new Error(data.message) };
-  }
-
-  if (error) {
-    return { repos: null, error };
-  }
-
-  if (isLoading) {
-    return { repos: null, error: null };
-  }
-
-  if (!isDataRepo(data)) {
-    return {
-      repos: null,
-      error: true,
-    };
-  }
-
-  return {
-    repos: data.tree.filter((d: any) => /^[^/]+\/[^/]+$/.test(d.path)),
-    error: null,
-  };
+  return [];
 }

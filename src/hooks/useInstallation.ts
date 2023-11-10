@@ -1,25 +1,32 @@
-import useSWR from 'swr';
-import fetcher from '@/utils';
-import useUser from './useUser';
+import { useEffect, useState } from 'react';
+import { sql } from '@vercel/postgres';
 
-export default function useInstallation() {
-  const { data, error, isLoading } = useSWR(
-    'https://api.github.com/user/installations',
-    fetcher,
-  );
-  const user = useUser();
+export default function useInstallationId(userId: number | null) {
+  const [installationId, setInstallationId] = useState(null);
 
-  if (error || data?.total_count === 0) {
-    return { installation: null, error: true };
-  }
+  useEffect(() => {
+    const fetchInstallationId = async () => {
+      console.log(userId);
+      try {
+        const result = await sql`
+          SELECT installation_id FROM users WHERE github_user_id = ${userId}
+        `;
 
-  if (isLoading) {
-    return { installation: null, error: null };
-  }
+        // Access the rows from the result
+        // Adjust this according to the structure of your query result
+        if (result.rows && result.rows.length > 0) {
+          setInstallationId(result.rows[0].installation_id);
+        }
+      } catch (error) {
+        console.error('Error fetching installation ID:', error);
+        // Handle the error appropriately
+      }
+    };
 
-  const installation = data?.installations?.find(
-    (i: any) => i.account.login === user?.login,
-  );
+    if (userId) {
+      fetchInstallationId();
+    }
+  }, [userId]);
 
-  return { installation, error: null };
+  return installationId;
 }

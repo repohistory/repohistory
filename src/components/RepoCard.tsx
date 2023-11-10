@@ -1,5 +1,3 @@
-'use client';
-
 import Link from 'next/link';
 import Star from '@/components/Icons/Star';
 import {
@@ -9,13 +7,12 @@ import {
   Divider,
   Skeleton,
 } from '@nextui-org/react';
-import useRepo from '@/hooks/useRepo';
 
-export default function RepoCard({ path }: { path: string }) {
-  const repo = useRepo(path);
+export default function RepoCard({ repo }: { repo: any }) {
+  const path = repo.full_name;
 
   return (
-    <Link href={`/dashboard/${path}`}>
+    <Link href={`/dashboard/${repo.id}`}>
       <Card
         isPressable
         disableRipple
