@@ -11,8 +11,12 @@ const datasets = (label: string, data: any[], color: string) => ({
   maxBarThickness: 10,
 });
 
-export default async function RepoPage({ params }: { params: { id: string } }) {
-  const id = params.id[0];
+export default async function RepoPage({
+  params,
+}: {
+  params: { fullName: string };
+}) {
+  const fullName = `${params.fullName[0]}/${params.fullName[1]}`;
   let dates = [];
   let viewsCounts = [];
   let uniqueViewsCounts = [];
@@ -23,7 +27,7 @@ export default async function RepoPage({ params }: { params: { id: string } }) {
     const { rows: trafficData } = await sql`
       SELECT *
       FROM repository_traffic
-      WHERE repository_id = ${id};
+      WHERE full_name = ${fullName};
     `;
     dates = trafficData.map((item) => item.date.toISOString().slice(0, 10));
     viewsCounts = trafficData.map((item) => item.views_count);
@@ -38,7 +42,7 @@ export default async function RepoPage({ params }: { params: { id: string } }) {
   return (
     <div className="flex flex-col items-center gap-5 px-5 py-5 sm:py-10 md:px-10 lg:px-20">
       <div className="flex w-full flex-col gap-5 xl:flex-row">
-        <Overview id={id} />
+        <Overview fullName={fullName} />
         {/*  <LineChart title="Stargazers" data={stargazers} />  */}
       </div>
       <div className="flex w-full flex-col gap-5 xl:flex-row">

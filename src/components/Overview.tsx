@@ -11,14 +11,12 @@ const app = new App({
   privateKey,
 });
 
-export default async function Overview({ id }: { id: string }) {
+export default async function Overview({ fullName }: { fullName: string }) {
   const userId = cookies().get('user_id')?.value ?? '';
   const installationId = await fetchInstallationId(userId);
 
   const octokit = await app.getInstallationOctokit(installationId);
-  const { data: repo } = await octokit.request('GET /repos/{owner}/{repo}', {
-    owner: 'm4xshen',
-    repo: 'hardtime.nvim',
+  const { data: repo } = await octokit.request(`GET /repos/${fullName}`, {
     headers: {
       'X-GitHub-Api-Version': '2022-11-28',
     },

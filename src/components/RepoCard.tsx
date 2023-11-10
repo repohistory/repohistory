@@ -12,7 +12,7 @@ export default function RepoCard({ repo }: { repo: any }) {
   const path = repo.full_name;
 
   return (
-    <Link href={`/dashboard/${repo.id}`}>
+    <Link href={`/dashboard/${path}`}>
       <Card
         isPressable
         disableRipple

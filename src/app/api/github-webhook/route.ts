@@ -32,34 +32,22 @@ async function updateTraffic(installationId: number) {
   const { repositories } = response.data;
 
   for (const repo of repositories) {
-    const owner = repo.owner.login;
-    const repoName = repo.name;
-    const repoId = repo.id; // Assuming the repository object has an id field.
-
     const { data: viewsData } = await octokit.request(
-      'GET /repos/{owner}/{repo}/traffic/views',
-      {
-        owner,
-        repo: repoName,
-      },
+      `GET /repos/${repo.full_name}/traffic/views`,
     );
 
     const { data: clonesData } = await octokit.request(
-      'GET /repos/{owner}/{repo}/traffic/clones',
-      {
-        owner,
-        repo: repoName,
-      },
+      `GET /repos/${repo.full_name}/traffic/clones`,
     );
 
     // Insert or update views data
     for (const view of viewsData.views) {
       await sql`
         INSERT INTO repository_traffic (
-          repository_id, date, views_count, unique_views_count
+          full_name, date, views_count, unique_views_count
         ) VALUES (
-          ${repoId}, ${view.timestamp}, ${view.count}, ${view.uniques}
-        ) ON CONFLICT (repository_id, date) DO UPDATE SET
+          ${repo.full_name}, ${view.timestamp}, ${view.count}, ${view.uniques}
+        ) ON CONFLICT (full_name, date) DO UPDATE SET
           views_count = EXCLUDED.views_count,
           unique_views_count = EXCLUDED.unique_views_count;
       `;
@@ -69,10 +57,10 @@ async function updateTraffic(installationId: number) {
     for (const clone of clonesData.clones) {
       await sql`
         INSERT INTO repository_traffic (
-          repository_id, date, clones_count, unique_clones_count
+          full_name, date, clones_count, unique_clones_count
         ) VALUES (
-          ${repoId}, ${clone.timestamp}, ${clone.count}, ${clone.uniques}
-        ) ON CONFLICT (repository_id, date) DO UPDATE SET
+          ${repo.full_name}, ${clone.timestamp}, ${clone.count}, ${clone.uniques}
+        ) ON CONFLICT (full_name, date) DO UPDATE SET
           clones_count = EXCLUDED.clones_count,
           unique_clones_count = EXCLUDED.unique_clones_count;
       `;
