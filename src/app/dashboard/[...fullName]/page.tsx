@@ -20,8 +20,11 @@ export default async function RepoPage({
   let dates = [];
   let viewsCounts = [];
   let uniqueViewsCounts = [];
+  let viewsTotal = 0;
+
   let clonesCounts = [];
   let uniqueClonesCounts = [];
+  let clonesTotal = 0;
 
   try {
     const { rows: trafficData } = await sql`
@@ -34,6 +37,20 @@ export default async function RepoPage({
     uniqueViewsCounts = trafficData.map((item) => item.unique_views_count);
     clonesCounts = trafficData.map((item) => item.clones_count);
     uniqueClonesCounts = trafficData.map((item) => item.unique_clones_count);
+
+    const { rows: viewsRows } = await sql`
+      SELECT SUM(views_count)
+      FROM repository_traffic
+      WHERE full_name = ${fullName};
+    `;
+    viewsTotal = viewsRows[0].sum;
+
+    const { rows: clonesRows } = await sql`
+      SELECT SUM(clones_count)
+      FROM repository_traffic
+      WHERE full_name = ${fullName};
+    `;
+    clonesTotal = clonesRows[0].sum;
   } catch (error) {
     console.error('Error fetching traffic data:', error);
     throw error;
@@ -42,7 +59,11 @@ export default async function RepoPage({
   return (
     <div className="flex flex-col items-center gap-5 px-5 py-5 sm:py-10 md:px-10 lg:px-20">
       <div className="flex w-full flex-col gap-5 xl:flex-row">
-        <Overview fullName={fullName} />
+        <Overview
+          fullName={fullName}
+          viewsTotal={viewsTotal}
+          clonesTotal={clonesTotal}
+        />
         {/*  <LineChart title="Stargazers" data={stargazers} />  */}
       </div>
       <div className="flex w-full flex-col gap-5 xl:flex-row">

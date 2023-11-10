@@ -11,7 +11,15 @@ const app = new App({
   privateKey,
 });
 
-export default async function Overview({ fullName }: { fullName: string }) {
+export default async function Overview({
+  fullName,
+  viewsTotal,
+  clonesTotal,
+}: {
+  fullName: string;
+  viewsTotal: number;
+  clonesTotal: number;
+}) {
   const userId = cookies().get('user_id')?.value ?? '';
   const installationId = await fetchInstallationId(userId);
 
@@ -46,11 +54,11 @@ export default async function Overview({ fullName }: { fullName: string }) {
       <div className="mt-8 flex justify-center gap-10">
         <div>
           <div className="text-center font-semibold ">Total Clones</div>
-          <div className="text-center text-4xl font-bold">999</div>
+          <div className="text-center text-4xl font-bold">{clonesTotal}</div>
         </div>
         <div>
           <div className="text-center font-semibold">Total Views</div>
-          <div className="text-center text-4xl font-bold">999</div>
+          <div className="text-center text-4xl font-bold">{viewsTotal}</div>
         </div>
       </div>
     </div>
