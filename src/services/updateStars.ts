@@ -26,7 +26,7 @@ export default async function updateStars(app: any, installationId: number) {
   const response = await octokit.request('GET /installation/repositories');
   const { repositories } = response.data;
   for (const repo of repositories) {
-    let page = 0;
+    let page = 1;
     let stars = [];
 
     while (true) {
