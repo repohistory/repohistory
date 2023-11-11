@@ -69,7 +69,8 @@ export default async function RepoPage({
     const { data: trafficData, error } = await supabase
       .from('repository_traffic')
       .select('*')
-      .eq('full_name', fullName);
+      .eq('full_name', fullName)
+      .order('date', { ascending: true });
 
     if (error) {
       throw new Error(error.message);
@@ -85,6 +86,7 @@ export default async function RepoPage({
       .from('repository_traffic')
       .select('*')
       .eq('full_name', fullName)
+      .order('date', { ascending: true })
       .select('clones_count');
 
     if (clonesResponse.error) {
@@ -99,6 +101,7 @@ export default async function RepoPage({
       .from('repository_traffic')
       .select('*')
       .eq('full_name', fullName)
+      .order('date', { ascending: true })
       .select('views_count');
 
     if (viewsResponse.error) {
