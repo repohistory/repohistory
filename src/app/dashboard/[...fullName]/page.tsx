@@ -4,9 +4,15 @@ import BarChart from '@/components/BarChart';
 import LineChart from '@/components/LineChart';
 import Overview from '@/components/Overview';
 import { fetchInstallationId } from '@/utils/dbHelpers';
-import { sql } from '@vercel/postgres';
 import { cookies } from 'next/headers';
 import { App } from 'octokit';
+
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+);
 
 const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY?.replace(/\\n/g, '\n');
 const app = new App({
@@ -60,24 +66,47 @@ export default async function RepoPage({
   let clonesTotal = 0;
 
   try {
-    const { rows: trafficData } = await sql`
-      SELECT * FROM repository_traffic WHERE full_name = ${fullName} ORDER BY date
-    `;
-    dates = trafficData.map((item) => item.date.toISOString().slice(0, 10));
+    const { data: trafficData, error } = await supabase
+      .from('repository_traffic')
+      .select('*')
+      .eq('full_name', fullName);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+    dates = trafficData.map((item) => item.date);
     viewsCounts = trafficData.map((item) => item.views_count);
     uniqueViewsCounts = trafficData.map((item) => item.unique_views_count);
     clonesCounts = trafficData.map((item) => item.clones_count);
     uniqueClonesCounts = trafficData.map((item) => item.unique_clones_count);
 
-    const { rows: viewsRows } = await sql`
-      SELECT SUM(views_count) FROM repository_traffic WHERE full_name = ${fullName}
-    `;
-    viewsTotal = viewsRows[0].sum;
+    // Summing clones_count
+    const clonesResponse = await supabase
+      .from('repository_traffic')
+      .select('*')
+      .eq('full_name', fullName)
+      .select('clones_count');
 
-    const { rows: clonesRows } = await sql`
-      SELECT SUM(clones_count) FROM repository_traffic WHERE full_name = ${fullName}
-    `;
-    clonesTotal = clonesRows[0].sum;
+    if (clonesResponse.error) {
+      throw new Error(clonesResponse.error.message);
+    }
+
+    const clonesData = clonesResponse.data;
+    clonesTotal = clonesData.reduce((acc, row) => acc + row.clones_count, 0);
+
+    // Summing views_count
+    const viewsResponse = await supabase
+      .from('repository_traffic')
+      .select('*')
+      .eq('full_name', fullName)
+      .select('views_count');
+
+    if (viewsResponse.error) {
+      throw new Error(viewsResponse.error.message);
+    }
+
+    const viewsData = viewsResponse.data;
+    viewsTotal = viewsData.reduce((acc, row) => acc + row.views_count, 0);
   } catch (error) {
     console.error('Error fetching traffic data:', error);
     throw error;

@@ -1,11 +1,13 @@
-import { sql } from '@vercel/postgres';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+);
 
 export default async function deleteUser(githubUserId: number) {
   try {
-    await sql`
-      DELETE FROM users
-      WHERE github_user_id = ${githubUserId}
-    `;
+    await supabase.from('users').delete().eq('github_user_id', githubUserId);
   } catch (error) {
     console.error('Error deleting user:', error);
     throw error;
