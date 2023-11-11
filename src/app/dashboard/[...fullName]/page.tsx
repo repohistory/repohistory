@@ -1,4 +1,5 @@
 import BarChart from '@/components/BarChart';
+import LineChart from '@/components/LineChart';
 import Overview from '@/components/Overview';
 import { sql } from '@vercel/postgres';
 
@@ -17,6 +18,10 @@ export default async function RepoPage({
   params: { fullName: string };
 }) {
   const fullName = `${params.fullName[0]}/${params.fullName[1]}`;
+
+  let starDates = [];
+  let starsCount = [];
+
   let dates = [];
   let viewsCounts = [];
   let uniqueViewsCounts = [];
@@ -27,6 +32,15 @@ export default async function RepoPage({
   let clonesTotal = 0;
 
   try {
+    const { rows: starsData } = await sql`
+      SELECT *
+      FROM repository_stars
+      WHERE full_name = ${fullName}
+      ORDER BY date;
+    `;
+    starDates = starsData.map((item) => item.date.toISOString().slice(0, 10));
+    starsCount = starsData.map((item) => item.stars_count);
+
     const { rows: trafficData } = await sql`
       SELECT *
       FROM repository_traffic
@@ -64,7 +78,24 @@ export default async function RepoPage({
           viewsTotal={viewsTotal}
           clonesTotal={clonesTotal}
         />
-        {/*  <LineChart title="Stargazers" data={stargazers} />  */}
+        <LineChart
+          title="Stargazers"
+          data={{
+            labels: starDates,
+            datasets: [
+              {
+                data: starsCount,
+                fill: true,
+                pointRadius: 0,
+                pointHitRadius: 30,
+                label: 'Stargazers',
+                borderColor: '#62C3F8',
+                backgroundColor: '#62C3F810',
+                tension: 0.5,
+              },
+            ],
+          }}
+        />
       </div>
       <div className="flex w-full flex-col gap-5 xl:flex-row">
         <BarChart

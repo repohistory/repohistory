@@ -2,7 +2,6 @@ import RepoCard from '@/components/RepoCard';
 import { fetchInstallationId } from '@/utils/dbHelpers';
 import { cookies } from 'next/headers';
 import { App } from 'octokit';
-import { updateStargarzers } from '../api/github-webhook/route';
 
 const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY?.replace(/\\n/g, '\n');
 const app = new App({
@@ -17,8 +16,6 @@ export default async function Dashboard() {
   const octokit = await app.getInstallationOctokit(installationId);
   const response = await octokit.request('GET /installation/repositories');
   const { repositories: repos } = response.data;
-
-  updateStargarzers(installationId);
 
   return (
     <div className="flex w-full justify-center px-5 py-5 sm:py-10 md:px-10 lg:px-20 ">

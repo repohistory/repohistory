@@ -87,7 +87,7 @@ function processStarData(timestamps: any[]) {
   return cumulativeData;
 }
 
-export async function updateStargarzers(installationId: number) {
+async function updateStargarzers(installationId: number) {
   const octokit = await app.getInstallationOctokit(installationId);
   const response = await octokit.request('GET /installation/repositories');
   const { repositories } = response.data;
@@ -115,7 +115,18 @@ export async function updateStargarzers(installationId: number) {
     }
 
     stargazers = processStarData(stargazers);
-    console.log(stargazers);
+
+    for (const d of stargazers) {
+      const [date, count] = Object.entries(d)[0];
+
+      await sql`
+        INSERT INTO repository_stars (full_name, date, stars_count)
+        VALUES (${repo.full_name}, ${date}, ${count})
+        ON CONFLICT (full_name, date) 
+        DO UPDATE SET 
+          stars_count = EXCLUDED.stars_count;
+      `;
+    }
   }
 }
 
@@ -136,7 +147,7 @@ export async function POST(req: Request) {
   const githubUserId = res.sender.id;
   await createUser(githubUserId, installationId);
   await updateTraffic(installationId);
-  // await updateStargarzers(installationId)
+  await updateStargarzers(installationId)
 
   return new Response('Hello, Next.js!', {
     status: 200,
