@@ -12,16 +12,26 @@ const app = new App({
 
 async function createUser(githubUserId: number, installationId: number) {
   try {
-    const result = await sql`
+    await sql`
       INSERT INTO users (github_user_id, installation_id)
       VALUES (${githubUserId}, ${installationId})
       ON CONFLICT (github_user_id) DO 
       UPDATE SET installation_id = EXCLUDED.installation_id
-      RETURNING *;
     `;
-    return result;
   } catch (error) {
     console.error('Error creating or updating user:', error);
+    throw error;
+  }
+}
+
+async function deleteUser(githubUserId: number) {
+  try {
+    await sql`
+      DELETE FROM users
+      WHERE github_user_id = ${githubUserId}
+    `;
+  } catch (error) {
+    console.error('Error deleting user:', error);
     throw error;
   }
 }
@@ -49,7 +59,7 @@ async function updateTraffic(installationId: number) {
           ${repo.full_name}, ${view.timestamp}, ${view.count}, ${view.uniques}
         ) ON CONFLICT (full_name, date) DO UPDATE SET
           views_count = EXCLUDED.views_count,
-          unique_views_count = EXCLUDED.unique_views_count;
+          unique_views_count = EXCLUDED.unique_views_count
       `;
     }
 
@@ -62,7 +72,7 @@ async function updateTraffic(installationId: number) {
           ${repo.full_name}, ${clone.timestamp}, ${clone.count}, ${clone.uniques}
         ) ON CONFLICT (full_name, date) DO UPDATE SET
           clones_count = EXCLUDED.clones_count,
-          unique_clones_count = EXCLUDED.unique_clones_count;
+          unique_clones_count = EXCLUDED.unique_clones_count
       `;
     }
   }
@@ -124,7 +134,7 @@ async function updateStargarzers(installationId: number) {
         VALUES (${repo.full_name}, ${date}, ${count})
         ON CONFLICT (full_name, date) 
         DO UPDATE SET 
-          stars_count = EXCLUDED.stars_count;
+          stars_count = EXCLUDED.stars_count
       `;
     }
   }
@@ -134,22 +144,29 @@ async function updateStargarzers(installationId: number) {
 export async function POST(req: Request) {
   const headersList = headers();
   const event = headersList.get('x-github-event');
-  if (event !== 'installation') {
-    return new Response('', { status: 200 });
-  }
-
   const res = await req.json();
-  if (res.action !== 'created') {
-    return new Response('', { status: 200 });
-  }
 
   const installationId = res.installation.id;
-  const githubUserId = res.sender.id;
-  await createUser(githubUserId, installationId);
-  await updateTraffic(installationId);
-  await updateStargarzers(installationId)
 
-  return new Response('Hello, Next.js!', {
+  if (event === 'installation') {
+    const githubUserId = res.sender.id;
+
+    if (res.action === 'created') {
+      await createUser(githubUserId, installationId);
+    } else if (res.action === 'deleted') {
+      await deleteUser(githubUserId);
+    }
+  }
+
+  if (
+    (event === 'installation_repositories' && res.action === 'added') ||
+    (event === 'installation' && res.action === 'created')
+  ) {
+    await updateTraffic(installationId);
+    await updateStargarzers(installationId);
+  }
+
+  return new Response('', {
     status: 200,
   });
 }

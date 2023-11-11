@@ -33,18 +33,15 @@ export default async function RepoPage({
 
   try {
     const { rows: starsData } = await sql`
-      SELECT *
-      FROM repository_stars
-      WHERE full_name = ${fullName}
-      ORDER BY date;
+      SELECT * FROM repository_stars
+      WHERE full_name = ${fullName} ORDER BY date
     `;
     starDates = starsData.map((item) => item.date.toISOString().slice(0, 10));
     starsCount = starsData.map((item) => item.stars_count);
 
     const { rows: trafficData } = await sql`
-      SELECT *
-      FROM repository_traffic
-      WHERE full_name = ${fullName};
+      SELECT * FROM repository_traffic
+      WHERE full_name = ${fullName} ORDER BY date
     `;
     dates = trafficData.map((item) => item.date.toISOString().slice(0, 10));
     viewsCounts = trafficData.map((item) => item.views_count);
@@ -53,16 +50,14 @@ export default async function RepoPage({
     uniqueClonesCounts = trafficData.map((item) => item.unique_clones_count);
 
     const { rows: viewsRows } = await sql`
-      SELECT SUM(views_count)
-      FROM repository_traffic
-      WHERE full_name = ${fullName};
+      SELECT SUM(views_count) FROM repository_traffic
+      WHERE full_name = ${fullName}
     `;
     viewsTotal = viewsRows[0].sum;
 
     const { rows: clonesRows } = await sql`
-      SELECT SUM(clones_count)
-      FROM repository_traffic
-      WHERE full_name = ${fullName};
+      SELECT SUM(clones_count) FROM repository_traffic
+      WHERE full_name = ${fullName}
     `;
     clonesTotal = clonesRows[0].sum;
   } catch (error) {

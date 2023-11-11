@@ -6,7 +6,8 @@ export async function fetchInstallationId(userId: string) {
 
   try {
     const result = await sql`
-      SELECT installation_id FROM users WHERE github_user_id = ${userId}
+      SELECT installation_id FROM users
+      WHERE github_user_id = ${userId}
     `;
 
     if (result.rows && result.rows.length > 0) {
