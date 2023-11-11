@@ -1,6 +1,5 @@
 import createUser from '@/services/createUser';
 import deleteUser from '@/services/deleteUser';
-import updateStars from '@/services/updateStars';
 import updateTraffic from '@/services/updateTraffic';
 import { headers } from 'next/headers';
 import { App } from 'octokit';
@@ -34,7 +33,6 @@ export async function POST(req: Request) {
     (event === 'installation' && res.action === 'created')
   ) {
     await updateTraffic(app, installationId);
-    await updateStars(app, installationId);
   }
 
   return new Response('', {

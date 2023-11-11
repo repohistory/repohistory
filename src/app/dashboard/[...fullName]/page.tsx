@@ -1,7 +1,18 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-await-in-loop */
 import BarChart from '@/components/BarChart';
 import LineChart from '@/components/LineChart';
 import Overview from '@/components/Overview';
+import { fetchInstallationId } from '@/utils/dbHelpers';
 import { sql } from '@vercel/postgres';
+import { cookies } from 'next/headers';
+import { App } from 'octokit';
+
+const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY?.replace(/\\n/g, '\n');
+const app = new App({
+  appId: process.env.NEXT_PUBLIC_APP_ID,
+  privateKey,
+});
 
 const datasets = (label: string, data: any[], color: string) => ({
   label,
@@ -12,15 +23,32 @@ const datasets = (label: string, data: any[], color: string) => ({
   maxBarThickness: 10,
 });
 
+function processStarData(timestamps: any[]): [string[], number[]] {
+  const dateCounts = timestamps.reduce((acc, timestamp) => {
+    // Convert timestamp to a date string
+    const date = timestamp.split('T')[0];
+    acc[date] = (acc[date] || 0) + 1;
+    return acc;
+  }, {});
+
+  let cumulativeCount = 0;
+  const cumulativeData = Object.keys(dateCounts).map((date) => {
+    cumulativeCount += dateCounts[date];
+    return { [date]: cumulativeCount };
+  });
+
+  const d = cumulativeData.map((item) => Object.keys(item)[0]);
+  const c = cumulativeData.map((item) => item[Object.keys(item)[0]]);
+
+  return [d, c];
+}
+
 export default async function RepoPage({
   params,
 }: {
   params: { fullName: string };
 }) {
   const fullName = `${params.fullName[0]}/${params.fullName[1]}`;
-
-  let starDates = [];
-  let starsCount = [];
 
   let dates = [];
   let viewsCounts = [];
@@ -32,16 +60,8 @@ export default async function RepoPage({
   let clonesTotal = 0;
 
   try {
-    const { rows: starsData } = await sql`
-      SELECT * FROM repository_stars
-      WHERE full_name = ${fullName} ORDER BY date
-    `;
-    starDates = starsData.map((item) => item.date.toISOString().slice(0, 10));
-    starsCount = starsData.map((item) => item.stars_count);
-
     const { rows: trafficData } = await sql`
-      SELECT * FROM repository_traffic
-      WHERE full_name = ${fullName} ORDER BY date
+      SELECT * FROM repository_traffic WHERE full_name = ${fullName} ORDER BY date
     `;
     dates = trafficData.map((item) => item.date.toISOString().slice(0, 10));
     viewsCounts = trafficData.map((item) => item.views_count);
@@ -50,20 +70,45 @@ export default async function RepoPage({
     uniqueClonesCounts = trafficData.map((item) => item.unique_clones_count);
 
     const { rows: viewsRows } = await sql`
-      SELECT SUM(views_count) FROM repository_traffic
-      WHERE full_name = ${fullName}
+      SELECT SUM(views_count) FROM repository_traffic WHERE full_name = ${fullName}
     `;
     viewsTotal = viewsRows[0].sum;
 
     const { rows: clonesRows } = await sql`
-      SELECT SUM(clones_count) FROM repository_traffic
-      WHERE full_name = ${fullName}
+      SELECT SUM(clones_count) FROM repository_traffic WHERE full_name = ${fullName}
     `;
     clonesTotal = clonesRows[0].sum;
   } catch (error) {
     console.error('Error fetching traffic data:', error);
     throw error;
   }
+
+  const userId = cookies().get('user_id')?.value ?? '';
+  const installationId = await fetchInstallationId(userId);
+  const octokit = await app.getInstallationOctokit(installationId);
+  let page = 1;
+  const stars = [];
+
+  while (true) {
+    const { data } = await octokit.request(
+      `GET /repos/${fullName}/stargazers`,
+      {
+        per_page: 100,
+        page,
+        headers: {
+          accept: 'application/vnd.github.v3.star+json',
+        },
+      },
+    );
+    page += 1;
+    const filteredData = data.map((d: any) => d.starred_at);
+    stars.push(...filteredData);
+    if (data.length === 0) {
+      break;
+    }
+  }
+
+  const [starDates, starsCount] = processStarData(stars);
 
   return (
     <div className="flex flex-col items-center gap-5 px-5 py-5 sm:py-10 md:px-10 lg:px-20">
