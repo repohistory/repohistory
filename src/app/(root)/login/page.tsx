@@ -6,7 +6,6 @@ export default function LoginPage({ searchParams }: { searchParams: any }) {
 
   return (
     <>
-      <NavbarWrapper />
       <h1 className="pt-36 text-center text-4xl font-bold leading-tight text-white">
         Login to repohistory
       </h1>
