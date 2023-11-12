@@ -32,7 +32,7 @@ export default function DropdownWrapper() {
       <DropdownMenu
         className="text-white"
         aria-label="Profile Actions"
-        variant="flat"
+        variant="light"
       >
         <DropdownItem key="profile" className="h-14 gap-2">
           <p className="font-semibold">{user?.name}</p>
