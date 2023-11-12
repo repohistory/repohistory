@@ -4,7 +4,7 @@ import Link from 'next/link';
 export default function LandingPage() {
   return (
     <div className="flex flex-col items-center gap-4 px-5">
-      <h1 className="pt-36 text-center text-6xl font-bold leading-tight text-white md:text-7xl">
+      <h1 className="pt-20 sm:pt-36 text-center text-6xl font-bold leading-tight text-white md:text-7xl">
         Track your repo&rsquo;s history.
       </h1>
       <h2 className="max-w-xl text-center text-base text-stone-400 md:text-xl">
@@ -24,9 +24,9 @@ export default function LandingPage() {
       </Button>
       <Image
         className="mx-auto my-10 border border-[#202225]"
-        width="80%"
+        width="90%"
         alt="screenshot of repohistory"
-        src="https://github.com/repohistory/repohistory/assets/74842863/b722d95d-3c41-4ee4-9d9c-d8b6e621b6f9"
+        src="https://github.com/m4xshen/img-host/assets/74842863/7a36531c-18b8-443e-9452-f8a85c7d9e6c"
       />
     </div>
   );
