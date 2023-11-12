@@ -1,13 +1,14 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
+import { cookies } from 'next/headers';
+import { App } from 'octokit';
 import BarChart from '@/components/BarChart';
 import LineChart from '@/components/LineChart';
 import Overview from '@/components/Overview';
 import { fetchInstallationId } from '@/utils/dbHelpers';
-import { cookies } from 'next/headers';
-import { App } from 'octokit';
-
 import { createClient } from '@supabase/supabase-js';
+
+export const dynamic = 'force-dynamic';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
