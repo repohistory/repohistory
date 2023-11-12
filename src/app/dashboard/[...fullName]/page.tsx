@@ -1,11 +1,7 @@
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-await-in-loop */
-import { cookies } from 'next/headers';
-import { App } from 'octokit';
 import BarChart from '@/components/BarChart';
 import LineChart from '@/components/LineChart';
 import Overview from '@/components/Overview';
-import { fetchInstallationId } from '@/utils/dbHelpers';
+import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 
 export const dynamic = 'force-dynamic';
@@ -15,12 +11,6 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 );
 
-const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY?.replace(/\\n/g, '\n');
-const app = new App({
-  appId: process.env.NEXT_PUBLIC_APP_ID,
-  privateKey,
-});
-
 const datasets = (label: string, data: any[], color: string) => ({
   label,
   data,
@@ -29,26 +19,6 @@ const datasets = (label: string, data: any[], color: string) => ({
   barPercentage: 0.7,
   maxBarThickness: 10,
 });
-
-function processStarData(timestamps: any[]): [string[], number[]] {
-  const dateCounts = timestamps.reduce((acc, timestamp) => {
-    // Convert timestamp to a date string
-    const date = timestamp.split('T')[0];
-    acc[date] = (acc[date] || 0) + 1;
-    return acc;
-  }, {});
-
-  let cumulativeCount = 0;
-  const cumulativeData = Object.keys(dateCounts).map((date) => {
-    cumulativeCount += dateCounts[date];
-    return { [date]: cumulativeCount };
-  });
-
-  const d = cumulativeData.map((item) => Object.keys(item)[0]);
-  const c = cumulativeData.map((item) => item[Object.keys(item)[0]]);
-
-  return [d, c];
-}
 
 export default async function RepoPage({
   params,
@@ -117,31 +87,6 @@ export default async function RepoPage({
   }
 
   const userId = cookies().get('user_id')?.value ?? '';
-  const installationId = await fetchInstallationId(userId);
-  const octokit = await app.getInstallationOctokit(installationId);
-  let page = 1;
-  const stars = [];
-
-  while (true) {
-    const { data } = await octokit.request(
-      `GET /repos/${fullName}/stargazers`,
-      {
-        per_page: 100,
-        page,
-        headers: {
-          accept: 'application/vnd.github.v3.star+json',
-        },
-      },
-    );
-    page += 1;
-    const filteredData = data.map((d: any) => d.starred_at);
-    stars.push(...filteredData);
-    if (data.length === 0) {
-      break;
-    }
-  }
-
-  const [starDates, starsCount] = processStarData(stars);
 
   return (
     <div className="flex flex-col items-center gap-5 px-5 py-5 sm:py-10 md:px-10 lg:px-20">
@@ -151,24 +96,7 @@ export default async function RepoPage({
           viewsTotal={viewsTotal}
           clonesTotal={clonesTotal}
         />
-        <LineChart
-          title="Stargazers"
-          data={{
-            labels: starDates,
-            datasets: [
-              {
-                data: starsCount,
-                fill: true,
-                pointRadius: 0,
-                pointHitRadius: 30,
-                label: 'Stargazers',
-                borderColor: '#62C3F8',
-                backgroundColor: '#62C3F810',
-                tension: 0.5,
-              },
-            ],
-          }}
-        />
+        <LineChart fullName={fullName} userId={userId} />
       </div>
       <div className="flex w-full flex-col gap-5 xl:flex-row">
         <BarChart
