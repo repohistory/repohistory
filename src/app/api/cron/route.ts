@@ -28,7 +28,7 @@ export async function GET() {
   const installations = data.map((d) => d.installation_id);
 
   for (const installation of installations) {
-    updateTraffic(app, installation);
+    await updateTraffic(app, installation);
   }
 
   return NextResponse.json({ ok: true });
