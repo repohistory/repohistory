@@ -1,9 +1,14 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 import { NextResponse } from 'next/server';
-import { sql } from '@vercel/postgres';
-import updateStars from '@/services/updateStars';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { App } from 'octokit';
+import updateTraffic from '@/services/updateTraffic';
+
+const supabase = new SupabaseClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+);
 
 const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY?.replace(/\\n/g, '\n');
 const app = new App({
@@ -13,14 +18,17 @@ const app = new App({
 
 // eslint-disable-next-line import/prefer-default-export
 export async function GET() {
-  const { rows } = await sql`
-    SELECT installation_id FROM users
-  `;
-  const installations = rows.map((row) => row.installation_id);
+  const { data, error } = await supabase
+    .from('users')
+    .select('installation_id');
+  if (error) {
+    return NextResponse.json({ ok: false });
+  }
+
+  const installations = data.map((d) => d.installation_id);
 
   for (const installation of installations) {
-    await updateStars(app, installation);
-    await updateStars(app, installation);
+    await updateTraffic(app, installation);
   }
 
   return NextResponse.json({ ok: true });
