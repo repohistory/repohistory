@@ -116,21 +116,18 @@ export default function LineChart({
         if (starsData.length === 0) {
           break;
         }
-
-        const [sd, sc] = processStarData(stars);
-        if (starDates && starsCount) {
-          setStarDates([...starDates, ...sd]);
-          setStarsCount([...starsCount, ...sc]);
-        } else {
-          setStarDates(sd);
-          setStarsCount(sc);
-        }
       }
+      const [sd, sc] = processStarData(stars);
+      setStarDates(sd);
+      setStarsCount(sc);
     })();
   }, []);
 
   return (
-    <div className="flex flex-col items-center rounded-medium border border-[#202225] bg-[#111111] p-2 sm:p-5 xl:w-2/3">
+    <div
+      className="flex flex-col items-center rounded-medium border
+      border-[#202225] bg-[#111111] p-2 sm:p-5 lg:min-h-[30rem] xl:w-2/3"
+    >
       <h1 className="text-lg font-semibold text-white">Stars</h1>
       {starDates && starsCount ? (
         <Line
@@ -152,7 +149,9 @@ export default function LineChart({
           }}
         />
       ) : (
-        <Spinner color="primary" className="py-10" />
+        <div className="flex h-full items-center justify-center">
+          <Spinner color="primary" />
+        </div>
       )}
     </div>
   );
