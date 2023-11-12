@@ -1,4 +1,3 @@
-import NavbarWrapper from '@/components/NavbarWrapper';
 import LoginButton from '@/components/LoginButton';
 
 export default function LoginPage({ searchParams }: { searchParams: any }) {
