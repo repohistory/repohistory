@@ -19,7 +19,7 @@ const app = new App({
 
 const updateAllTraffic = inngest.createFunction(
   { id: 'update-all-traffic' },
-  { cron: '*/30 * * * *' },
+  { cron: '*/5 * * * *' },
   async () => {
     const { data, error } = await supabase
       .from('users')
