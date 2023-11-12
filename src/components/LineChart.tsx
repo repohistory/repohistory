@@ -83,10 +83,10 @@ function processStarData(timestamps: any[]): [string[], number[]] {
 }
 
 export default function LineChart({
-  fullName,
+  repo,
   userId,
 }: {
-  fullName: string;
+  repo: any;
   userId: string;
 }) {
   const [starDates, setStarDates] = useState<string[] | null>(null);
@@ -96,27 +96,31 @@ export default function LineChart({
     (async () => {
       const installationId = await fetchInstallationId(userId);
       const octokit = await app.getInstallationOctokit(installationId);
+      const totalStars = Math.ceil(repo.stargazers_count / 100);
 
-      const stars = [];
-      let page = 1;
-      while (true) {
-        const { data: starsData } = await octokit.request(
-          `GET /repos/${fullName}/stargazers`,
-          {
+      const fetchPromises = [];
+      for (let page = 1; page <= totalStars; page += 1) {
+        fetchPromises.push(
+          octokit.request(`GET /repos/${repo.full_name}/stargazers`, {
             per_page: 100,
             page,
             headers: {
               accept: 'application/vnd.github.v3.star+json',
             },
-          },
+          }),
         );
-        page += 1;
-        const filteredData = starsData.map((d: any) => d.starred_at);
-        stars.push(...filteredData);
-        if (starsData.length === 0) {
-          break;
-        }
       }
+
+      const results = await Promise.allSettled(fetchPromises);
+
+      const stars: any[] = [];
+      results.forEach((result) => {
+        if (result.status === 'fulfilled') {
+          const filteredData = result.value.data.map((d: any) => d.starred_at);
+          stars.push(...filteredData);
+        }
+      });
+
       const [sd, sc] = processStarData(stars);
       setStarDates(sd);
       setStarsCount(sc);

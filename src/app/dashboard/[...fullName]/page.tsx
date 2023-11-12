@@ -1,8 +1,10 @@
 import BarChart from '@/components/BarChart';
 import LineChart from '@/components/LineChart';
 import Overview from '@/components/Overview';
+import { App } from 'octokit';
 import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
+import { fetchInstallationId } from '@/utils/dbHelpers';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,6 +12,12 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 );
+
+const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY?.replace(/\\n/g, '\n');
+const app = new App({
+  appId: process.env.NEXT_PUBLIC_APP_ID,
+  privateKey,
+});
 
 const datasets = (label: string, data: any[], color: string) => ({
   label,
@@ -87,16 +95,24 @@ export default async function RepoPage({
   }
 
   const userId = cookies().get('user_id')?.value ?? '';
+  const installationId = await fetchInstallationId(userId);
+
+  const octokit = await app.getInstallationOctokit(installationId);
+  const { data: repo } = await octokit.request(`GET /repos/${fullName}`, {
+    headers: {
+      'X-GitHub-Api-Version': '2022-11-28',
+    },
+  });
 
   return (
     <div className="flex flex-col items-center gap-5 px-5 py-5 sm:py-10 md:px-10 lg:px-20">
       <div className="flex w-full flex-col gap-5 xl:flex-row">
         <Overview
-          fullName={fullName}
+          repo={repo}
           viewsTotal={viewsTotal}
           clonesTotal={clonesTotal}
         />
-        <LineChart fullName={fullName} userId={userId} />
+        <LineChart repo={repo} userId={userId} />
       </div>
       <div className="flex w-full flex-col gap-5 xl:flex-row">
         <BarChart

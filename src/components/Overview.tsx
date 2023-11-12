@@ -12,23 +12,23 @@ const app = new App({
 });
 
 export default async function Overview({
-  fullName,
+  repo,
   viewsTotal,
   clonesTotal,
 }: {
-  fullName: string;
+    repo: any;
   viewsTotal: number;
   clonesTotal: number;
 }) {
-  const userId = cookies().get('user_id')?.value ?? '';
-  const installationId = await fetchInstallationId(userId);
-
-  const octokit = await app.getInstallationOctokit(installationId);
-  const { data: repo } = await octokit.request(`GET /repos/${fullName}`, {
-    headers: {
-      'X-GitHub-Api-Version': '2022-11-28',
-    },
-  });
+  // const userId = cookies().get('user_id')?.value ?? '';
+  // const installationId = await fetchInstallationId(userId);
+  //
+  // const octokit = await app.getInstallationOctokit(installationId);
+  // const { data: repo } = await octokit.request(`GET /repos/${fullName}`, {
+  //   headers: {
+  //     'X-GitHub-Api-Version': '2022-11-28',
+  //   },
+  // });
 
   return (
     <div
