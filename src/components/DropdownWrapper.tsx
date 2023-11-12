@@ -1,3 +1,5 @@
+'use client';
+
 import useLogout from '@/hooks/useLogout';
 import useUser from '@/hooks/useUser';
 import {
