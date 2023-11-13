@@ -26,7 +26,7 @@ export default function LandingPage() {
         className="mx-auto my-10 border border-[#202225]"
         width="90%"
         alt="screenshot of repohistory"
-        src="https://github.com/m4xshen/img-host/assets/74842863/7a36531c-18b8-443e-9452-f8a85c7d9e6c"
+        src="/demo.png"
       />
     </div>
   );
