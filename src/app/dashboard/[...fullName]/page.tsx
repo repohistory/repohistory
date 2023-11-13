@@ -2,16 +2,11 @@ import BarChart from '@/components/BarChart';
 import LineChart from '@/components/LineChart';
 import Overview from '@/components/Overview';
 import { cookies } from 'next/headers';
-import { createClient } from '@supabase/supabase-js';
 import { app } from '@/utils/octokit';
 import { fetchInstallationId } from '@/utils/dbHelpers';
+import supabase from '@/utils/supabase';
 
 export const dynamic = 'force-dynamic';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-);
 
 const datasets = (label: string, data: any[], color: string) => ({
   label,

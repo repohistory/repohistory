@@ -1,12 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 import { app } from '@/utils/octokit';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-);
+import supabase from '@/utils/supabase';
 
 export default async function updateTraffic(installationId: number) {
   const octokit = await app.getInstallationOctokit(installationId);
