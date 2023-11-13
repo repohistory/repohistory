@@ -1,7 +1,7 @@
 import Fork from '@/components/Icons/Fork';
 import Issue from '@/components/Icons/Issue';
 import Star from '@/components/Icons/Star';
-import Link from 'next/link';
+import { Link } from '@nextui-org/react';
 
 export default async function Overview({
   repo,
@@ -19,27 +19,33 @@ export default async function Overview({
     >
       <h1 className="text-3xl font-bold">{repo?.name}</h1>
       <div>{repo?.description}</div>
-      <div className="flex gap-5">
+      <div className="flex gap-1">
         <Link
+          isExternal
+          isBlock
+          color="foreground"
           href={`${repo?.html_url}/stargazers`}
-          target="_blank"
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 text-white"
         >
           <Star />
           {repo?.stargazers_count}
         </Link>
         <Link
+          isExternal
+          isBlock
+          color="foreground"
           href={`${repo?.html_url}/forks`}
-          target="_blank"
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 text-white"
         >
           <Fork />
           {repo?.forks_count}
         </Link>
         <Link
+          isExternal
+          isBlock
+          color="foreground"
           href={`${repo?.html_url}/issues`}
-          target="_blank"
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 text-white"
         >
           <Issue />
           {repo?.open_issues_count}
