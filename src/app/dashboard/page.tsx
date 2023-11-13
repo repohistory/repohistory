@@ -1,7 +1,9 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import RepoCard from '@/components/RepoCard';
 import { Link } from '@nextui-org/react';
 
-import { fetchInstallationId } from '@/utils/dbHelpers';
+import { fetchInstallationIds } from '@/utils/dbHelpers';
 import { cookies } from 'next/headers';
 import { app } from '@/utils/octokit';
 
@@ -9,10 +11,12 @@ export default async function Dashboard() {
   const repos: any[] = [];
   try {
     const userId = cookies().get('user_id')?.value ?? '';
-    const installationId = await fetchInstallationId(userId);
-    await app.eachRepository({ installationId }, ({ repository }) => {
-      repos.push(repository);
-    });
+    const installationIds = await fetchInstallationIds(userId);
+    for (const installationId of installationIds) {
+      await app.eachRepository({ installationId }, ({ repository }) => {
+        repos.push(repository);
+      });
+    }
     repos.sort((a, b) => b.stargazers_count - a.stargazers_count);
   } catch (error) {
     console.log(error);
@@ -26,14 +30,16 @@ export default async function Dashboard() {
             No repositories found
           </h1>
           <p className="mt-2 text-center text-sm text-gray-500">
-            Please <Link
-              underline='always'
+            Please{' '}
+            <Link
+              underline="always"
               isExternal
               className="text-sm"
               href="https://github.com/apps/repohistory/installations/new"
             >
               install GitHub App
-            </Link> and select repositories you want to track.
+            </Link>{' '}
+            and select repositories you want to track.
           </p>
         </div>
       ) : (

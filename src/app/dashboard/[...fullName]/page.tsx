@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-loop-func */
+/* eslint-disable no-restricted-syntax */
 import BarChart from '@/components/BarChart';
 import LineChart from '@/components/LineChart';
 import Overview from '@/components/Overview';
 import { cookies } from 'next/headers';
 import { app } from '@/utils/octokit';
-import { fetchInstallationId } from '@/utils/dbHelpers';
+import { fetchInstallationIds } from '@/utils/dbHelpers';
 import supabase from '@/utils/supabase';
 
 export const dynamic = 'force-dynamic';
@@ -84,13 +86,35 @@ export default async function RepoPage({
   }
 
   const userId = cookies().get('user_id')?.value ?? '';
-  const installationId = await fetchInstallationId(userId);
-  const octokit = await app.getInstallationOctokit(installationId);
-  const { data: repo } = await octokit.request(`GET /repos/${fullName}`, {
-    headers: {
-      'X-GitHub-Api-Version': '2022-11-28',
-    },
-  });
+  const installationIds = await fetchInstallationIds(userId);
+
+  let octokit: any;
+  for await (const installationId of installationIds) {
+    let found = false;
+    for await (const { octokit: o, repository } of app.eachRepository.iterator({
+      installationId,
+    })) {
+      if (repository.full_name === fullName) {
+        octokit = o;
+        found = true;
+        break;
+      }
+    }
+
+    if (found) {
+      break;
+    }
+  }
+
+  let repo;
+  if (octokit) {
+    const { data } = await octokit.request(`GET /repos/${fullName}`, {
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+    });
+    repo = data;
+  }
 
   return (
     <div className="flex flex-col items-center gap-5 px-5 py-5 sm:py-10 md:px-10 lg:px-20">

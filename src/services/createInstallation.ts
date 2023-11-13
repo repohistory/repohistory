@@ -1,6 +1,6 @@
 import supabase from "@/utils/supabase";
 
-export default async function createUser(
+export default async function createInstallation(
   githubUserId: number,
   installationId: number,
 ) {
@@ -11,7 +11,7 @@ export default async function createUser(
         { github_user_id: githubUserId, installation_id: installationId },
       ]);
   } catch (error) {
-    console.error('Error creating or updating user:', error);
+    console.error('Error creating or updating installation:', error);
     throw error;
   }
 }

@@ -1,5 +1,6 @@
 'use client';
 
+/* eslint-disable @typescript-eslint/no-loop-func */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 
@@ -17,7 +18,7 @@ import {
 } from 'chart.js';
 import { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
-import { fetchInstallationId } from '@/utils/dbHelpers';
+import { fetchInstallationIds } from '@/utils/dbHelpers';
 import { app } from '@/utils/octokit';
 
 ChartJS.register(
@@ -101,8 +102,30 @@ export default function LineChart({
 
   useEffect(() => {
     (async () => {
-      const installationId = await fetchInstallationId(userId);
-      const octokit = await app.getInstallationOctokit(installationId);
+      const installationIds = await fetchInstallationIds(userId);
+      let octokit: any;
+      for await (const installationId of installationIds) {
+        let found = false;
+        for await (const {
+          octokit: o,
+          repository,
+        } of app.eachRepository.iterator({ installationId })) {
+          if (repository.full_name === repo.full_name) {
+            octokit = o;
+            found = true;
+            break;
+          }
+        }
+
+        if (found) {
+          break;
+        }
+      }
+
+      if (!octokit) {
+        return;
+      }
+
       const totalStars = Math.ceil(repo.stargazers_count / 100);
 
       const fetchPromises = [];

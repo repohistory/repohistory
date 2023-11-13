@@ -1,5 +1,5 @@
-import createUser from '@/services/createUser';
-import deleteUser from '@/services/deleteUser';
+import createInstallation from '@/services/createInstallation';
+import deleteInstallation from '@/services/deleteInstallation';
 import updateTraffic from '@/services/updateTraffic';
 import { headers } from 'next/headers';
 
@@ -12,12 +12,11 @@ export async function POST(req: Request) {
   const installationId = res.installation.id;
 
   if (event === 'installation') {
-    const githubUserId = res.sender.id;
-
     if (res.action === 'created') {
-      await createUser(githubUserId, installationId);
+      const githubUserId = res.sender.id;
+      await createInstallation(githubUserId, installationId);
     } else if (res.action === 'deleted') {
-      await deleteUser(githubUserId);
+      await deleteInstallation(installationId);
     }
   }
 
