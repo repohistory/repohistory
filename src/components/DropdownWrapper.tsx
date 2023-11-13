@@ -1,7 +1,6 @@
 'use client';
 
 import useLogout from '@/hooks/useLogout';
-import useUser from '@/hooks/useUser';
 import {
   Avatar,
   Dropdown,
@@ -12,8 +11,7 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-export default function DropdownWrapper() {
-  const user = useUser();
+export default function DropdownWrapper({ user }: { user: any }) {
   const router = useRouter();
   const logout = useLogout(router);
 

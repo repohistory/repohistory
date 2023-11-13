@@ -2,12 +2,19 @@ import { Navbar, Link } from '@nextui-org/react';
 import DropdownWrapper from '@/components/DropdownWrapper';
 import Image from 'next/image';
 import Path from '@/components/Path';
+import { cookies } from 'next/headers';
+import { Octokit } from 'octokit';
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const octokit = new Octokit({
+    auth: cookies().get('access_token')?.value ?? '',
+  });
+  const { data: user } = await octokit.request('GET /user');
+
   return (
     <>
       <Navbar
@@ -29,7 +36,7 @@ export default function DashboardLayout({
           />
         </Link>
         <Path />
-        <DropdownWrapper />
+        <DropdownWrapper user={user} />
       </Navbar>
       <div className="w-full overflow-y-auto scrollbar-hide">{children}</div>
     </>
