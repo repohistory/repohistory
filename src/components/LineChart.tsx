@@ -18,7 +18,7 @@ import {
 import { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { fetchInstallationId } from '@/utils/dbHelpers';
-import { App } from 'octokit';
+import { app } from '@/utils/octokit';
 
 ChartJS.register(
   CategoryScale,
@@ -55,12 +55,6 @@ const options = {
     },
   },
 };
-
-const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY?.replace(/\\n/g, '\n');
-const app = new App({
-  appId: process.env.NEXT_PUBLIC_APP_ID,
-  privateKey,
-});
 
 function processStarData(timestamps: any[]): [string[], number[]] {
   const dateCounts = timestamps.reduce((acc, timestamp) => {

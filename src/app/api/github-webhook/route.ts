@@ -2,13 +2,6 @@ import createUser from '@/services/createUser';
 import deleteUser from '@/services/deleteUser';
 import updateTraffic from '@/services/updateTraffic';
 import { headers } from 'next/headers';
-import { App } from 'octokit';
-
-const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY?.replace(/\\n/g, '\n');
-const app = new App({
-  appId: process.env.NEXT_PUBLIC_APP_ID,
-  privateKey,
-});
 
 // eslint-disable-next-line import/prefer-default-export
 export async function POST(req: Request) {
@@ -32,7 +25,7 @@ export async function POST(req: Request) {
     (event === 'installation_repositories' && res.action === 'added') ||
     (event === 'installation' && res.action === 'created')
   ) {
-    await updateTraffic(app, installationId);
+    await updateTraffic(installationId);
   }
 
   return new Response('', {

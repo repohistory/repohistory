@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
+import { app } from '@/utils/octokit';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -7,20 +8,21 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 );
 
-export default async function updateTraffic(app: any, installationId: number) {
+export default async function updateTraffic(installationId: number) {
   const octokit = await app.getInstallationOctokit(installationId);
-  const response = await octokit.request('GET /installation/repositories');
-  const { repositories } = response.data;
+  const repositories: any[] = [];
 
-  for (const repo of repositories) {
-    console.log(`Updating traffic for ${repo.full_name}`);
+  await app.eachRepository({ installationId }, ({ repository }) => {
+    repositories.push(repository);
+  });
 
+  for (const repository of repositories) {
     const { data: viewsData } = await octokit.request(
-      `GET /repos/${repo.full_name}/traffic/views`,
+      `GET /repos/${repository.full_name}/traffic/views`,
     );
 
     const { data: clonesData } = await octokit.request(
-      `GET /repos/${repo.full_name}/traffic/clones`,
+      `GET /repos/${repository.full_name}/traffic/clones`,
     );
 
     // Insert or update views data
@@ -28,7 +30,7 @@ export default async function updateTraffic(app: any, installationId: number) {
       await supabase.from('repository_traffic').upsert(
         [
           {
-            full_name: repo.full_name,
+            full_name: repository.full_name,
             date: view.timestamp,
             views_count: view.count,
             unique_views_count: view.uniques,
@@ -45,7 +47,7 @@ export default async function updateTraffic(app: any, installationId: number) {
       await supabase.from('repository_traffic').upsert(
         [
           {
-            full_name: repo.full_name,
+            full_name: repository.full_name,
             date: clone.timestamp,
             clones_count: clone.count,
             unique_clones_count: clone.uniques,

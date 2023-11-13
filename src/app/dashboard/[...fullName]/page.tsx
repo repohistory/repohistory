@@ -1,9 +1,9 @@
 import BarChart from '@/components/BarChart';
 import LineChart from '@/components/LineChart';
 import Overview from '@/components/Overview';
-import { App } from 'octokit';
 import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
+import { app } from '@/utils/octokit';
 import { fetchInstallationId } from '@/utils/dbHelpers';
 
 export const dynamic = 'force-dynamic';
@@ -12,12 +12,6 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 );
-
-const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY?.replace(/\\n/g, '\n');
-const app = new App({
-  appId: process.env.NEXT_PUBLIC_APP_ID,
-  privateKey,
-});
 
 const datasets = (label: string, data: any[], color: string) => ({
   label,
@@ -96,7 +90,6 @@ export default async function RepoPage({
 
   const userId = cookies().get('user_id')?.value ?? '';
   const installationId = await fetchInstallationId(userId);
-
   const octokit = await app.getInstallationOctokit(installationId);
   const { data: repo } = await octokit.request(`GET /repos/${fullName}`, {
     headers: {

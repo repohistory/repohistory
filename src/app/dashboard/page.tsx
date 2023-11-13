@@ -1,24 +1,18 @@
 import RepoCard from '@/components/RepoCard';
-import { fetchInstallationId } from '@/utils/dbHelpers';
 import { Link } from '@nextui-org/react';
-import { cookies } from 'next/headers';
-import { App } from 'octokit';
 
-const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY?.replace(/\\n/g, '\n');
-const app = new App({
-  appId: process.env.NEXT_PUBLIC_APP_ID,
-  privateKey,
-});
+import { fetchInstallationId } from '@/utils/dbHelpers';
+import { cookies } from 'next/headers';
+import { app } from '@/utils/octokit';
 
 export default async function Dashboard() {
-  const userId = cookies().get('user_id')?.value ?? '';
-  const installationId = await fetchInstallationId(userId);
-
-  const repos = [];
+  const repos: any[] = [];
   try {
-    const octokit = await app.getInstallationOctokit(installationId);
-    const response = await octokit.request('GET /installation/repositories');
-    repos.push(...response.data.repositories);
+    const userId = cookies().get('user_id')?.value ?? '';
+    const installationId = await fetchInstallationId(userId);
+    await app.eachRepository({ installationId }, ({ repository }) => {
+      repos.push(repository);
+    });
   } catch (error) {
     console.log(error);
   }
@@ -31,13 +25,15 @@ export default async function Dashboard() {
             No repositories found
           </h1>
           <p className="mt-2 text-center text-sm text-gray-500">
-            Please <Link
+            Please{' '}
+            <Link
               className="text-sm"
               href="https://github.com/apps/repohistory/installations/new"
               target="_blank"
             >
               install GitHub App
-            </Link> and add repositories to your installation
+            </Link>{' '}
+            and add repositories to your installation
           </p>
         </div>
       ) : (
