@@ -1,6 +1,12 @@
+<p align="center">
+<img src="https://github.com/repohistory/repohistory/blob/main/public/banner.png?raw=true">
+</p>
+
+---
+
 # repohistory
 
-Analyze and track your GitHub repository traffic history longer than 14 days
+Repohistory is a GitHub repository traffic history tracker longer than 14 days
 
 ![image](https://github.com/m4xshen/img-host/assets/74842863/7a36531c-18b8-443e-9452-f8a85c7d9e6c)
 
