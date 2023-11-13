@@ -13,6 +13,7 @@ export default async function Dashboard() {
     await app.eachRepository({ installationId }, ({ repository }) => {
       repos.push(repository);
     });
+    repos.sort((a, b) => b.stargazers_count - a.stargazers_count);
   } catch (error) {
     console.log(error);
   }
@@ -25,13 +26,15 @@ export default async function Dashboard() {
             No repositories found
           </h1>
           <p className="mt-2 text-center text-sm text-gray-500">
-            Please <Link
+            Please{' '}
+            <Link
               className="text-sm"
               href="https://github.com/apps/repohistory/installations/new"
               target="_blank"
             >
               install GitHub App
-            </Link> and add repositories to your installation
+            </Link>{' '}
+            and add repositories to your installation
           </p>
         </div>
       ) : (
