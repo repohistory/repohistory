@@ -40,6 +40,19 @@ const options = {
     },
   },
   plugins: {
+    tooltip: {
+      boxPadding: 2,
+      usePointStyle: true,
+      callbacks: {
+        labelColor(ctx: any) {
+          return {
+            borderColor: ctx.dataset.backgroundColor,
+            backgroundColor: ctx.dataset.backgroundColor,
+            borderWidth: 3,
+          };
+        },
+      },
+    },
     legend: {
       display: false,
     },
