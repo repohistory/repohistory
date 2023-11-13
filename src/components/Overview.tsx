@@ -1,13 +1,14 @@
 import Fork from '@/components/Icons/Fork';
 import Issue from '@/components/Icons/Issue';
 import Star from '@/components/Icons/Star';
+import Link from 'next/link';
 
 export default async function Overview({
   repo,
   viewsTotal,
   clonesTotal,
 }: {
-    repo: any;
+  repo: any;
   viewsTotal: number;
   clonesTotal: number;
 }) {
@@ -19,18 +20,30 @@ export default async function Overview({
       <h1 className="text-3xl font-bold">{repo?.name}</h1>
       <div>{repo?.description}</div>
       <div className="flex gap-5">
-        <div className="flex items-center gap-2">
+        <Link
+          href={`${repo?.html_url}/stargazers`}
+          target="_blank"
+          className="flex items-center gap-2"
+        >
           <Star />
           {repo?.stargazers_count}
-        </div>
-        <div className="flex items-center gap-2">
+        </Link>
+        <Link
+          href={`${repo?.html_url}/forks`}
+          target="_blank"
+          className="flex items-center gap-2"
+        >
           <Fork />
           {repo?.forks_count}
-        </div>
-        <div className="flex items-center gap-2">
+        </Link>
+        <Link
+          href={`${repo?.html_url}/issues`}
+          target="_blank"
+          className="flex items-center gap-2"
+        >
           <Issue />
           {repo?.open_issues_count}
-        </div>
+        </Link>
       </div>
       <div className="mt-8 flex justify-center gap-10">
         <div>
