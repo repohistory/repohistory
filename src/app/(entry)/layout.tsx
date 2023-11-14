@@ -8,7 +8,7 @@ export default function RootLayout({
 }) {
   return (
     <>
-      <Navbar isBordered height="4.0rem" className="bg-black">
+      <Navbar isBordered height="4.0rem" className="bg-black bg-opacity-20">
         <NavbarBrand>
           <Link
             href="/"

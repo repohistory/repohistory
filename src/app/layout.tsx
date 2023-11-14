@@ -6,7 +6,7 @@ import Providers from '@/app/providers';
 export const metadata: Metadata = {
   title: 'repohistory',
   description:
-    'Analyze and track your GitHub repository traffic history longer than 14 days with repohistory.',
+    'Repohistory is a GitHub repository traffic history tracker that keeps records beyond the standard 14 days, offering an easy and detailed long-term view.',
 };
 
 const inter = Inter({ subsets: ['latin'] });
