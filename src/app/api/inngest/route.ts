@@ -3,7 +3,12 @@
 import updateTraffic from '@/services/updateTraffic';
 import { serve } from 'inngest/next';
 import { inngest } from '@/inngest/client';
-import supabase from '@/utils/supabase';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+);
 
 const updateAllTraffic = inngest.createFunction(
   { id: 'update-all-traffic' },
