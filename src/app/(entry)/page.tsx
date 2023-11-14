@@ -21,7 +21,6 @@ export default function LandingPage() {
           color="primary"
           radius="sm"
           size="lg"
-          variant="bordered"
           as={Link}
           href="/login"
         >

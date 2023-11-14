@@ -21,7 +21,7 @@ export default function RootLayout({
               src="/repohistory.png"
               unoptimized
             />
-            <h1 className="ml-2">repohistory</h1>
+            <h1 className="ml-2">Repohistory</h1>
           </Link>
         </NavbarBrand>
       </Navbar>
