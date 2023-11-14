@@ -7,7 +7,7 @@ import supabase from '@/utils/supabase';
 
 const updateAllTraffic = inngest.createFunction(
   { id: 'update-all-traffic' },
-  { cron: '* */12 * * *' },
+  { cron: '*/5 * * * *' },
   async () => {
     const { data, error } = await supabase
       .from('users')
