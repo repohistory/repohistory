@@ -32,9 +32,11 @@ export async function POST(request: Request) {
 
   cookies().set('access_token', data.access_token, {
     path: '/',
+    maxAge: 8 * 60 * 60,
   });
   cookies().set('user_id', user.id.toString(), {
     path: '/',
+    maxAge: 8 * 60 * 60,
   });
 
   return new NextResponse(data);
