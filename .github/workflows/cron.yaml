@@ -1,13 +1,26 @@
-name: Cron API Request
+name: Cron Job Execution
 
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '*/10 * * * *' # Runs every 10 minutes
 
 jobs:
-  make-request:
+  execute-script:
     runs-on: ubuntu-latest
     steps:
-      - name: POST request to API
-        run: |
-          curl -X POST https://repohistory.com/api/cron
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14' # Replace with your Node.js version
+
+      - name: Install dependencies
+        run: npm install
+        # If your project has a specific directory structure, you might need to change the working directory:
+        # working-directory: ./path/to/your/project
+
+      - name: Run the script
+        run: node src/cron.js
+        # Again, adjust the working directory if needed
