@@ -6,17 +6,17 @@
 // import Overview from '@/components/Overview';
 import { cookies } from 'next/headers';
 // import { app } from '@/utils/octokit';
-// import { fetchInstallationIds } from '@/utils/dbHelpers';
+import { fetchInstallationIds } from '@/utils/dbHelpers';
 import supabase from '@/utils/supabase';
-//
-// const datasets = (label: string, data: any[], color: string) => ({
-//   label,
-//   data,
-//   backgroundColor: color,
-//   borderRadius: 999,
-//   barPercentage: 0.7,
-//   maxBarThickness: 10,
-// });
+
+const datasets = (label: string, data: any[], color: string) => ({
+  label,
+  data,
+  backgroundColor: color,
+  borderRadius: 999,
+  barPercentage: 0.7,
+  maxBarThickness: 10,
+});
 
 export default async function RepoPage({
   params,
@@ -85,8 +85,8 @@ export default async function RepoPage({
   }
 
   const userId = cookies().get('user_id')?.value ?? '';
-  // const installationIds = await fetchInstallationIds(userId);
-  //
+  const installationIds = await fetchInstallationIds(userId);
+
   // let octokit: any;
   // for await (const installationId of installationIds) {
   //   let found = false;
