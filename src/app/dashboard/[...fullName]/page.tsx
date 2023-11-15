@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-loop-func */
 /* eslint-disable no-restricted-syntax */
 
-import BarChart from '@/components/BarChart';
-import LineChart from '@/components/LineChart';
-import Overview from '@/components/Overview';
+// import BarChart from '@/components/BarChart';
+// import LineChart from '@/components/LineChart';
+// import Overview from '@/components/Overview';
 import { cookies } from 'next/headers';
-import { app } from '@/utils/octokit';
+// import { app } from '@/utils/octokit';
 import { fetchInstallationIds } from '@/utils/dbHelpers';
 import supabase from '@/utils/supabase';
 
@@ -86,70 +86,72 @@ export default async function RepoPage({
   const userId = cookies().get('user_id')?.value ?? '';
   const installationIds = await fetchInstallationIds(userId);
 
-  let octokit: any;
-  for await (const installationId of installationIds) {
-    let found = false;
-    for await (const { octokit: o, repository } of app.eachRepository.iterator({
-      installationId,
-    })) {
-      if (repository.full_name === fullName) {
-        octokit = o;
-        found = true;
-        break;
-      }
-    }
+  // let octokit: any;
+  // for await (const installationId of installationIds) {
+  //   let found = false;
+  //   for await (const { octokit: o, repository } of app.eachRepository.iterator({
+  //     installationId,
+  //   })) {
+  //     if (repository.full_name === fullName) {
+  //       octokit = o;
+  //       found = true;
+  //       break;
+  //     }
+  //   }
+  //
+  //   if (found) {
+  //     break;
+  //   }
+  // }
+  //
+  // let repo;
+  // if (octokit) {
+  //   const { data } = await octokit.request(`GET /repos/${fullName}`, {
+  //     headers: {
+  //       'X-GitHub-Api-Version': '2022-11-28',
+  //     },
+  //   });
+  //   repo = data;
+  // }
+  //
+  // return (
+  //   <div className="flex flex-col items-center gap-5 px-5 py-5 sm:py-10 md:px-10 lg:px-20">
+  //     <div className="flex w-full flex-col gap-5 xl:flex-row">
+  //       <Overview
+  //         repo={repo}
+  //         viewsTotal={viewsTotal}
+  //         clonesTotal={clonesTotal}
+  //       />
+  //       <LineChart repo={repo} userId={userId} />
+  //     </div>
+  //     <div className="flex w-full flex-col gap-5 xl:flex-row">
+  //       <BarChart
+  //         title="Git Clones"
+  //         primaryLabel="Unique Cloners"
+  //         secondaryLabel="Clones"
+  //         data={{
+  //           labels: dates,
+  //           datasets: [
+  //             datasets('Unique Cloners', uniqueClonesCounts, '#62C3F8'),
+  //             datasets('Clones', clonesCounts, '#315C72'),
+  //           ],
+  //         }}
+  //       />
+  //       <BarChart
+  //         title="Visitors"
+  //         primaryLabel="Unique Visitors"
+  //         secondaryLabel="Views"
+  //         data={{
+  //           labels: dates,
+  //           datasets: [
+  //             datasets('Unique Visitors', uniqueViewsCounts, '#62C3F8'),
+  //             datasets('Views', viewsCounts, '#315C72'),
+  //           ],
+  //         }}
+  //       />
+  //     </div>
+  //   </div>
+  // );
 
-    if (found) {
-      break;
-    }
-  }
-
-  let repo;
-  if (octokit) {
-    const { data } = await octokit.request(`GET /repos/${fullName}`, {
-      headers: {
-        'X-GitHub-Api-Version': '2022-11-28',
-      },
-    });
-    repo = data;
-  }
-
-  return (
-    <div className="flex flex-col items-center gap-5 px-5 py-5 sm:py-10 md:px-10 lg:px-20">
-      <div className="flex w-full flex-col gap-5 xl:flex-row">
-        <Overview
-          repo={repo}
-          viewsTotal={viewsTotal}
-          clonesTotal={clonesTotal}
-        />
-        <LineChart repo={repo} userId={userId} />
-      </div>
-      <div className="flex w-full flex-col gap-5 xl:flex-row">
-        <BarChart
-          title="Git Clones"
-          primaryLabel="Unique Cloners"
-          secondaryLabel="Clones"
-          data={{
-            labels: dates,
-            datasets: [
-              datasets('Unique Cloners', uniqueClonesCounts, '#62C3F8'),
-              datasets('Clones', clonesCounts, '#315C72'),
-            ],
-          }}
-        />
-        <BarChart
-          title="Visitors"
-          primaryLabel="Unique Visitors"
-          secondaryLabel="Views"
-          data={{
-            labels: dates,
-            datasets: [
-              datasets('Unique Visitors', uniqueViewsCounts, '#62C3F8'),
-              datasets('Views', viewsCounts, '#315C72'),
-            ],
-          }}
-        />
-      </div>
-    </div>
-  );
+  return <div className="text-white">{userId}</div>;
 }
