@@ -7,7 +7,7 @@
 import { cookies } from 'next/headers';
 // import { app } from '@/utils/octokit';
 // import { fetchInstallationIds } from '@/utils/dbHelpers';
-// import supabase from '@/utils/supabase';
+import supabase from '@/utils/supabase';
 //
 // const datasets = (label: string, data: any[], color: string) => ({
 //   label,
@@ -23,67 +23,67 @@ export default async function RepoPage({
 }: {
   params: { fullName: string };
 }) {
-  // const fullName = `${params.fullName[0]}/${params.fullName[1]}`;
-  //
-  // let dates = [];
-  // let viewsCounts = [];
-  // let uniqueViewsCounts = [];
-  // let viewsTotal = 0;
-  //
-  // let clonesCounts = [];
-  // let uniqueClonesCounts = [];
-  // let clonesTotal = 0;
-  //
-  // try {
-  //   const { data: trafficData, error } = await supabase
-  //     .from('repository_traffic')
-  //     .select('*')
-  //     .eq('full_name', fullName)
-  //     .order('date', { ascending: true });
-  //
-  //   if (error) {
-  //     throw new Error(error.message);
-  //   }
-  //   dates = trafficData.map((item) => item.date);
-  //   viewsCounts = trafficData.map((item) => item.views_count);
-  //   uniqueViewsCounts = trafficData.map((item) => item.unique_views_count);
-  //   clonesCounts = trafficData.map((item) => item.clones_count);
-  //   uniqueClonesCounts = trafficData.map((item) => item.unique_clones_count);
-  //
-  //   // Summing clones_count
-  //   const clonesResponse = await supabase
-  //     .from('repository_traffic')
-  //     .select('*')
-  //     .eq('full_name', fullName)
-  //     .order('date', { ascending: true })
-  //     .select('clones_count');
-  //
-  //   if (clonesResponse.error) {
-  //     throw new Error(clonesResponse.error.message);
-  //   }
-  //
-  //   const clonesData = clonesResponse.data;
-  //   clonesTotal = clonesData.reduce((acc, row) => acc + row.clones_count, 0);
-  //
-  //   // Summing views_count
-  //   const viewsResponse = await supabase
-  //     .from('repository_traffic')
-  //     .select('*')
-  //     .eq('full_name', fullName)
-  //     .order('date', { ascending: true })
-  //     .select('views_count');
-  //
-  //   if (viewsResponse.error) {
-  //     throw new Error(viewsResponse.error.message);
-  //   }
-  //
-  //   const viewsData = viewsResponse.data;
-  //   viewsTotal = viewsData.reduce((acc, row) => acc + row.views_count, 0);
-  // } catch (error) {
-  //   console.error('Error fetching traffic data:', error);
-  //   throw error;
-  // }
-  //
+  const fullName = `${params.fullName[0]}/${params.fullName[1]}`;
+
+  let dates = [];
+  let viewsCounts = [];
+  let uniqueViewsCounts = [];
+  let viewsTotal = 0;
+
+  let clonesCounts = [];
+  let uniqueClonesCounts = [];
+  let clonesTotal = 0;
+
+  try {
+    const { data: trafficData, error } = await supabase
+      .from('repository_traffic')
+      .select('*')
+      .eq('full_name', fullName)
+      .order('date', { ascending: true });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+    dates = trafficData.map((item) => item.date);
+    viewsCounts = trafficData.map((item) => item.views_count);
+    uniqueViewsCounts = trafficData.map((item) => item.unique_views_count);
+    clonesCounts = trafficData.map((item) => item.clones_count);
+    uniqueClonesCounts = trafficData.map((item) => item.unique_clones_count);
+
+    // Summing clones_count
+    const clonesResponse = await supabase
+      .from('repository_traffic')
+      .select('*')
+      .eq('full_name', fullName)
+      .order('date', { ascending: true })
+      .select('clones_count');
+
+    if (clonesResponse.error) {
+      throw new Error(clonesResponse.error.message);
+    }
+
+    const clonesData = clonesResponse.data;
+    clonesTotal = clonesData.reduce((acc, row) => acc + row.clones_count, 0);
+
+    // Summing views_count
+    const viewsResponse = await supabase
+      .from('repository_traffic')
+      .select('*')
+      .eq('full_name', fullName)
+      .order('date', { ascending: true })
+      .select('views_count');
+
+    if (viewsResponse.error) {
+      throw new Error(viewsResponse.error.message);
+    }
+
+    const viewsData = viewsResponse.data;
+    viewsTotal = viewsData.reduce((acc, row) => acc + row.views_count, 0);
+  } catch (error) {
+    console.error('Error fetching traffic data:', error);
+    throw error;
+  }
+
   const userId = cookies().get('user_id')?.value ?? '';
   // const installationIds = await fetchInstallationIds(userId);
   //
