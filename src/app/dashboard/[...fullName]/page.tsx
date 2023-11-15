@@ -5,7 +5,7 @@
 // import LineChart from '@/components/LineChart';
 // import Overview from '@/components/Overview';
 import { cookies } from 'next/headers';
-// import { app } from '@/utils/octokit';
+import { app } from '@/utils/octokit';
 import { fetchInstallationIds } from '@/utils/dbHelpers';
 import supabase from '@/utils/supabase';
 
@@ -86,24 +86,26 @@ export default async function RepoPage({
   const userId = cookies().get('user_id')?.value ?? '';
   const installationIds = await fetchInstallationIds(userId);
 
-  // let octokit: any;
-  // for await (const installationId of installationIds) {
-  //   let found = false;
-  //   for await (const { octokit: o, repository } of app.eachRepository.iterator({
-  //     installationId,
-  //   })) {
-  //     if (repository.full_name === fullName) {
-  //       octokit = o;
-  //       found = true;
-  //       break;
-  //     }
-  //   }
-  //
-  //   if (found) {
-  //     break;
-  //   }
-  // }
-  //
+  let octokit: any;
+  for await (const installationId of installationIds) {
+    let found = false;
+    for await (const { octokit: o, repository } of app.eachRepository.iterator({
+      installationId,
+    })) {
+      if (repository.full_name === fullName) {
+        octokit = o;
+        found = true;
+        break;
+      }
+    }
+
+    if (found) {
+      break;
+    }
+  }
+
+  console.log(octokit);
+
   // let repo;
   // if (octokit) {
   //   const { data } = await octokit.request(`GET /repos/${fullName}`, {
