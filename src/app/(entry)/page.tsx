@@ -2,7 +2,7 @@ import Shade1 from '@/components/Shade1';
 import { Button, Image } from '@nextui-org/react';
 import Link from 'next/link';
 
-export default function LandingPage() {
+export default async function LandingPage() {
   return (
     <>
       <Shade1 />

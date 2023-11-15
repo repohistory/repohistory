@@ -1,0 +1,13 @@
+name: Cron API Request
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+
+jobs:
+  make-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: POST request to API
+        run: |
+          curl -X POST https://repohistory.com/api/cron
