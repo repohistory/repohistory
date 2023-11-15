@@ -8,8 +8,8 @@ export default function RepoCard({ repo }: { repo: any }) {
       <Card
         isPressable
         disableRipple
-        className="h-56 w-full rounded-md border border-[#202225] bg-[#111111]
-          text-white transition-all duration-400 hover:bg-[#222222]"
+        className="h-56 w-full rounded-md border-1 border-[#303031] bg-[#111112]
+          text-white transition-all duration-400 hover:bg-[#161617]"
       >
         <CardHeader className="flex justify-between text-lg font-semibold">
           {repo.full_name}
@@ -18,7 +18,7 @@ export default function RepoCard({ repo }: { repo: any }) {
             {repo.stargazers_count}
           </div>
         </CardHeader>
-        <Divider className="bg-[#33373a]" />
+        <Divider className="bg-[#303031]" />
         <CardBody>{repo.description}</CardBody>
       </Card>
     </Link>

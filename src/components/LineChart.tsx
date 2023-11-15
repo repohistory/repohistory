@@ -117,7 +117,7 @@ export default function LineChart({
   return (
     <div
       className="flex flex-col items-center rounded-medium border
-      border-[#202225] bg-[#111111] p-2 sm:p-5 lg:min-h-[30rem] xl:w-2/3"
+      border-[#303031] bg-[#111112] p-2 sm:p-5 lg:min-h-[30rem] xl:w-2/3"
     >
       <h1 className="text-lg font-semibold text-white">Stars</h1>
       {starDates && starsCount ? (

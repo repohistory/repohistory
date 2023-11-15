@@ -9,7 +9,7 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        'login': "url('../../public/background.jpg')",
+        'login': "url('../../public/bg2.png')",
       },
     },
   },

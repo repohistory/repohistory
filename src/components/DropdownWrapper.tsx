@@ -18,12 +18,12 @@ export default function DropdownWrapper({ user }: { user: any }) {
   return (
     <Dropdown
       placement="bottom-end"
-      className="border border-[#202225] bg-[#121212]"
+      className="border border-[#202021] bg-[#111112]"
     >
       <DropdownTrigger>
         <Avatar
           as="button"
-          className="border border-[#202225] transition-transform"
+          className="border border-[#202021] transition-transform"
           src={user?.avatar_url}
         />
       </DropdownTrigger>
@@ -36,10 +36,10 @@ export default function DropdownWrapper({ user }: { user: any }) {
           <p className="font-semibold">{user?.name}</p>
           <p className="font-semibold">@{user?.login}</p>
         </DropdownItem>
-        <DropdownItem key="settings" href="/settings" as={Link}>
+        <DropdownItem key="settings" color="primary" href="/settings" as={Link}>
           Settings
         </DropdownItem>
-        <DropdownItem key="logout" color="danger" onClick={logout}>
+        <DropdownItem key="logout" color="primary" onClick={logout}>
           Log Out
         </DropdownItem>
       </DropdownMenu>

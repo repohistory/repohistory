@@ -76,7 +76,7 @@ export default function BarChart({
   data,
 }: Props) {
   return (
-    <div className="flex flex-col items-center rounded-medium border border-[#202225] bg-[#111111] p-2 sm:p-5 xl:w-1/2">
+    <div className="flex flex-col items-center rounded-medium border border-[#303031] bg-[#111112] p-2 sm:p-5 xl:w-1/2">
       <h1 className="text-lg font-semibold text-white">{title}</h1>
       {data ? (
         <Bar options={options} data={data} />

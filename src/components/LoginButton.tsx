@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { Button } from '@nextui-org/react';
 import Spinner from '@/components/Icons/Spinner';
 import { useRouter } from 'next/navigation';
+import GitHub from './Icons/GitHub';
 
 export default function LoginButton({ code }: { code: string | null }) {
   const router = useRouter();
@@ -27,12 +28,13 @@ export default function LoginButton({ code }: { code: string | null }) {
     })();
   }, [code]);
 
+  const isLoading = code !== undefined && code !== null;
+
   return (
     <Button
       spinner={<Spinner />}
-      isLoading={code !== undefined && code !== null}
-      className="mt-10"
-      color="default"
+      isLoading={isLoading}
+      className="mt-10 bg-[#222223] font-semibold text-white"
       radius="sm"
       size="lg"
       as={Link}
@@ -41,6 +43,7 @@ export default function LoginButton({ code }: { code: string | null }) {
         redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL}/login`,
       })}`}
     >
+      {isLoading ? null : <GitHub />}
       Continue with GitHub
     </Button>
   );

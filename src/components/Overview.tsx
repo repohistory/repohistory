@@ -15,7 +15,7 @@ export default async function Overview({
   return (
     <div
       className="flex flex-col gap-4 rounded-medium border
-        border-[#202225] bg-[#111111] p-5 text-white xl:w-1/3"
+        border-[#303031] bg-[#111112] p-5 text-white xl:w-1/3"
     >
       <h1 className="text-3xl font-bold">{repo?.name}</h1>
       <div>{repo?.description}</div>

@@ -20,7 +20,7 @@ export default async function DashboardLayout({
       <Navbar
         isBordered
         height="4.0rem"
-        className="border-[#202225]"
+        className="bg-[#050506] border-[#303031] bg-opacity-80 backdrop-filter backdrop-blur-md"
         classNames={{
           base: 'justify-between',
           wrapper: 'max-w-full sm:px-10',
@@ -31,7 +31,7 @@ export default async function DashboardLayout({
             width={30}
             height={30}
             alt="logo"
-            src="/repohistory.png"
+            src="https://github.com/m4xshen/img-host/assets/74842863/e8eaecb6-aeff-4c4e-a242-456dfaddaa76"
             unoptimized
           />
         </Link>
