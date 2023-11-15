@@ -8,8 +8,6 @@ import { app } from '@/utils/octokit';
 import { fetchInstallationIds } from '@/utils/dbHelpers';
 import supabase from '@/utils/supabase';
 
-export const dynamic = 'force-dynamic';
-
 const datasets = (label: string, data: any[], color: string) => ({
   label,
   data,
