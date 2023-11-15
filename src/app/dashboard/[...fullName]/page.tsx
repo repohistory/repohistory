@@ -86,35 +86,27 @@ export default async function RepoPage({
   const userId = cookies().get('user_id')?.value ?? '';
   const installationIds = await fetchInstallationIds(userId);
 
-  let octokit: any;
-  for await (const installationId of installationIds) {
-    let found = false;
-    for await (const { octokit: o, repository } of app.eachRepository.iterator({
-      installationId,
-    })) {
-      if (repository.full_name === fullName) {
-        octokit = o;
-        found = true;
-        break;
-      }
-    }
-
-    if (found) {
-      break;
-    }
-  }
-
   let repo = null;
-  if (octokit) {
+  for await (const installationId of installationIds) {
     try {
+      const octokit = await app.getInstallationOctokit(installationId);
+
       const { data } = await octokit.request(`GET /repos/${fullName}`, {
         headers: {
           'X-GitHub-Api-Version': '2022-11-28',
         },
       });
-      repo = data;
-    } catch(error) {
-      console.error(error);
+
+      if (data) {
+        repo = data;
+        break;
+      }
+    } catch (error) {
+      console.error(
+        'Error fetching repository data for installation ID:',
+        installationId,
+        error,
+      );
     }
   }
 
@@ -126,7 +118,7 @@ export default async function RepoPage({
           viewsTotal={viewsTotal}
           clonesTotal={clonesTotal}
         />
-        {/*  <LineChart repo={repo} userId={userId} />  */}
+        {/*  <LineChart repo={repo} userId={userId} octokit={octokit} />  */}
       </div>
       <div className="flex w-full flex-col gap-5 xl:flex-row">
         <BarChart
