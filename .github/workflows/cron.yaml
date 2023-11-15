@@ -24,5 +24,8 @@ jobs:
       - name: Run the script
         env:
           NEXT_PUBLIC_APP_ID: ${{ secrets.NEXT_PUBLIC_APP_ID }}
+          NEXT_PUBLIC_PRIVATE_KEY: ${{ secrets.NEXT_PUBLIC_PRIVATE_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: node src/cron.js
         # Again, adjust the working directory if needed
