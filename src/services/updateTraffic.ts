@@ -11,7 +11,7 @@ export default async function updateTraffic(installationId: number) {
     repositories.push(repository);
   });
 
-  if (repositories.length > 5) {
+  if (repositories.length > 2) {
     return;
   }
 

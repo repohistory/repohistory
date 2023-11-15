@@ -1,9 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
 const { App } = require('@octokit/app');
 
-console.log(process.env);
-console.log(process.env.NEXT_PUBLIC_APP_ID);
-
 const privateKey = process.env.NEXT_PUBLIC_PRIVATE_KEY?.replace(/\\n/g, '\n');
 const app = new App({
   appId: process.env.NEXT_PUBLIC_APP_ID,
