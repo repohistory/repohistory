@@ -35,7 +35,6 @@ export default function LoginButton({ code }: { code: string | null }) {
       color="default"
       radius="sm"
       size="lg"
-      variant="bordered"
       as={Link}
       href={`https://github.com/login/oauth/authorize?${new URLSearchParams({
         client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
