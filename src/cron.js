@@ -23,6 +23,10 @@ async function updateTraffic(installationId) {
     repositories.push(repository);
   });
 
+  if (repositories.length > 5) {
+    return;
+  }
+
   for (const repository of repositories) {
     console.log(repository.full_name);
     const { data: viewsData } = await octokit.request(
