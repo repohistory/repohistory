@@ -18,8 +18,6 @@ import {
 } from 'chart.js';
 import { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
-import { fetchInstallationIds } from '@/utils/dbHelpers';
-import { app } from '@/utils/octokit';
 
 ChartJS.register(
   CategoryScale,
@@ -91,56 +89,15 @@ function processStarData(timestamps: any[]): [string[], number[]] {
 }
 
 export default function LineChart({
-  repo,
-  userId,
+  fetchPromises,
 }: {
-  repo: any;
-  userId: string;
+  fetchPromises: Promise<any>[];
 }) {
   const [starDates, setStarDates] = useState<string[] | null>(null);
   const [starsCount, setStarsCount] = useState<number[] | null>(null);
 
   useEffect(() => {
     (async () => {
-      const installationIds = await fetchInstallationIds(userId);
-      let octokit: any;
-      for await (const installationId of installationIds) {
-        let found = false;
-        for await (const {
-          octokit: o,
-          repository,
-        } of app.eachRepository.iterator({ installationId })) {
-          if (repository.full_name === repo.full_name) {
-            octokit = o;
-            found = true;
-            break;
-          }
-        }
-
-        if (found) {
-          break;
-        }
-      }
-
-      if (!octokit) {
-        return;
-      }
-
-      const totalStars = Math.ceil(repo.stargazers_count / 100);
-
-      const fetchPromises = [];
-      for (let page = 1; page <= totalStars; page += 1) {
-        fetchPromises.push(
-          octokit.request(`GET /repos/${repo.full_name}/stargazers`, {
-            per_page: 100,
-            page,
-            headers: {
-              accept: 'application/vnd.github.v3.star+json',
-            },
-          }),
-        );
-      }
-
       const results = await Promise.allSettled(fetchPromises);
 
       const stars: any[] = [];

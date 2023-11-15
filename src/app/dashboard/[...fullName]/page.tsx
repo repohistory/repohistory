@@ -86,6 +86,7 @@ export default async function RepoPage({
   const userId = cookies().get('user_id')?.value ?? '';
   const installationIds = await fetchInstallationIds(userId);
 
+  const fetchPromises: Promise<any>[] = [];
   let repo = null;
   for await (const installationId of installationIds) {
     try {
@@ -99,6 +100,20 @@ export default async function RepoPage({
 
       if (data) {
         repo = data;
+
+        const totalStars = Math.ceil(repo.stargazers_count / 100);
+        for (let page = 1; page <= totalStars; page += 1) {
+          fetchPromises.push(
+            octokit.request(`GET /repos/${repo.full_name}/stargazers`, {
+              per_page: 100,
+              page,
+              headers: {
+                accept: 'application/vnd.github.v3.star+json',
+              },
+            }),
+          );
+        }
+
         break;
       }
     } catch (error) {
@@ -118,7 +133,7 @@ export default async function RepoPage({
           viewsTotal={viewsTotal}
           clonesTotal={clonesTotal}
         />
-        {/*  <LineChart repo={repo} userId={userId} octokit={octokit} />  */}
+        <LineChart fetchPromises={fetchPromises} />
       </div>
       <div className="flex w-full flex-col gap-5 xl:flex-row">
         <BarChart
