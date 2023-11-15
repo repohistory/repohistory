@@ -2,7 +2,7 @@ name: Cron Job Execution
 
 on:
   schedule:
-    - cron: '*/10 * * * *' # Runs every 10 minutes
+    - cron: '*/5 * * * *' # Runs every 10 minutes
 
 jobs:
   execute-script:
@@ -22,5 +22,7 @@ jobs:
         # working-directory: ./path/to/your/project
 
       - name: Run the script
+        env:
+          NEXT_PUBLIC_APP_ID: ${{ secrets.NEXT_PUBLIC_APP_ID }}
         run: node src/cron.js
         # Again, adjust the working directory if needed
