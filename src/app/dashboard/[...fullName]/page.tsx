@@ -81,7 +81,6 @@ export default async function RepoPage({
     viewsTotal = viewsData.reduce((acc, row) => acc + row.views_count, 0);
   } catch (error) {
     console.error('Error fetching traffic data:', error);
-    throw error;
   }
 
   const userId = cookies().get('user_id')?.value ?? '';
