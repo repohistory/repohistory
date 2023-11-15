@@ -1,5 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
-const { App } = require('octokit');
+const { App } = require('@octokit/app');
 
 require('dotenv').config({ path: '.env.local' })
 
