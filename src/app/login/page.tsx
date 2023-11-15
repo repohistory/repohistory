@@ -12,7 +12,12 @@ export default function LoginPage({ searchParams }: { searchParams: any }) {
           href="https://repohistory.com"
           className="ml-auto mt-20 flex items-center gap-3 text-3xl font-bold leading-tight text-white"
         >
-          <Image width={35} height={35} src="/repohistory.png" alt="logo" />
+          <Image
+            width={35}
+            height={35}
+            src="https://github.com/m4xshen/img-host/assets/74842863/e8eaecb6-aeff-4c4e-a242-456dfaddaa76"
+            alt="logo"
+          />
           repohistory
         </Link>
         <h1 className="flex flex-col gap-5 pt-64 text-5xl font-semibold leading-tight text-white md:text-5xl">
@@ -30,7 +35,7 @@ export default function LoginPage({ searchParams }: { searchParams: any }) {
             width={35}
             height={35}
             alt="logo"
-            src="/repohistory.png"
+            src="https://github.com/m4xshen/img-host/assets/74842863/e8eaecb6-aeff-4c4e-a242-456dfaddaa76"
             unoptimized
           />
           repohistory
