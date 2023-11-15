@@ -104,18 +104,22 @@ export default async function RepoPage({
     }
   }
 
-  console.log(octokit);
+  let repo = null;
+  if (octokit) {
+    try {
+      const { data } = await octokit.request(`GET /repos/${fullName}`, {
+        headers: {
+          'X-GitHub-Api-Version': '2022-11-28',
+        },
+      });
+      repo = data;
+    } catch(error) {
+      console.error(error);
+    }
+  }
 
-  // let repo;
-  // if (octokit) {
-  //   const { data } = await octokit.request(`GET /repos/${fullName}`, {
-  //     headers: {
-  //       'X-GitHub-Api-Version': '2022-11-28',
-  //     },
-  //   });
-  //   repo = data;
-  // }
-  //
+  console.log(repo);
+
   // return (
   //   <div className="flex flex-col items-center gap-5 px-5 py-5 sm:py-10 md:px-10 lg:px-20">
   //     <div className="flex w-full flex-col gap-5 xl:flex-row">
