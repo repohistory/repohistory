@@ -2,7 +2,7 @@ name: Cron Job Execution
 
 on:
   schedule:
-    - cron: '*/5 * * * *' # Runs every 10 minutes
+    - cron: '* */12 * * *'
 
 jobs:
   execute-script:
@@ -14,12 +14,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18' # Replace with your Node.js version
+          node-version: '18'
 
       - name: Install dependencies
         run: npm install
-        # If your project has a specific directory structure, you might need to change the working directory:
-        # working-directory: ./path/to/your/project
 
       - name: Run the script
         env:
@@ -28,4 +26,3 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: node src/cron.js
-        # Again, adjust the working directory if needed
