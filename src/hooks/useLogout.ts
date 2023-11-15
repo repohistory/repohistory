@@ -8,7 +8,7 @@ async function logout(router: AppRouterInstance) {
   destroyCookie(null, 'user_id', {
     path: '/',
   });
-  router.refresh();
+  router.push('/login');
 }
 
 export default function useLogout(router: AppRouterInstance) {

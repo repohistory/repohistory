@@ -36,7 +36,7 @@ export default function DropdownWrapper({ user }: { user: any }) {
           <p className="font-semibold">{user?.name}</p>
           <p className="font-semibold">@{user?.login}</p>
         </DropdownItem>
-        <DropdownItem key="settings" href="/dashboard/settings" as={Link}>
+        <DropdownItem key="settings" href="/settings" as={Link}>
           Settings
         </DropdownItem>
         <DropdownItem key="logout" color="danger" onClick={logout}>

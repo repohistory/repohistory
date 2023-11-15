@@ -22,7 +22,8 @@ export default function LoginButton({ code }: { code: string | null }) {
         method: 'POST',
         body: JSON.stringify({ code }),
       });
-      router.push('/dashboard');
+
+      router.push('/');
     })();
   }, [code]);
 

@@ -4,7 +4,7 @@ import { Card, CardHeader, CardBody, Divider } from '@nextui-org/react';
 
 export default function RepoCard({ repo }: { repo: any }) {
   return (
-    <Link href={`/dashboard/${repo.full_name}`}>
+    <Link href={repo.full_name}>
       <Card
         isPressable
         disableRipple

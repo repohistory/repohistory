@@ -9,8 +9,8 @@ export default function Path() {
 
   let owner = '';
   let repo = '';
-  if (owner === '' && parts.length === 4 && parts[1] === 'dashboard') {
-    [owner, repo] = parts.slice(2);
+  if (owner === '' && parts.length === 3) {
+    [owner, repo] = parts.slice(1);
   }
 
   return (
