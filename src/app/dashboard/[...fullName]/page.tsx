@@ -1,27 +1,29 @@
 /* eslint-disable @typescript-eslint/no-loop-func */
 /* eslint-disable no-restricted-syntax */
-import BarChart from '@/components/BarChart';
-import LineChart from '@/components/LineChart';
-import Overview from '@/components/Overview';
-import { cookies } from 'next/headers';
-import { app } from '@/utils/octokit';
-import { fetchInstallationIds } from '@/utils/dbHelpers';
-import supabase from '@/utils/supabase';
 
-const datasets = (label: string, data: any[], color: string) => ({
-  label,
-  data,
-  backgroundColor: color,
-  borderRadius: 999,
-  barPercentage: 0.7,
-  maxBarThickness: 10,
-});
+// import BarChart from '@/components/BarChart';
+// import LineChart from '@/components/LineChart';
+// import Overview from '@/components/Overview';
+// import { cookies } from 'next/headers';
+// import { app } from '@/utils/octokit';
+// import { fetchInstallationIds } from '@/utils/dbHelpers';
+// import supabase from '@/utils/supabase';
+//
+// const datasets = (label: string, data: any[], color: string) => ({
+//   label,
+//   data,
+//   backgroundColor: color,
+//   borderRadius: 999,
+//   barPercentage: 0.7,
+//   maxBarThickness: 10,
+// });
 
 export default async function RepoPage({
   params,
 }: {
   params: { fullName: string };
 }) {
+  /*
   const fullName = `${params.fullName[0]}/${params.fullName[1]}`;
 
   let dates = [];
@@ -152,4 +154,7 @@ export default async function RepoPage({
       </div>
     </div>
   );
+  */
+
+  return <div className="text-white">test</div>;
 }
