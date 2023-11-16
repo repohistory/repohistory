@@ -38,7 +38,7 @@ export default async function DashboardLayout({
         <Path />
         <DropdownWrapper user={user} />
       </Navbar>
-      <div className="w-full overflow-y-auto">{children}</div>
+      <div className="w-full overflow-y-auto no-scrollbar">{children}</div>
     </>
   );
 }

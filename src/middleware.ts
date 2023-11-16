@@ -5,8 +5,6 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const path = url.pathname;
 
-  // Skip middleware for static files
-  console.log(path)
   if (path.startsWith('/_next/') || path.startsWith('/images/')) {
     return NextResponse.next();
   }

@@ -35,17 +35,20 @@ export default async function Dashboard() {
     content = (
       <div className="flex h-full w-full flex-col items-center justify-center">
         <h1 className="text-center text-2xl font-bold text-white">
-          {repos.length === 0 ? 'No' : `More than ${limit}`} repositories selected
+          {repos.length === 0 ? 'No' : `More than ${limit}`} repositories
+          selected
         </h1>
         <p className="mt-2 text-center text-sm text-gray-500">
-          Please <Link
+          Please{' '}
+          <Link
             underline="always"
             isExternal
             className="text-sm"
             href="https://github.com/apps/repohistory/installations/new"
           >
             {repos.length === 0 ? 'install' : 'configure'} GitHub App
-          </Link> and select at most {limit} repositories you want to track.
+          </Link>{' '}
+          and select at most {limit} repositories you want to track.
         </p>
       </div>
     );
