@@ -20,7 +20,14 @@ async function updateTraffic(installationId) {
     repositories.push(repository);
   });
 
-  if (repositories.length > 5) {
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('installation_id', installationId);
+
+  const limit = error ? 2 : data[0].repository_limit ?? 2;
+
+  if (repositories.length > limit) {
     return;
   }
 
