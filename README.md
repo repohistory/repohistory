@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="./public/banner.png">
+  <img src="./public/images/banner.png">
   <b>
-    Repohistory is a GitHub repository traffic history tracker that keeps records beyond the standard 14 days, offering an easy and detailed long-term view.
+    Repohistory is a GitHub repo traffic history tracker that keeps records beyond the standard 14 days, offering an easy and detailed long-term view.
   </b>
 </p>
   
-![](public/github.png)
+![](public/images/github.png)
 
 ## Motivation
 
