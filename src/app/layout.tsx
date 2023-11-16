@@ -4,9 +4,9 @@ import { Inter } from 'next/font/google';
 import Providers from '@/app/providers';
 
 export const metadata: Metadata = {
-  title: 'repohistory',
+  title: 'Repohistory',
   description:
-    'Repohistory is a GitHub repository traffic history tracker that keeps records beyond the standard 14 days, offering an easy and detailed long-term view.',
+    'Repohistory is a GitHub repo traffic history tracker that keeps records beyond the standard 14 days, offering an easy and detailed long-term view.',
 };
 
 const inter = Inter({ subsets: ['latin'] });
