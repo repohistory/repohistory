@@ -13,12 +13,7 @@ export default function LoginPage({ searchParams }: { searchParams: any }) {
           className="ml-auto mt-20 flex items-center gap-3 text-3xl font-bold
             leading-tight text-white"
         >
-          <Image
-            width={35}
-            height={35}
-            src="https://github.com/m4xshen/img-host/assets/74842863/e8eaecb6-aeff-4c4e-a242-456dfaddaa76"
-            alt="logo"
-          />
+          <Image width={35} height={35} src="/logo.png" alt="logo" />
           repohistory
         </Link>
         <h1
