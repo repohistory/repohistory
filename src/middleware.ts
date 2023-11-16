@@ -6,7 +6,8 @@ export function middleware(request: NextRequest) {
   const path = url.pathname;
 
   // Skip middleware for static files
-  if (path.startsWith('/_next/static/')) {
+  console.log(path)
+  if (path.startsWith('/_next/') || path.startsWith('/images/')) {
     return NextResponse.next();
   }
 

@@ -31,7 +31,7 @@ export default async function DashboardLayout({
             width={32}
             height={32}
             alt="logo"
-            src="/logo.png"
+            src="/images/logo.png"
             unoptimized
           />
         </Link>
