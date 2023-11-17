@@ -23,12 +23,15 @@ export default async function Dashboard() {
     console.log(error);
   }
 
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from('users')
     .select('*')
     .eq('github_user_id', cookies().get('user_id')?.value ?? '');
 
-  const limit = error ? 2 : data[0].repository_limit ?? 2;
+  let limit = 2;
+  if (data && data.length > 0) {
+    limit = data[0].repository_limit;
+  }
 
   let content;
   if (repos.length === 0 || repos.length > limit) {
