@@ -1,5 +1,6 @@
 <p align="center">
-  <img src="./public/images/banner.png">
+  <img src="./public/images/banner-dark.png#gh-dark-mode-only">
+  <img src="./public/images/banner-light.png#gh-light-mode-only">
   <b>
     Repohistory is a GitHub repo traffic history tracker that keeps records beyond the standard 14 days, offering an easy and detailed long-term view.
   </b>
