@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Repohistory - Sign In',
+  title: 'Repohistory - Log in',
 };
 
 export default function LoginPage({ searchParams }: { searchParams: any }) {
@@ -45,7 +45,7 @@ export default function LoginPage({ searchParams }: { searchParams: any }) {
           repohistory
         </Link>
         <h1 className="pt-36 text-center text-4xl font-bold leading-tight text-white">
-          Sign In
+          Log in
         </h1>
         <div className="flex flex-col items-center gap-10">
           <LoginButton code={code} />
