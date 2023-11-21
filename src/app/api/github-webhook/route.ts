@@ -7,8 +7,13 @@ import { headers } from 'next/headers';
 export async function POST(req: Request) {
   const headersList = headers();
   const event = headersList.get('x-github-event');
-  const res = await req.json();
+  if (event === 'ping') {
+    return new Response('', {
+      status: 200,
+    });
+  }
 
+  const res = await req.json();
   const installationId = res.installation.id;
 
   if (event === 'installation') {
