@@ -3,6 +3,7 @@ name: Cron Job
 on:
   schedule:
     - cron: '59 11,23 * * *'
+  workflow_dispatch:
 
 jobs:
   execute-script:
@@ -19,10 +20,13 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run the script
+      - name: Compile TypeScript file
+        run: npx tsc src/cron.ts --outDir dist
+
+      - name: Run the compiled script
         env:
           NEXT_PUBLIC_APP_ID: ${{ secrets.NEXT_PUBLIC_APP_ID }}
           NEXT_PUBLIC_PRIVATE_KEY: ${{ secrets.NEXT_PUBLIC_PRIVATE_KEY }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-        run: node src/cron.js
+        run: node dist/cron.js
