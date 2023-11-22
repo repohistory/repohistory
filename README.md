@@ -10,6 +10,8 @@
 
 ![github](https://github.com/repohistory/repohistory/assets/74842863/e0cb2fad-f2d1-4a1f-a418-996ab11dde2a)
 
+Find out more at https://repohistory.com
+
 ## 🎯 Motivation
 
 GitHub's 14-day limit on repository data often leaves developers without vital long-term insights. Repohistory addresses this by offering an easy-to-setup, beautifully designed interface for extended repository tracking. This gives developers a powerful tool to analyze trends and progress over time, not just a brief snapshot.
