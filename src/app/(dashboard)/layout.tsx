@@ -20,7 +20,7 @@ export default async function DashboardLayout({
       <Navbar
         isBordered
         height="4.0rem"
-        className="bg-[#050506] border-[#303031] bg-opacity-80 backdrop-filter backdrop-blur-md"
+        className="border-[#303031] bg-[#050506] bg-opacity-80 backdrop-blur-md backdrop-filter"
         classNames={{
           base: 'justify-between',
           wrapper: 'max-w-full sm:px-10',
@@ -38,7 +38,7 @@ export default async function DashboardLayout({
         <Path />
         <DropdownWrapper user={user} />
       </Navbar>
-      <div className="w-full overflow-y-auto no-scrollbar">{children}</div>
+      <div className="w-full overflow-y-auto scrollbar-hide">{children}</div>
     </>
   );
 }

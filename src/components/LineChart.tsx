@@ -112,7 +112,7 @@ export default function LineChart({
       setStarDates(sd);
       setStarsCount(sc);
     })();
-  }, []);
+  }, [fetchPromises]);
 
   return (
     <div

@@ -26,7 +26,7 @@ export default function LoginButton({ code }: { code: string | null }) {
 
       router.push('/');
     })();
-  }, [code]);
+  }, [code, router]);
 
   const isLoading = code !== undefined && code !== null;
 
