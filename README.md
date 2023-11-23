@@ -45,6 +45,7 @@ No, GitHub provides access to data only for the past 14 days. However, Repohisto
 - UI: `Tailwind CSS`, `NextUI`
 - Front-End: `Next.js (App Router)`
 - Database: `Supabase`
+- Auth / Permission: `GitHub Apps`
 - Cron Job: `GitHub Action`
 
 ## 🦾 Contributing
