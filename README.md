@@ -8,7 +8,7 @@
   </b>
 </p>
 
-![github](https://github.com/repohistory/repohistory/assets/74842863/e0cb2fad-f2d1-4a1f-a418-996ab11dde2a)
+![github](https://github.com/repohistory/repohistory/assets/74842863/a0538888-99d9-40ab-8c7e-17f4e8cf0134)
 
 Find out more at https://repohistory.com
 
