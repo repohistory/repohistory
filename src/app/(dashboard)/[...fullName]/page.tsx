@@ -204,8 +204,8 @@ export default async function RepoPage({
         />
       </div>
       <div className="flex w-full flex-col gap-5 xl:flex-row">
-        <DoughnutChart title="Referring sites" labels={siteLabels} />
-        <DoughnutChart title="Popular content" labels={contentLabels} />
+        <DoughnutChart title="Referring Sites" labels={siteLabels} />
+        <DoughnutChart title="Popular Content" labels={contentLabels} />
       </div>
     </div>
   );
