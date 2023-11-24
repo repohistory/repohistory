@@ -9,6 +9,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const options = {
   responsive: true,
+  cutout: '60%',
   plugins: {
     tooltip: {
       boxPadding: 2,
@@ -32,7 +33,8 @@ const options = {
 interface Label {
   name: string;
   path?: string;
-  data: number;
+  count: number;
+  uniques: number;
   color: string;
 }
 
@@ -47,11 +49,19 @@ export default function DoughnutChart({ title, labels }: Props) {
     datasets: [
       {
         label: 'Views',
-        data: labels.map((label) => label.data),
+        data: labels.map((label) => label.count),
         backgroundColor: labels.map((label) => label.color),
         borderColor: '#111112',
-        borderWidth: 7,
-        borderRadius: 13,
+        borderRadius: 9999,
+        borderWidth: 10,
+      },
+      {
+        label: 'Unique Visitors',
+        data: labels.map((label) => label.uniques),
+        backgroundColor: labels.map((label) => label.color),
+        borderColor: '#111112',
+        borderRadius: 9999,
+        borderWidth: 10,
       },
     ],
   };
@@ -67,7 +77,7 @@ export default function DoughnutChart({ title, labels }: Props) {
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-center text-sm sm:text-base">
             Views
             <div className="text-center text-2xl font-bold sm:text-4xl">
-              {labels.reduce((acc, curr) => acc + curr.data, 0)}
+              {labels.reduce((acc, curr) => acc + curr.count, 0)}
             </div>
           </div>
           <div className="relative z-10">

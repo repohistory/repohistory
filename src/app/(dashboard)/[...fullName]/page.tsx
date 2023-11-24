@@ -117,7 +117,8 @@ export default async function RepoPage({
         );
         siteLabels = sites.slice(0, 4).map((site: any, index: number) => ({
           name: site.referrer,
-          data: site.count,
+          count: site.count,
+          uniques: site.uniques,
           color: colors[index],
         }));
 
@@ -136,7 +137,8 @@ export default async function RepoPage({
             return {
               name: truncatedTitle,
               path: `https://github.com${content.path}`,
-              data: content.count,
+              count: content.count,
+              uniques: content.uniques,
               color: colors[index],
             };
           });
