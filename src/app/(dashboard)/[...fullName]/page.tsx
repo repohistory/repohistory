@@ -8,6 +8,9 @@ import { cookies } from 'next/headers';
 import { app } from '@/utils/octokit';
 import { fetchInstallationIds } from '@/utils/dbHelpers';
 import supabase from '@/utils/supabase';
+import DoughnutChart from '@/components/DoughnutChart';
+
+const colors = ['#62C3F8', '#4F9BC4', '#3A7391', '#264B5E'];
 
 const datasets = (label: string, data: any[], color: string) => ({
   label,
@@ -33,6 +36,9 @@ export default async function RepoPage({
   let clonesCounts = [];
   let uniqueClonesCounts = [];
   let clonesTotal = 0;
+
+  let siteLabels = [];
+  let contentLabels = [];
 
   try {
     const { data: trafficData, error } = await supabase
@@ -101,6 +107,40 @@ export default async function RepoPage({
       if (data) {
         repo = data;
 
+        const { data: sites } = await octokit.request(
+          `GET /repos/${repo.full_name}/traffic/popular/referrers`,
+          {
+            headers: {
+              'X-GitHub-Api-Version': '2022-11-28',
+            },
+          },
+        );
+        siteLabels = sites.slice(0, 4).map((site: any, index: number) => ({
+          name: site.referrer,
+          data: site.count,
+          color: colors[index],
+        }));
+
+        const { data: contents } = await octokit.request(
+          `GET /repos/${repo.full_name}/traffic/popular/paths`,
+          {
+            headers: {
+              'X-GitHub-Api-Version': '2022-11-28',
+            },
+          },
+        );
+        contentLabels = contents
+          .slice(0, 4)
+          .map((content: any, index: number) => {
+            const truncatedTitle = content.title;
+            return {
+              name: truncatedTitle,
+              path: `https://github.com${content.path}`,
+              data: content.count,
+              color: colors[index],
+            };
+          });
+
         const totalStars = Math.ceil(repo.stargazers_count / 100);
         for (let page = 1; page <= totalStars; page += 1) {
           fetchPromises.push(
@@ -160,6 +200,10 @@ export default async function RepoPage({
             ],
           }}
         />
+      </div>
+      <div className="flex w-full flex-col gap-5 xl:flex-row">
+        <DoughnutChart title="Referring sites" labels={siteLabels} />
+        <DoughnutChart title="Popular content" labels={contentLabels} />
       </div>
     </div>
   );

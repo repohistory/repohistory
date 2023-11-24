@@ -6,6 +6,12 @@ module.exports = {
     './src/**/*.{js,ts,jsx,tsx,mdx}',
     './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
+  safelist: [
+    'bg-[#62C3F8]',
+    'bg-[#4F9BC4]',
+    'bg-[#3A7391]',
+    'bg-[#264B5E]',
+  ],
   theme: {
     extend: {
       backgroundImage: {
