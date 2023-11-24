@@ -130,6 +130,7 @@ export default function LineChart({
                 data: starsCount,
                 fill: true,
                 pointRadius: 1,
+                pointHoverRadius: 7,
                 pointHitRadius: 30,
                 label: 'Stars',
                 borderColor: '#62C3F8',

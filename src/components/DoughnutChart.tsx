@@ -63,14 +63,16 @@ export default function DoughnutChart({ title, labels }: Props) {
     >
       <h1 className="text-lg font-semibold">{title}</h1>
       <div className="flex w-full flex-col justify-center sm:flex-row sm:gap-10">
-        <div className="relative mx-auto w-1/2 sm:mx-0 sm:max-w-[18rem]">
+        <div className="relative mx-auto w-1/2 sm:mx-0 sm:max-w-[16.5rem]">
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-center text-sm sm:text-base">
             Views
             <div className="text-center text-2xl font-bold sm:text-4xl">
               {labels.reduce((acc, curr) => acc + curr.data, 0)}
             </div>
           </div>
-          <Doughnut data={data} options={options} />
+          <div className="relative z-10">
+            <Doughnut data={data} options={options} />
+          </div>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-3 sm:w-1/2 sm:flex-col xl:items-stretch">
           {labels.map((label) =>
