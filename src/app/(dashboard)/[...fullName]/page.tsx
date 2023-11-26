@@ -4,12 +4,11 @@
 import BarChart from '@/components/BarChart';
 import LineChart from '@/components/LineChart';
 import Overview from '@/components/Overview';
-import { cookies } from 'next/headers';
 import { app } from '@/utils/octokit';
 import supabase from '@/utils/supabase';
 import DoughnutChart from '@/components/DoughnutChart';
-import { Octokit } from 'octokit';
 import { redirect } from 'next/navigation';
+import getInstallationIds from '@/utils/getInstallationIds';
 
 const colors = ['#62C3F8', '#4F9BC4', '#3A7391', '#264B5E'];
 
@@ -90,15 +89,7 @@ export default async function RepoPage({
     console.error('Error fetching traffic data:', error);
   }
 
-  const userOctokit = new Octokit({
-    auth: cookies().get('access_token')?.value ?? '',
-  });
-  const { data: installationData } = await userOctokit.request(
-    'GET /user/installations',
-  );
-  const installationIds = installationData.installations.map(
-    (installation: any) => installation.id,
-  );
+  const installationIds = await getInstallationIds();
 
   const fetchPromises: Promise<any>[] = [];
   let repo = null;

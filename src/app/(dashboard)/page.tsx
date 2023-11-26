@@ -6,21 +6,12 @@ import { Image, Link } from '@nextui-org/react';
 import { cookies } from 'next/headers';
 import { app } from '@/utils/octokit';
 import supabase from '@/utils/supabase';
-import { Octokit } from 'octokit';
+import getInstallationIds from '@/utils/getInstallationIds';
 
 export default async function Dashboard() {
   const repos: any[] = [];
   try {
-    const userOctokit = new Octokit({
-      auth: cookies().get('access_token')?.value ?? '',
-    });
-    const { data: installationData } = await userOctokit.request(
-      'GET /user/installations',
-    );
-    const installationIds = installationData.installations.map(
-      (installation: any) => installation.id,
-    );
-
+    const installationIds = await getInstallationIds();
     for (const installationId of installationIds) {
       await app.eachRepository({ installationId }, ({ repository }) => {
         repos.push(repository);
