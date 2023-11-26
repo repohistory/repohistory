@@ -4,7 +4,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 
-import { Spinner, Switch } from '@nextui-org/react';
+import { Switch } from '@nextui-org/react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -100,27 +100,26 @@ export default function LineChart({
 }: {
   fetchPromises: Promise<any>[];
 }) {
-  const [starDates, setStarDates] = useState<string[] | null>(null);
-  const [starsCount, setStarsCount] = useState<number[] | null>(null);
   const [growth, setGrowth] = useState(false);
+  const [stars, setStars] = useState<any[]>([]);
 
   useEffect(() => {
     (async () => {
       const results = await Promise.allSettled(fetchPromises);
 
-      const stars: any[] = [];
+      const newStars: any[] = [];
       results.forEach((result) => {
         if (result.status === 'fulfilled') {
           const filteredData = result.value.data.map((d: any) => d.starred_at);
-          stars.push(...filteredData);
+          newStars.push(...filteredData);
         }
       });
 
-      const [sd, sc] = processStarData(stars, growth);
-      setStarDates(sd);
-      setStarsCount(sc);
+      setStars(newStars);
     })();
-  }, [fetchPromises, growth]);
+  }, [fetchPromises]);
+
+  const [starDates, starsCount] = processStarData(stars, growth);
 
   return (
     <div
@@ -137,32 +136,26 @@ export default function LineChart({
           className="absolute right-0 top-0"
         />
       </div>
-      {starDates && starsCount ? (
-        <Line
-          options={options}
-          data={{
-            labels: starDates,
-            datasets: [
-              {
-                data: starsCount,
-                fill: true,
-                pointRadius: 1,
-                pointHoverRadius: 7,
-                pointHitRadius: 30,
-                label: 'Stars',
-                borderColor: '#62C3F8',
-                backgroundColor: '#62C3F810',
-                hoverBackgroundColor: '#62C3F8',
-                tension: 0.5,
-              },
-            ],
-          }}
-        />
-      ) : (
-        <div className="flex h-full items-center justify-center">
-          <Spinner color="primary" />
-        </div>
-      )}
+      <Line
+        options={options}
+        data={{
+          labels: starDates,
+          datasets: [
+            {
+              data: starsCount,
+              fill: true,
+              pointRadius: 1,
+              pointHoverRadius: 7,
+              pointHitRadius: 30,
+              label: 'Stars',
+              borderColor: '#62C3F8',
+              backgroundColor: '#62C3F810',
+              hoverBackgroundColor: '#62C3F8',
+              tension: 0.5,
+            },
+          ],
+        }}
+      />
     </div>
   );
 }
