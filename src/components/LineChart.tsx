@@ -4,7 +4,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 
-import { Spinner } from '@nextui-org/react';
+import { Spinner, Switch } from '@nextui-org/react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -68,7 +68,10 @@ const options = {
   },
 };
 
-function processStarData(timestamps: any[]): [string[], number[]] {
+function processStarData(
+  timestamps: any[],
+  growth: boolean,
+): [string[], number[]] {
   const dateCounts = timestamps.reduce((acc, timestamp) => {
     // Convert timestamp to a date string
     const date = timestamp.split('T')[0];
@@ -78,6 +81,10 @@ function processStarData(timestamps: any[]): [string[], number[]] {
 
   let cumulativeCount = 0;
   const cumulativeData = Object.keys(dateCounts).map((date) => {
+    if (growth) {
+      return { [date]: dateCounts[date] };
+    }
+
     cumulativeCount += dateCounts[date];
     return { [date]: cumulativeCount };
   });
@@ -95,6 +102,7 @@ export default function LineChart({
 }) {
   const [starDates, setStarDates] = useState<string[] | null>(null);
   const [starsCount, setStarsCount] = useState<number[] | null>(null);
+  const [growth, setGrowth] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -108,18 +116,27 @@ export default function LineChart({
         }
       });
 
-      const [sd, sc] = processStarData(stars);
+      const [sd, sc] = processStarData(stars, growth);
       setStarDates(sd);
       setStarsCount(sc);
     })();
-  }, [fetchPromises]);
+  }, [fetchPromises, growth]);
 
   return (
     <div
       className="flex flex-col items-center rounded-medium border
       border-[#303031] bg-[#111112] p-2 sm:p-5 lg:min-h-[30rem] xl:w-2/3"
     >
-      <h1 className="text-lg font-semibold text-white">Stars</h1>
+      <div className="relative w-full">
+        <h1 className="text-center text-lg font-semibold text-white">
+          {growth ? 'Stars Growth' : 'Stars Count'}
+        </h1>
+        <Switch
+          isSelected={growth}
+          onValueChange={setGrowth}
+          className="absolute right-0 top-0"
+        />
+      </div>
       {starDates && starsCount ? (
         <Line
           options={options}
