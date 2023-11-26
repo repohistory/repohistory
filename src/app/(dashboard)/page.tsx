@@ -3,16 +3,24 @@
 import RepoCard from '@/components/RepoCard';
 import { Image, Link } from '@nextui-org/react';
 
-import { fetchInstallationIds } from '@/utils/dbHelpers';
 import { cookies } from 'next/headers';
 import { app } from '@/utils/octokit';
 import supabase from '@/utils/supabase';
+import { Octokit } from 'octokit';
 
 export default async function Dashboard() {
   const repos: any[] = [];
   try {
-    const userId = cookies().get('user_id')?.value ?? '';
-    const installationIds = await fetchInstallationIds(userId);
+    const userOctokit = new Octokit({
+      auth: cookies().get('access_token')?.value ?? '',
+    });
+    const { data: installationData } = await userOctokit.request(
+      'GET /user/installations',
+    );
+    const installationIds = installationData.installations.map(
+      (installation: any) => installation.id,
+    );
+
     for (const installationId of installationIds) {
       await app.eachRepository({ installationId }, ({ repository }) => {
         repos.push(repository);
@@ -44,14 +52,16 @@ export default async function Dashboard() {
               : `More than ${limit} repositories selected`}
           </h1>
           <div className="mt-2">
-            Visit <Link
+            Visit{' '}
+            <Link
               underline="always"
               isExternal
               className="text-sm"
               href="https://github.com/apps/repohistory/installations/new"
             >
               GitHub App page
-            </Link> and follow the instructions.
+            </Link>{' '}
+            and follow the instructions.
           </div>
           <div className="flex gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-black">

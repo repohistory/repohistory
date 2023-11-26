@@ -6,9 +6,10 @@ import LineChart from '@/components/LineChart';
 import Overview from '@/components/Overview';
 import { cookies } from 'next/headers';
 import { app } from '@/utils/octokit';
-import { fetchInstallationIds } from '@/utils/dbHelpers';
 import supabase from '@/utils/supabase';
 import DoughnutChart from '@/components/DoughnutChart';
+import { Octokit } from 'octokit';
+import { redirect } from 'next/navigation';
 
 const colors = ['#62C3F8', '#4F9BC4', '#3A7391', '#264B5E'];
 
@@ -89,8 +90,15 @@ export default async function RepoPage({
     console.error('Error fetching traffic data:', error);
   }
 
-  const userId = cookies().get('user_id')?.value ?? '';
-  const installationIds = await fetchInstallationIds(userId);
+  const userOctokit = new Octokit({
+    auth: cookies().get('access_token')?.value ?? '',
+  });
+  const { data: installationData } = await userOctokit.request(
+    'GET /user/installations',
+  );
+  const installationIds = installationData.installations.map(
+    (installation: any) => installation.id,
+  );
 
   const fetchPromises: Promise<any>[] = [];
   let repo = null;
@@ -98,66 +106,57 @@ export default async function RepoPage({
     try {
       const octokit = await app.getInstallationOctokit(installationId);
 
-      const { data } = await octokit.request(`GET /repos/${fullName}`, {
-        headers: {
-          'X-GitHub-Api-Version': '2022-11-28',
-        },
-      });
+      const test = await octokit.request(`GET /installation/repositories`);
 
-      if (data) {
-        repo = data;
+      repo = test.data.repositories.find(
+        (repository: any) => repository.full_name === fullName,
+      );
 
-        const { data: sites } = await octokit.request(
-          `GET /repos/${repo.full_name}/traffic/popular/referrers`,
-          {
-            headers: {
-              'X-GitHub-Api-Version': '2022-11-28',
-            },
-          },
-        );
-        siteLabels = sites.slice(0, 4).map((site: any, index: number) => ({
-          name: site.referrer,
-          count: site.count,
-          uniques: site.uniques,
-          color: colors[index],
-        }));
-
-        const { data: contents } = await octokit.request(
-          `GET /repos/${repo.full_name}/traffic/popular/paths`,
-          {
-            headers: {
-              'X-GitHub-Api-Version': '2022-11-28',
-            },
-          },
-        );
-        contentLabels = contents
-          .slice(0, 4)
-          .map((content: any, index: number) => {
-            const truncatedTitle = content.title;
-            return {
-              name: truncatedTitle,
-              path: `https://github.com${content.path}`,
-              count: content.count,
-              uniques: content.uniques,
-              color: colors[index],
-            };
-          });
-
-        const totalStars = Math.ceil(repo.stargazers_count / 100);
-        for (let page = 1; page <= totalStars; page += 1) {
-          fetchPromises.push(
-            octokit.request(`GET /repos/${repo.full_name}/stargazers`, {
-              per_page: 100,
-              page,
-              headers: {
-                accept: 'application/vnd.github.v3.star+json',
-              },
-            }),
-          );
-        }
-
-        break;
+      if (!repo) {
+        // eslint-disable-next-line no-continue
+        continue;
       }
+
+      const { data: sites } = await octokit.request(
+        `GET /repos/${repo.full_name}/traffic/popular/referrers`,
+      );
+      siteLabels = sites.slice(0, 4).map((site: any, index: number) => ({
+        name: site.referrer,
+        count: site.count,
+        uniques: site.uniques,
+        color: colors[index],
+      }));
+
+      const { data: contents } = await octokit.request(
+        `GET /repos/${repo.full_name}/traffic/popular/paths`,
+      );
+      contentLabels = contents
+        .slice(0, 4)
+        .map((content: any, index: number) => {
+          const truncatedTitle = content.title;
+          return {
+            name: truncatedTitle,
+            path: `https://github.com${content.path}`,
+            count: content.count,
+            uniques: content.uniques,
+            color: colors[index],
+          };
+        });
+
+      const totalStars = Math.ceil(repo.stargazers_count / 100);
+      for (let page = 1; page <= totalStars; page += 1) {
+        fetchPromises.push(
+          octokit.request(`GET /repos/${repo.full_name}/stargazers`, {
+            per_page: 100,
+            page,
+            headers: {
+              accept: 'application/vnd.github.v3.star+json',
+            },
+          }),
+        );
+      }
+
+      break;
     } catch (error) {
       console.error(
         'Error fetching repository data for installation ID:',
@@ -165,6 +164,10 @@ export default async function RepoPage({
         error,
       );
     }
+  }
+
+  if (!repo) {
+    redirect('/');
   }
 
   return (
