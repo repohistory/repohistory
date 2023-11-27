@@ -1,11 +1,14 @@
 'use client';
 
-import processStarData from '@/utils/processStarsData';
 /* eslint-disable @typescript-eslint/no-loop-func */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 
+import { useEffect, useState } from 'react';
+import { Line } from 'react-chartjs-2';
 import { Switch } from '@nextui-org/react';
+import { lineOptions } from '@/utils/chartjs';
+import processStarData from '@/utils/processStarsData';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -17,8 +20,6 @@ import {
   Legend,
   Filler,
 } from 'chart.js';
-import { useEffect, useState } from 'react';
-import { Line } from 'react-chartjs-2';
 
 ChartJS.register(
   CategoryScale,
@@ -30,44 +31,6 @@ ChartJS.register(
   Legend,
   Filler,
 );
-
-const options = {
-  responsive: true,
-  scales: {
-    x: {
-      stacked: true,
-      grid: {
-        color: '#00000000',
-      },
-      ticks: {
-        maxTicksLimit: 5,
-      },
-    },
-    y: {
-      grid: {
-        color: '#202225',
-      },
-    },
-  },
-  plugins: {
-    tooltip: {
-      boxPadding: 2,
-      usePointStyle: true,
-      callbacks: {
-        labelColor(ctx: any) {
-          return {
-            borderColor: ctx.dataset.borderColor,
-            backgroundColor: ctx.dataset.borderColor,
-            borderWidth: 3,
-          };
-        },
-      },
-    },
-    legend: {
-      display: false,
-    },
-  },
-};
 
 export default function LineChart({
   fetchPromises,
@@ -111,7 +74,7 @@ export default function LineChart({
         />
       </div>
       <Line
-        options={options}
+        options={lineOptions}
         data={{
           labels: starsDates,
           datasets: [

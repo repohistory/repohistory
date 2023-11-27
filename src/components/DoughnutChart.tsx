@@ -1,34 +1,12 @@
 'use client';
 
+import { doughnutOptions } from '@/utils/chartjs';
 import { Chip } from '@nextui-org/react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import Link from 'next/link';
 import { Doughnut } from 'react-chartjs-2';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
-
-const options = {
-  responsive: true,
-  cutout: '60%',
-  plugins: {
-    tooltip: {
-      boxPadding: 2,
-      usePointStyle: true,
-      callbacks: {
-        labelColor(ctx: any) {
-          return {
-            borderColor: ctx.dataset.backgroundColor[ctx.dataIndex],
-            backgroundColor: ctx.dataset.backgroundColor[ctx.dataIndex],
-            borderWidth: 3,
-          };
-        },
-      },
-    },
-    legend: {
-      display: false,
-    },
-  },
-};
 
 interface Label {
   name: string;
@@ -84,7 +62,7 @@ export default function DoughnutChart({ title, labels }: Props) {
             </div>
           </div>
           <div className="relative z-10">
-            <Doughnut data={data} options={options} />
+            <Doughnut data={data} options={doughnutOptions} />
           </div>
         </div>
         <div
