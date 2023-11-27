@@ -3,8 +3,8 @@
 
 import { redirect } from 'next/navigation';
 import Overview from '@/components/Overview';
+import StarsChart from '@/components/StarsChart';
 import TrafficCharts from '@/components/TrafficCharts';
-import LineChart from '@/components/LineChart';
 import PopularCharts from '@/components/PopularCharts';
 import { app } from '@/utils/octokit';
 import getInstallationIds from '@/utils/getInstallationIds';
@@ -16,7 +16,6 @@ export default async function RepoPage({
 }) {
   const installationIds = await getInstallationIds();
   const fullName = `${params.fullName[0]}/${params.fullName[1]}`;
-  const fetchPromises: Promise<any>[] = [];
   let repo = null;
   let octokit = null;
 
@@ -34,21 +33,6 @@ export default async function RepoPage({
     }
   }
 
-  if (octokit && repo) {
-    const totalStars = Math.ceil(repo.stargazers_count / 100);
-    for (let page = 1; page <= totalStars; page += 1) {
-      fetchPromises.push(
-        octokit.request(`GET /repos/${repo.full_name}/stargazers`, {
-          per_page: 100,
-          page,
-          headers: {
-            accept: 'application/vnd.github.v3.star+json',
-          },
-        }),
-      );
-    }
-  }
-
   if (!repo) {
     redirect('/');
   }
@@ -57,7 +41,7 @@ export default async function RepoPage({
     <div className="flex flex-col items-center gap-5 px-5 py-5 sm:py-10 md:px-10 lg:px-20">
       <div className="flex w-full flex-col gap-5 xl:flex-row">
         <Overview repo={repo} />
-        <LineChart fetchPromises={fetchPromises} />
+        <StarsChart octokit={octokit} repo={repo} />
       </div>
       <div className="flex w-full flex-col gap-5 xl:flex-row">
         <TrafficCharts fullName={fullName} />
