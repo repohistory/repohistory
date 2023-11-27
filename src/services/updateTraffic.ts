@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
-import getRepos from '@/utils/getRepos';
-import { getLimit } from '@/utils/getLimit';
+import getRepos from '../utils/getRepos';
+import { getLimit } from '../utils/getLimit';
 import { app } from '../utils/octokit';
 import supabase from '../utils/supabase';
 
