@@ -2,35 +2,14 @@
 /* eslint-disable no-restricted-syntax */
 import RepoCard from '@/components/RepoCard';
 import { Image, Link } from '@nextui-org/react';
-
-import { cookies } from 'next/headers';
-import { app } from '@/utils/octokit';
-import supabase from '@/utils/supabase';
+import getRepos from '@/utils/getRepos';
 import getInstallationIds from '@/utils/getInstallationIds';
+import { getLimit } from '@/utils/getLimit';
 
 export default async function Dashboard() {
-  const repos: any[] = [];
-  try {
-    const installationIds = await getInstallationIds();
-    for (const installationId of installationIds) {
-      await app.eachRepository({ installationId }, ({ repository }) => {
-        repos.push(repository);
-      });
-    }
-    repos.sort((a, b) => b.stargazers_count - a.stargazers_count);
-  } catch (error) {
-    console.log(error);
-  }
-
-  const { data } = await supabase
-    .from('users')
-    .select('*')
-    .eq('github_user_id', cookies().get('user_id')?.value ?? '');
-
-  let limit = 2;
-  if (data && data.length > 0) {
-    limit = data[0].repository_limit;
-  }
+  const installationIds = await getInstallationIds();
+  const repos = await getRepos(installationIds);
+  const limit = await getLimit(installationIds[0]);
 
   let content;
   if (repos.length === 0 || repos.length > limit) {
@@ -92,9 +71,11 @@ export default async function Dashboard() {
   } else {
     content = (
       <div className="grid w-full gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {repos.map((repo: any) => (
-          <RepoCard repo={repo} key={repo.id} />
-        ))}
+        {repos
+          .sort((a, b) => b.stargazers_count - a.stargazers_count)
+          .map((repo: any) => (
+            <RepoCard repo={repo} key={repo.id} />
+          ))}
       </div>
     );
   }

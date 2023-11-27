@@ -1,35 +1,27 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
+import getRepos from '@/utils/getRepos';
+import { getLimit } from '@/utils/getLimit';
 import { app } from '../utils/octokit';
 import supabase from '../utils/supabase';
 
 export default async function updateTraffic(installationId: number) {
   const octokit = await app.getInstallationOctokit(installationId);
-  const repositories: any[] = [];
+  const repos = await getRepos([installationId]);
+  const limit = await getLimit(installationId);
 
-  await app.eachRepository({ installationId }, ({ repository }) => {
-    repositories.push(repository);
-  });
-
-  const { data, error } = await supabase
-    .from('users')
-    .select('*')
-    .eq('installation_id', installationId);
-
-  const limit = error ? 2 : data[0].repository_limit ?? 2;
-
-  if (repositories.length > limit) {
+  if (repos.length > limit) {
     return;
   }
 
-  for (const repository of repositories) {
-    console.log(repository.full_name);
+  for (const repo of repos) {
+    console.log(repo.full_name);
     const { data: viewsData } = await octokit.request(
-      `GET /repos/${repository.full_name}/traffic/views`,
+      `GET /repos/${repo.full_name}/traffic/views`,
     );
 
     const { data: clonesData } = await octokit.request(
-      `GET /repos/${repository.full_name}/traffic/clones`,
+      `GET /repos/${repo.full_name}/traffic/clones`,
     );
 
     // Insert or update views data
@@ -37,7 +29,7 @@ export default async function updateTraffic(installationId: number) {
       await supabase.from('repository_traffic').upsert(
         [
           {
-            full_name: repository.full_name,
+            full_name: repo.full_name,
             date: view.timestamp,
             views_count: view.count,
             unique_views_count: view.uniques,
@@ -54,7 +46,7 @@ export default async function updateTraffic(installationId: number) {
       await supabase.from('repository_traffic').upsert(
         [
           {
-            full_name: repository.full_name,
+            full_name: repo.full_name,
             date: clone.timestamp,
             clones_count: clone.count,
             unique_clones_count: clone.uniques,
