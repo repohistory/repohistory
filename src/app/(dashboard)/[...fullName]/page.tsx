@@ -1,25 +1,16 @@
 /* eslint-disable @typescript-eslint/no-loop-func */
 /* eslint-disable no-restricted-syntax */
 
-import BarChart from '@/components/BarChart';
-import LineChart from '@/components/LineChart';
+import { redirect } from 'next/navigation';
 import Overview from '@/components/Overview';
+import TrafficCharts from '@/components/TrafficCharts';
+import LineChart from '@/components/LineChart';
+import DoughnutChart from '@/components/DoughnutChart';
 import { app } from '@/utils/octokit';
 import supabase from '@/utils/supabase';
-import DoughnutChart from '@/components/DoughnutChart';
-import { redirect } from 'next/navigation';
 import getInstallationIds from '@/utils/getInstallationIds';
 
 const colors = ['#62C3F8', '#4F9BC4', '#3A7391', '#264B5E'];
-
-const datasets = (label: string, data: any[], color: string) => ({
-  label,
-  data,
-  backgroundColor: color,
-  borderRadius: 999,
-  barPercentage: 0.7,
-  maxBarThickness: 10,
-});
 
 export default async function RepoPage({
   params,
@@ -28,34 +19,13 @@ export default async function RepoPage({
 }) {
   const fullName = `${params.fullName[0]}/${params.fullName[1]}`;
 
-  let dates = [];
-  let viewsCounts = [];
-  let uniqueViewsCounts = [];
   let viewsTotal = 0;
-
-  let clonesCounts = [];
-  let uniqueClonesCounts = [];
   let clonesTotal = 0;
 
   let siteLabels = [];
   let contentLabels = [];
 
   try {
-    const { data: trafficData, error } = await supabase
-      .from('repository_traffic')
-      .select('*')
-      .eq('full_name', fullName)
-      .order('date', { ascending: true });
-
-    if (error) {
-      throw new Error(error.message);
-    }
-    dates = trafficData.map((item) => item.date);
-    viewsCounts = trafficData.map((item) => item.views_count);
-    uniqueViewsCounts = trafficData.map((item) => item.unique_views_count);
-    clonesCounts = trafficData.map((item) => item.clones_count);
-    uniqueClonesCounts = trafficData.map((item) => item.unique_clones_count);
-
     // Summing clones_count
     const clonesResponse = await supabase
       .from('repository_traffic')
@@ -172,30 +142,7 @@ export default async function RepoPage({
         <LineChart fetchPromises={fetchPromises} />
       </div>
       <div className="flex w-full flex-col gap-5 xl:flex-row">
-        <BarChart
-          title="Git Clones"
-          primaryLabel="Unique Cloners"
-          secondaryLabel="Clones"
-          data={{
-            labels: dates,
-            datasets: [
-              datasets('Unique Cloners', uniqueClonesCounts, '#62C3F8'),
-              datasets('Clones', clonesCounts, '#315C72'),
-            ],
-          }}
-        />
-        <BarChart
-          title="Visitors"
-          primaryLabel="Unique Visitors"
-          secondaryLabel="Views"
-          data={{
-            labels: dates,
-            datasets: [
-              datasets('Unique Visitors', uniqueViewsCounts, '#62C3F8'),
-              datasets('Views', viewsCounts, '#315C72'),
-            ],
-          }}
-        />
+        <TrafficCharts fullName={fullName} />
       </div>
       <div className="flex w-full flex-col gap-5 xl:flex-row">
         <DoughnutChart title="Referring Sites" labels={siteLabels} />
