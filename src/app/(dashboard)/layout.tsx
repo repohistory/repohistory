@@ -2,18 +2,15 @@ import { Navbar, Link } from '@nextui-org/react';
 import DropdownWrapper from '@/components/DropdownWrapper';
 import Path from '@/components/Path';
 import Image from 'next/image';
-import { cookies } from 'next/headers';
-import { Octokit } from 'octokit';
+import { getUserOctokit } from '@/utils/octokit';
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const octokit = new Octokit({
-    auth: cookies().get('access_token')?.value ?? '',
-  });
-  const { data: user } = await octokit.request('GET /user');
+  const userOctokit = await getUserOctokit();
+  const { data: user } = await userOctokit.request('GET /user');
 
   return (
     <>
