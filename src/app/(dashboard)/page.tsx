@@ -10,12 +10,11 @@ export default async function Dashboard() {
   const installationIds = await getInstallationIds();
   const repos = await getRepos(installationIds);
   const limit = await getLimit(installationIds[0]);
+  const isValidInstallation = repos.length > 0 && repos.length <= limit;
 
   return (
     <div className="flex w-full justify-center px-5 py-5 sm:py-10 md:px-10 lg:px-20 ">
-      {repos.length === 0 || repos.length > limit ? (
-        <Guide repos={repos} limit={limit} />
-      ) : (
+      {isValidInstallation ? (
         <div className="grid w-full gap-5 md:grid-cols-2 xl:grid-cols-3">
           {repos
             .sort((a, b) => b.stargazers_count - a.stargazers_count)
@@ -23,6 +22,8 @@ export default async function Dashboard() {
               <RepoCard repo={repo} key={repo.id} />
             ))}
         </div>
+      ) : (
+        <Guide repos={repos} limit={limit} />
       )}
     </div>
   );
