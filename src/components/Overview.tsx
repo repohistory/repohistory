@@ -1,17 +1,32 @@
 import Fork from '@/components/Icons/Fork';
 import Issue from '@/components/Icons/Issue';
 import Star from '@/components/Icons/Star';
+import supabase from '@/utils/supabase';
 import { Link } from '@nextui-org/react';
 
-export default async function Overview({
-  repo,
-  viewsTotal,
-  clonesTotal,
-}: {
-  repo: any;
-  viewsTotal: number;
-  clonesTotal: number;
-}) {
+export default async function Overview({ repo }: { repo: any }) {
+  const { data: clonesData, error: clonesError } = await supabase
+    .from('repository_traffic')
+    .select('*')
+    .eq('full_name', repo.full_name)
+    .order('date', { ascending: true })
+    .select('clones_count');
+
+  const clonesTotal = clonesError
+    ? 0
+    : clonesData.reduce((acc, row) => acc + row.clones_count, 0);
+
+  const { data: viewsData, error: viewsError } = await supabase
+    .from('repository_traffic')
+    .select('*')
+    .eq('full_name', repo.full_name)
+    .order('date', { ascending: true })
+    .select('views_count');
+
+  const viewsTotal = viewsError
+    ? 0
+    : viewsData.reduce((acc, row) => acc + row.views_count, 0);
+
   return (
     <div className="flex flex-col gap-5 xl:w-1/3">
       <div

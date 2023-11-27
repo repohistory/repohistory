@@ -7,7 +7,6 @@ import TrafficCharts from '@/components/TrafficCharts';
 import LineChart from '@/components/LineChart';
 import DoughnutChart from '@/components/DoughnutChart';
 import { app } from '@/utils/octokit';
-import supabase from '@/utils/supabase';
 import getInstallationIds from '@/utils/getInstallationIds';
 
 const colors = ['#62C3F8', '#4F9BC4', '#3A7391', '#264B5E'];
@@ -19,45 +18,8 @@ export default async function RepoPage({
 }) {
   const fullName = `${params.fullName[0]}/${params.fullName[1]}`;
 
-  let viewsTotal = 0;
-  let clonesTotal = 0;
-
   let siteLabels = [];
   let contentLabels = [];
-
-  try {
-    // Summing clones_count
-    const clonesResponse = await supabase
-      .from('repository_traffic')
-      .select('*')
-      .eq('full_name', fullName)
-      .order('date', { ascending: true })
-      .select('clones_count');
-
-    if (clonesResponse.error) {
-      throw new Error(clonesResponse.error.message);
-    }
-
-    const clonesData = clonesResponse.data;
-    clonesTotal = clonesData.reduce((acc, row) => acc + row.clones_count, 0);
-
-    // Summing views_count
-    const viewsResponse = await supabase
-      .from('repository_traffic')
-      .select('*')
-      .eq('full_name', fullName)
-      .order('date', { ascending: true })
-      .select('views_count');
-
-    if (viewsResponse.error) {
-      throw new Error(viewsResponse.error.message);
-    }
-
-    const viewsData = viewsResponse.data;
-    viewsTotal = viewsData.reduce((acc, row) => acc + row.views_count, 0);
-  } catch (error) {
-    console.error('Error fetching traffic data:', error);
-  }
 
   const installationIds = await getInstallationIds();
 
@@ -134,11 +96,7 @@ export default async function RepoPage({
   return (
     <div className="flex flex-col items-center gap-5 px-5 py-5 sm:py-10 md:px-10 lg:px-20">
       <div className="flex w-full flex-col gap-5 xl:flex-row">
-        <Overview
-          repo={repo}
-          viewsTotal={viewsTotal}
-          clonesTotal={clonesTotal}
-        />
+        <Overview repo={repo} />
         <LineChart fetchPromises={fetchPromises} />
       </div>
       <div className="flex w-full flex-col gap-5 xl:flex-row">
