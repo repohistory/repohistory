@@ -17,7 +17,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <Script src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`} />
+      <head>
+        <link
+          rel="manifest"
+          crossOrigin="use-credentials"
+          href="/manifest.json"
+        />
+      </head>
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
+      />
       <Script id="google-analytics">
         {`
           window.dataLayer = window.dataLayer || [];
@@ -27,7 +36,7 @@ export default function RootLayout({
         `}
       </Script>
       <body
-        className={`${inter.className} scrollbar-hide min-h-screen bg-[#0A0A0B] dark`}
+        className={`${inter.className} min-h-screen bg-[#0A0A0B] scrollbar-hide dark`}
       >
         <Providers>{children}</Providers>
       </body>
