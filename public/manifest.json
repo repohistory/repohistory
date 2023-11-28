@@ -5,8 +5,7 @@
   "theme_color": "#0a0a0b",
   "background_color": "#0a0a0b",
   "display": "standalone",
-  "orientation": "landscape",
-  "scope": "/",
+  "orientation": "portrait",
   "start_url": "/",
   "icons": [
     { "src": "icons/16x16.png", "sizes": "16x16", "type": "image/png" },
