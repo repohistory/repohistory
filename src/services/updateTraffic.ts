@@ -15,7 +15,7 @@ export default async function updateTraffic(installationId: number) {
   }
 
   for (const repo of repos) {
-    console.log(repo.full_name);
+    console.log(repo.full_name, 'start');
     const { data: viewsData } = await octokit.request(
       `GET /repos/${repo.full_name}/traffic/views`,
     );
@@ -57,5 +57,6 @@ export default async function updateTraffic(installationId: number) {
         },
       );
     }
+    console.log(repo.full_name, 'done');
   }
 }
