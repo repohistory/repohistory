@@ -1,4 +1,4 @@
-import { app } from '@/utils/octokit';
+import { app } from '../utils/octokit';
 import updateTraffic from './updateTraffic';
 
 export default function updateAllTraffic() {
