@@ -1,8 +1,6 @@
-async function loadAndUpdateAllTraffic() {
-  const { default: updateAllTraffic } = await import(
-    './services/updateAllTraffic'
-  );
-  updateAllTraffic();
-}
+import updateTraffic from './services/updateTraffic';
+import { app } from './utils/octokit';
 
-loadAndUpdateAllTraffic();
+app.eachInstallation(({ installation }) => {
+  updateTraffic(installation.id);
+});
