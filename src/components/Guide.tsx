@@ -38,7 +38,8 @@ export default function Guide({
             2
           </div>
           <span>
-            Select <b>at most {limit}</b> repositories you want to track
+            Select <b>at most {limit}</b> repositories you want to track.<br />
+            For more repositories, the paid plan is coming soon.
           </span>
         </div>
         <div className="flex gap-2">
