@@ -6,8 +6,8 @@ Welcome to Repohistory. We are committed to safeguarding the privacy of our user
 ## Data Collection and Use
 ### GitHub App Permissions: 
 - Repohistory uses GitHub Apps to interact with users' GitHub accounts. 
-- We request **read access to Metadata**, which allows us to access basic information about repositories, issues, pull requests, and more.
-- We also require **read access to Administration data** for accessing traffic data related to repositories.
+- We request **read access to [Metadata](https://docs.github.com/en/rest/overview/permissions-required-for-github-apps?apiVersion=2022-11-28#repository-permissions-for-metadata)**, which allows us to access basic information about repositories, issues, pull requests, and more.
+- We also require **read access to [Administration](https://docs.github.com/en/rest/overview/permissions-required-for-github-apps?apiVersion=2022-11-28#repository-permissions-for-administration)** for accessing traffic data related to repositories.
 
 ### Purpose of Data Collection:
 - The data accessed is solely for the purpose of providing our services, including but not limited to, analyzing repository history, traffic patterns, and offering insights.

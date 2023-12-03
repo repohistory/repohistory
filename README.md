@@ -22,23 +22,6 @@ GitHub's 14-day limit on repository data often leaves developers without vital l
 - 📈 **All-Time Stars History**: Visualize the growth of your repo with an all-time stars history graph.
 - 🖥️ **Dashboard Overview**: Easily access a dashboard view for an overview of all your projects.
 
-## ❓ FAQ
-
-<details>
-<summary><b>Q1: Why is there a limit of tracking only two repositories per user?</b></summary>
-We're using Supabase's free plan, which has certain usage limits. The two-repo limit helps us stay within these quotas. As Repohistory grows, we plan to revisit and potentially increase this limit based on our capacity and project's expansion.
-</details>
-
-<details>
-<summary><b>Q2: What permissions does Repohistory require on my GitHub account?</b></summary>
-Repohistory uses GitHub Apps to request specific permissions from users. We require read access to <a href="https://docs.github.com/en/rest/overview/permissions-required-for-github-apps?apiVersion=2022-11-28#repository-permissions-for-metadata">Metadata</a> for basic information, and read access to <a href="https://docs.github.com/en/rest/overview/permissions-required-for-github-apps?apiVersion=2022-11-28#repository-permissions-for-administration">Administration</a> for traffic data.
-</details>
-
-<details>
-<summary><b>Q3: Can Repohistory retrieve data older than 14 days?</b></summary>
-No, GitHub provides access to data only for the past 14 days. However, Repohistory will accumulate and make available data extending beyond the 14-day limit from your first login.
-</details>
-
 ## 📚 Stack
 
 - Language: `Typescript`
