@@ -5,9 +5,6 @@ async function logout(router: AppRouterInstance) {
   destroyCookie(null, 'access_token', {
     path: '/',
   });
-  destroyCookie(null, 'user_id', {
-    path: '/',
-  });
   router.push('/login');
 }
 
