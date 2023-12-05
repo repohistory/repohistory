@@ -2,7 +2,7 @@ name: Cron Job
 
 on:
   schedule:
-    - cron: '59 11,23 * * *'
+    - cron: '0 */8 * * *'
   workflow_dispatch:
 
 jobs:
