@@ -2063,10 +2063,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@octokit/app@^14.0.0":
-  version "14.0.1"
-  resolved "https://registry.yarnpkg.com/@octokit/app/-/app-14.0.1.tgz#86e4501bc2cf8335a4767079dda41273975cdd88"
-  integrity sha512-4opdXcWBVhzd6FOxlaxDKXXqi9Vz2hsDSWQGNo49HbYFAX11UqMpksMjEdfvHy0x19Pse8Nvn+R6inNb/V398w==
+"@octokit/app@^14.0.2":
+  version "14.0.2"
+  resolved "https://registry.yarnpkg.com/@octokit/app/-/app-14.0.2.tgz#b47c52020221351fb58640f113eb38b2ad3998fe"
+  integrity sha512-NCSCktSx+XmjuSUVn2dLfqQ9WIYePGP95SDJs4I9cn/0ZkeXcPkaoCLl64Us3dRKL2ozC7hArwze5Eu+/qt1tg==
   dependencies:
     "@octokit/auth-app" "^6.0.0"
     "@octokit/auth-unauthenticated" "^5.0.0"
@@ -2074,7 +2074,7 @@
     "@octokit/oauth-app" "^6.0.0"
     "@octokit/plugin-paginate-rest" "^9.0.0"
     "@octokit/types" "^12.0.0"
-    "@octokit/webhooks" "^12.0.1"
+    "@octokit/webhooks" "^12.0.4"
 
 "@octokit/auth-app@^6.0.0":
   version "6.0.1"
@@ -2290,10 +2290,10 @@
   resolved "https://registry.yarnpkg.com/@octokit/webhooks-types/-/webhooks-types-7.1.0.tgz#d533dea253416e02dd6c2bfab25e533295bd5d3f"
   integrity sha512-y92CpG4kFFtBBjni8LHoV12IegJ+KFxLgKRengrVjKmGE5XMeCuGvlfRe75lTRrgXaG6XIWJlFpIDTlkoJsU8w==
 
-"@octokit/webhooks@^12.0.1":
-  version "12.0.3"
-  resolved "https://registry.yarnpkg.com/@octokit/webhooks/-/webhooks-12.0.3.tgz#91f5df322e83b3b7d8bb9af5e692ffea16d6c8bb"
-  integrity sha512-8iG+/yza7hwz1RrQ7i7uGpK2/tuItZxZq1aTmeg2TNp2xTUB8F8lZF/FcZvyyAxT8tpDMF74TjFGCDACkf1kAQ==
+"@octokit/webhooks@^12.0.4":
+  version "12.0.10"
+  resolved "https://registry.yarnpkg.com/@octokit/webhooks/-/webhooks-12.0.10.tgz#3dcd3424ae4ff29b62b8fc8408b08c17b8178ece"
+  integrity sha512-Q8d26l7gZ3L1SSr25NFbbP0B431sovU5r0tIqcvy8Z4PrD1LBv0cJEjvDLOieouzPSTzSzufzRIeXD7S+zAESA==
   dependencies:
     "@octokit/request-error" "^5.0.0"
     "@octokit/webhooks-methods" "^4.0.0"
@@ -5910,12 +5910,12 @@ object.values@^1.1.7:
     define-properties "^1.2.0"
     es-abstract "^1.22.1"
 
-octokit@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/octokit/-/octokit-3.1.1.tgz#0f7941a4b287cb53b4e795ee75284438013f897c"
-  integrity sha512-AKJs5XYs7iAh7bskkYpxhUIpsYZdLqjnlnqrN5s9FFZuJ/a6ATUHivGpUKDpGB/xa+LGDtG9Lu8bOCfPM84vHQ==
+octokit@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/octokit/-/octokit-3.1.2.tgz#e574e4f2f5f8712e10412ce81fb56a74c93d4cfa"
+  integrity sha512-MG5qmrTL5y8KYwFgE1A4JWmgfQBaIETE/lOlfwNYx1QOtCQHGVxkRJmdUJltFc1HVn73d61TlMhMyNTOtMl+ng==
   dependencies:
-    "@octokit/app" "^14.0.0"
+    "@octokit/app" "^14.0.2"
     "@octokit/core" "^5.0.0"
     "@octokit/oauth-app" "^6.0.0"
     "@octokit/plugin-paginate-graphql" "^4.0.0"
