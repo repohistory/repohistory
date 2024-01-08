@@ -6,8 +6,6 @@
     </picture>
     Repohistory is an open-source dashboard for tracking GitHub repo traffic history longer than 14 days, with a sleek UI for comprehensive long-term data insights.
     </b>
-  <br /><br />
-  <a href="https://www.producthunt.com/posts/repohistory?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-repohistory" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=433138&theme=light" alt="Repohistory - Track&#0032;GitHub&#0032;repo&#0032;traffic&#0032;history&#0032;longer&#0032;than&#0032;14&#0032;days&#0046; | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 </p>
 
 ![github](https://github.com/repohistory/repohistory/assets/74842863/6bbceee7-fb6f-4eba-8665-4b1106883a3c)
