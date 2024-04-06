@@ -6,7 +6,7 @@ import * as crypto from 'crypto';
 
 const verifySignature = async (body: any, sig: any) => {
   const signature = crypto
-    .createHmac('sha256', process.env.GITHUB_APP_WEBHOOK_SECRET)
+    .createHmac('sha256', process.env.APP_WEBHOOK_SECRET)
     .update(JSON.stringify(body))
     .digest('hex');
 
