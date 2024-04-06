@@ -4,11 +4,9 @@ import updateTraffic from '@/services/updateTraffic';
 import { headers } from 'next/headers';
 import * as crypto from 'crypto';
 
-const WEBHOOK_SECRET = process.env.NEXT_PUBLIC_GITHUB_WEBHOOK_SECRET;
-
 const verifySignature = async (body: any, sig: any) => {
   const signature = crypto
-    .createHmac('sha256', WEBHOOK_SECRET)
+    .createHmac('sha256', process.env.GITHUB_APP_WEBHOOK_SECRET)
     .update(JSON.stringify(body))
     .digest('hex');
 

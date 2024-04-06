@@ -39,7 +39,7 @@ export default function LoginButton({ code }: { code: string | null }) {
       size="lg"
       as={Link}
       href={`https://github.com/login/oauth/authorize?${new URLSearchParams({
-        client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
+        client_id: process.env.NEXT_PUBLIC_GITHUB_APP_CLIENT_ID,
         redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL}/login`,
       })}`}
     >
