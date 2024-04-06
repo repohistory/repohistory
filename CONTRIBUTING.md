@@ -24,14 +24,14 @@ Repohistory fetch repository data through GitHub Apps. You need to register a ne
 5. Run Supabase: `npx supabase start`
 6. Create `.env.local` file with following content:
 ```text
-GITHUB_APP_ID="your app id when you create a GitHub App"
-NEXT_PUBLIC_GITHUB_APP_CLIENT_ID="your app client id when you create a GitHub App"
-GITHUB_APP_CLIENT_SECRET="your app client secret when you create a GitHub App"
-GITHUB_APP_WEBHOOK_SECRET="your app webhook secret when you create a GitHub App"
-GITHUB_APP_PRIVATE_KEY="-----BEGIN PRIVATE KEY....END PRIVATE KEY----"
+APP_ID="your app id when you create a GitHub App"
+NEXT_PUBLIC_APP_CLIENT_ID="your app client id when you create a GitHub App"
+APP_CLIENT_SECRET="your app client secret when you create a GitHub App"
+APP_WEBHOOK_SECRET="your app webhook secret when you create a GitHub App"
+APP_PRIVATE_KEY="-----BEGIN PRIVATE KEY....END PRIVATE KEY----"
 NEXT_PUBLIC_SITE_URL="http://127.0.0.1:3000"
-NEXT_PUBLIC_SUPABASE_URL="API URL from step 5 output"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="anon key from step 5 output"
+SUPABASE_URL="API URL from step 5 output"
+SUPABASE_ANON_KEY="anon key from step 5 output"
 ```
 
 Note that `GITHUB_APP_PRIVATE_KEY` should be in `PKCS#8` format. You can convert the key using the following command:
