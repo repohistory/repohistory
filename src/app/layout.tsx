@@ -3,6 +3,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Providers from '@/app/providers';
+import PlausibleProvider from 'next-plausible';
 
 export const metadata: Metadata = {
   title: 'Repohistory',
@@ -218,6 +219,7 @@ export default function RootLayout({
           media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
           href="splash_screens/iPhone_13_mini__iPhone_12_mini__iPhone_11_Pro__iPhone_XS__iPhone_X_portrait.png"
         />
+        <PlausibleProvider domain="app.repohistory.com" />
       </head>
       <body
         className={`${inter.className} min-h-screen bg-[#0A0A0B] scrollbar-hide dark`}
