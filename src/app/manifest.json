@@ -1,0 +1,24 @@
+{
+  "name": "Repohistory",
+  "short_name": "Repohistory",
+  "description": "An open-source dashboard for tracking GitHub repo traffic history longer than 14 days.",
+  "theme_color": "#0a0a0b",
+  "background_color": "#0a0a0b",
+  "display": "standalone",
+  "orientation": "landscape",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/icons/maskable_icon_x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/general_icon_x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
