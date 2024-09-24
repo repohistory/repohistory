@@ -7,6 +7,17 @@ import supabase from '../utils/supabase';
 
 export default async function updateTraffic(installationId: number) {
   const octokit = await app.getInstallationOctokit(installationId);
+
+  const {
+    data: { suspended_at },
+  } = await octokit.rest.apps.getInstallation({
+    installation_id: installationId,
+  });
+
+  if (suspended_at) {
+    return;
+  }
+
   const repos = await getRepos([installationId]);
   const limit = await getLimit(installationId);
 
