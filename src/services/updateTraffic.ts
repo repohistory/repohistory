@@ -9,12 +9,12 @@ export default async function updateTraffic(installationId: number) {
   const octokit = await app.getInstallationOctokit(installationId);
 
   const {
-    data: { suspended_at },
+    data: { suspended_at: suspendedAt },
   } = await octokit.rest.apps.getInstallation({
     installation_id: installationId,
   });
 
-  if (suspended_at) {
+  if (suspendedAt) {
     return;
   }
 
