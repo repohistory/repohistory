@@ -5,10 +5,6 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const path = url.pathname;
 
-  if (path.startsWith('/_next/') || path.startsWith('/images/')) {
-    return NextResponse.next();
-  }
-
   const hasAccessToken = request.cookies.get('access_token');
 
   if (hasAccessToken && path.startsWith('/login')) {
@@ -25,3 +21,9 @@ export function middleware(request: NextRequest) {
 
   return NextResponse.next();
 }
+
+export const config = {
+  matcher: [
+    '/((?!_next/static|_next/image|.*\\..*|favicon.ico).*)',
+  ],
+};
