@@ -44,7 +44,7 @@ export default function BarChart({
     for (let i = 0; i < data.labels.length!; i += 1) {
       const ithData: Record<string, any> = {};
       data.datasets.forEach((dataset) => {
-        ithData[dataset.label] = data.datasets[i].data;
+        ithData[dataset.label] = dataset.data[i];
       });
       downloadableData[data.labels[i]] = ithData;
     }
