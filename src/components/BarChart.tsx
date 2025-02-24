@@ -54,44 +54,43 @@ export default function BarChart({
       className="flex flex-col items-center rounded-medium
         border border-[#303031] bg-[#111112] p-2 sm:p-5 xl:w-1/2"
     >
-      <h1 className="text-lg font-semibold text-white">{title}</h1>
-      {data ? (
-        <Bar options={barOptions} data={data} />
-      ) : (
-        <Spinner color="primary" className="py-10" />
-      )}
-      <div className="relative mt-1 w-full">
-        <div className="flex justify-center gap-3">
-          <Chip
-            color="primary"
-            variant="dot"
-            classNames={{
-              base: 'border border-[#303031]',
-            }}
-          >
-            {primaryLabel}
-          </Chip>
-          <Chip
-            color="secondary"
-            variant="dot"
-            classNames={{
-              base: 'border border-[#303031]',
-            }}
-          >
-            {secondaryLabel}
-          </Chip>
-        </div>
+      <div className="relative flex w-full justify-center text-lg font-semibold text-white">
+        <h1>{title}</h1>
         <Link
           href={`data:text/json;charset=utf-8,${encodeURIComponent(
             JSON.stringify(downloadableData),
           )}`}
           download="repo-data.json"
           isBlock
-          className="items-right absolute right-0 flex gap-2 text-white"
+          className="absolute right-0 text-xl text-white"
         >
           <Download />
-          Download raw data
         </Link>
+      </div>
+      {data ? (
+        <Bar options={barOptions} data={data} />
+      ) : (
+        <Spinner color="primary" className="py-10" />
+      )}
+      <div className="mt-1 flex justify-center gap-3">
+        <Chip
+          color="primary"
+          variant="dot"
+          classNames={{
+            base: 'border border-[#303031]',
+          }}
+        >
+          {primaryLabel}
+        </Chip>
+        <Chip
+          color="secondary"
+          variant="dot"
+          classNames={{
+            base: 'border border-[#303031]',
+          }}
+        >
+          {secondaryLabel}
+        </Chip>
       </div>
     </div>
   );
