@@ -71,7 +71,7 @@ export default function BarChart({
     downloadableJsonData[Object.keys(downloadableJsonData)[0]],
   );
   Object.keys(downloadableJsonData).forEach((date: string) => {
-    downloadableCsvData += `${date}`;
+    downloadableCsvData += `'${date}'`;
     keys.forEach((key) => {
       downloadableCsvData += `,${downloadableJsonData[date][key]}`;
     });
