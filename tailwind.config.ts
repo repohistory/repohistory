@@ -1,3 +1,4 @@
+import { heroui } from '@heroui/theme';
 const { nextui } = require('@nextui-org/react');
 
 /** @type {import('tailwindcss').Config} */
@@ -5,17 +6,13 @@ module.exports = {
   content: [
     './src/**/*.{js,ts,jsx,tsx,mdx}',
     './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
+    './node_modules/@heroui/theme/dist/components/(button|dropdown|ripple|spinner|menu|divider|popover).js',
   ],
-  safelist: [
-    'bg-[#62C3F8]',
-    'bg-[#4F9BC4]',
-    'bg-[#3A7391]',
-    'bg-[#264B5E]',
-  ],
+  safelist: ['bg-[#62C3F8]', 'bg-[#4F9BC4]', 'bg-[#3A7391]', 'bg-[#264B5E]'],
   theme: {
     extend: {
       backgroundImage: {
-        'login': "url('../../public/images/bg2.png')",
+        login: "url('../../public/images/bg2.png')",
       },
     },
   },
@@ -42,5 +39,6 @@ module.exports = {
         },
       },
     }),
+    heroui(),
   ],
 };
