@@ -8,5 +8,5 @@ export async function getLimit(installationId: number) {
     .select('*')
     .eq('installation_id', installationId);
 
-  return error ? 2 : data[0].repository_limit ?? 2;
+  return error ? 2 : data[0]?.repository_limit ?? 2;
 }
