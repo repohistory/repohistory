@@ -1,36 +1,36 @@
-<p align="center">
-  <b>
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/repohistory/repohistory/assets/74842863/f6e17fa3-3b2a-4032-a869-d3ca560ff522">
-      <img alt="Slogan banner: Effortless Tracking Timeless Insights." src="https://github.com/repohistory/repohistory/assets/74842863/3b321e1e-c8de-4aa8-928e-a73d382e197d">
-    </picture>
-    Repohistory is an open-source dashboard for tracking GitHub repo traffic history longer than 14 days, with a sleek UI for comprehensive long-term data insights.
-    </b>
-</p>
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-![github](https://github.com/repohistory/repohistory/assets/74842863/6bbceee7-fb6f-4eba-8665-4b1106883a3c)
+## Getting Started
 
-Find out more at https://repohistory.com
+First, run the development server:
 
-## 🎯 Motivation
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-GitHub's 14-day limit on repository data often leaves developers without vital long-term insights. Repohistory addresses this by offering an easy-to-setup, beautifully designed interface for extended repository tracking. This gives developers a powerful tool to analyze trends and progress over time, not just a brief snapshot.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## ✨ Features
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-- 📊 **Data Tracking**: Start tracking clones and views data from your first login.
-- 📈 **All-Time Stars History**: Visualize the growth of your repo with an all-time stars history graph.
-- 🖥️ **Dashboard Overview**: Easily access a dashboard view for an overview of all your projects.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## 📚 Stack
+## Learn More
 
-- Language: `Typescript`
-- UI: `Tailwind CSS`, `NextUI`
-- Front-End: `Next.js (App Router)`
-- Database: `Supabase`
-- Auth / Permission: `GitHub Apps`
-- Cron Job: `GitHub Action`
+To learn more about Next.js, take a look at the following resources:
 
-## 🦾 Contributing
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-All contributions are welcome! Just open a pull request.
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
