@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { GitHub } from "@/components/icons";
+import { signin } from "@/actions/auth";
 
 export default function SignInPage() {
   return (
@@ -19,7 +20,7 @@ export default function SignInPage() {
             Repohistory
           </h1>
         </div>
-        <Button>
+        <Button className="w-full" onClick={signin}>
           <GitHub />
           Continue with GitHub
         </Button>
