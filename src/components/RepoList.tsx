@@ -1,15 +1,20 @@
-import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { Octokit } from "octokit";
 import { getRepos } from "@/utils/octokit/get-repos";
 import { Repo } from "@/types";
 import { RepoCard } from "@/components/repo-card";
 
 export async function RepoList() {
-  const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const cookieStore = await cookies();
+  const providerToken = cookieStore.get('provider_token')?.value;
+
+  if (!providerToken) {
+    redirect("/signin");
+  }
 
   const octokit = new Octokit({
-    auth: session?.provider_token
+    auth: providerToken
   });
 
   const repos = await getRepos(octokit);

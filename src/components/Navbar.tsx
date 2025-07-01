@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { User } from "@supabase/supabase-js";
-import { Path } from "./Path";
 import { DropdownWrapper } from "./DropdownWrapper";
 
 interface NavbarProps {
@@ -21,7 +20,6 @@ export function Navbar({ user }: NavbarProps) {
             unoptimized
           />
         </Link>
-        <Path />
         <DropdownWrapper user={user} />
       </div>
     </nav>
