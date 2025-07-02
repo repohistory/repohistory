@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { Octokit } from "octokit";
 import { StarsChart } from "@/components/StarsChart";
@@ -8,10 +7,10 @@ import { ViewChart } from "@/components/ViewChart";
 import { CloneChart } from "@/components/CloneChart";
 import { PopularCharts } from "@/components/PopularCharts";
 import { getRepoOverview, getRepoTraffic, getRepoStars } from "@/utils/repoData";
+import { getValidProviderToken } from "@/utils/auth/refresh-token";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ExternalLink, FileText, Star, GitFork, AlertCircle, Eye, Download } from "lucide-react";
+import { ExternalLink, FileText } from "lucide-react";
 
 interface PageProps {
   params: Promise<{
@@ -35,12 +34,7 @@ export default async function RepoPage({ params }: PageProps) {
     redirect("/signin");
   }
 
-  const cookieStore = await cookies();
-  const providerToken = cookieStore.get('provider_token')?.value;
-
-  if (!providerToken) {
-    redirect("/signin");
-  }
+  const providerToken = await getValidProviderToken();
 
   const octokit = new Octokit({
     auth: providerToken
@@ -66,21 +60,6 @@ export default async function RepoPage({ params }: PageProps) {
     ) : null;
   }
 
-  async function RepoStatWrapper({ index }: { index: number }) {
-    const [owner, repo] = fullName.split("/");
-    const overview = await getRepoOverview(octokit, owner, repo);
-    const traffic = await getRepoTraffic(octokit, await createClient(), fullName);
-    
-    const stats = [
-      overview.stars.toLocaleString(),
-      overview.forks.toLocaleString(),
-      overview.issues.toLocaleString(),
-      traffic.views.count.toLocaleString(),
-      traffic.clones.count.toLocaleString(),
-    ];
-
-    return <div className="text-2xl font-bold">{stats[index]}</div>;
-  }
 
   async function StarsChartWrapper() {
     const [owner, repo] = fullName.split("/");
@@ -98,18 +77,12 @@ export default async function RepoPage({ params }: PageProps) {
     return <CloneChart traffic={traffic} />;
   }
 
+
   async function PopularChartsWrapper() {
     const traffic = await getRepoTraffic(octokit, await createClient(), fullName);
     return <PopularCharts traffic={traffic} />;
   }
 
-  const statsConfig = [
-    { title: "Stars", icon: Star },
-    { title: "Forks", icon: GitFork },
-    { title: "Issues", icon: AlertCircle },
-    { title: "Views", icon: Eye },
-    { title: "Clones", icon: Download },
-  ];
 
   return (
     <div className="container mx-auto p-4 space-y-6">
@@ -120,83 +93,19 @@ export default async function RepoPage({ params }: PageProps) {
             <RepoDescriptionWrapper />
           </Suspense>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {statsConfig.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <Card key={stat.title}>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    {stat.title}
-                  </CardTitle>
-                  <Icon className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <Suspense fallback={<Skeleton className="h-8 w-16" />}>
-                    <RepoStatWrapper index={index} />
-                  </Suspense>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
       </div>
 
-      <Card>
-        <Suspense fallback={
-          <>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Stars Over Time</CardTitle>
-                <CardDescription>
-                  Repository star growth
-                </CardDescription>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" disabled>
-                  Cumulative
-                </Button>
-                <Button variant="outline" size="sm" disabled>
-                  Daily
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-64 w-full" />
-            </CardContent>
-          </>
-        }>
-          <StarsChartWrapper />
-        </Suspense>
-      </Card>
+      <Suspense fallback={<Skeleton className="h-80 w-full" />}>
+        <StarsChartWrapper />
+      </Suspense>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Repository Views</CardTitle>
-          <CardDescription>
-            Daily views and unique visitors
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Suspense fallback={<Skeleton className="h-64 w-full" />}>
-            <ViewChartWrapper />
-          </Suspense>
-        </CardContent>
-      </Card>
+      <Suspense fallback={<Skeleton className="h-80 w-full" />}>
+        <ViewChartWrapper />
+      </Suspense>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Repository Clones</CardTitle>
-          <CardDescription>
-            Daily clones and unique cloners
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Suspense fallback={<Skeleton className="h-64 w-full" />}>
-            <CloneChartWrapper />
-          </Suspense>
-        </CardContent>
-      </Card>
+      <Suspense fallback={<Skeleton className="h-80 w-full" />}>
+        <CloneChartWrapper />
+      </Suspense>
 
       <Card>
         <Suspense fallback={

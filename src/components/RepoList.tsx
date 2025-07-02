@@ -1,17 +1,11 @@
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 import { Octokit } from "octokit";
 import { getRepos } from "@/utils/octokit/get-repos";
 import { Repo } from "@/types";
 import { RepoCard } from "@/components/repo-card";
+import { getValidProviderToken } from "@/utils/auth/refresh-token";
 
 export async function RepoList() {
-  const cookieStore = await cookies();
-  const providerToken = cookieStore.get('provider_token')?.value;
-
-  if (!providerToken) {
-    redirect("/signin");
-  }
+  const providerToken = await getValidProviderToken();
 
   const octokit = new Octokit({
     auth: providerToken

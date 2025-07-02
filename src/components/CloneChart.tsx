@@ -1,7 +1,10 @@
 "use client";
 
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { Bar, BarChart, XAxis, YAxis } from "recharts";
+import { useMemo, useState, useCallback } from "react";
+import { Area } from "recharts";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartConfig } from "@/components/ui/chart";
+import { ZoomableChart } from "@/components/ZoomableChart";
 import { RepoTrafficData } from "@/utils/repoData";
 
 interface CloneChartProps {
@@ -20,60 +23,89 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function CloneChart({ traffic }: CloneChartProps) {
-  const clonesData = traffic.clones.clones.map((item) => ({
-    date: new Date(item.timestamp).toLocaleDateString(),
+  const [zoomedData, setZoomedData] = useState<Array<{ date: string; unique: number; total: number }>>([]);
+  
+  const data = useMemo(() => traffic.clones.clones.map((item) => ({
+    date: item.timestamp,
     unique: item.uniques,
     total: item.count,
-  }));
+  })), [traffic.clones.clones]);
+
+  const handleDataChange = useCallback((newZoomedData: Array<{ date: string; [key: string]: string | number }>) => {
+    setZoomedData(newZoomedData as Array<{ date: string; unique: number; total: number }>);
+  }, []);
+
+  const totalClones = useMemo(() => {
+    const dataToUse = zoomedData.length > 0 ? zoomedData : data;
+    return dataToUse.reduce((acc, curr) => acc + curr.total, 0);
+  }, [zoomedData, data]);
 
   return (
-    <ChartContainer config={chartConfig} className="h-64 w-full">
-      <BarChart
-        data={clonesData}
-        margin={{
-          left: 12,
-          right: 12,
-        }}
-        barCategoryGap="10%"
-        barGap={4}
-        syncMethod="index"
-      >
-        <Bar
-          barSize={50}
-          dataKey="total"
-          fill="var(--color-total)"
-          radius={[4, 4, 0, 0]}
-        />
-        <Bar
-          barSize={30}
-          dataKey="unique"
-          fill="var(--color-unique)"
-          radius={[4, 4, 0, 0]}
-        />
-        <XAxis 
-          dataKey="date"
-          tickLine={false}
-          axisLine={false}
-          tickMargin={8}
-          tickFormatter={(value) => {
-            const date = new Date(value);
-            return date.toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-            });
-          }}
-        />
-        <YAxis
-          tickLine={false}
-          axisLine={false}
-          tickMargin={8}
-          tickFormatter={(value) => value.toLocaleString()}
-        />
-        <ChartTooltip
-          cursor={false}
-          content={<ChartTooltipContent indicator="dashed" />}
-        />
-      </BarChart>
-    </ChartContainer>
+    <Card className="w-full">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b">
+        <div className="flex flex-1 flex-col justify-center gap-1">
+          <CardTitle>Repository Clones</CardTitle>
+          <CardDescription>
+            Daily clones and unique cloners
+          </CardDescription>
+        </div>
+        <div className="flex flex-col items-end gap-1">
+          <span className="text-xs text-muted-foreground">
+            Total Clones
+          </span>
+          <span className="text-lg font-bold leading-none sm:text-3xl">
+            {totalClones.toLocaleString()}
+          </span>
+        </div>
+      </CardHeader>
+      <CardContent className="px-2 sm:p-6">
+        <ZoomableChart data={data} chartConfig={chartConfig} className="h-64 w-full" onDataChange={handleDataChange}>
+          <defs>
+            <linearGradient id="fillTotalClone" x1="0" y1="0" x2="0" y2="1">
+              <stop
+                offset="5%"
+                stopColor="var(--color-total)"
+                stopOpacity={0.8}
+              />
+              <stop
+                offset="95%"
+                stopColor="var(--color-total)"
+                stopOpacity={0.1}
+              />
+            </linearGradient>
+            <linearGradient id="fillUniqueClone" x1="0" y1="0" x2="0" y2="1">
+              <stop
+                offset="5%"
+                stopColor="var(--color-unique)"
+                stopOpacity={0.8}
+              />
+              <stop
+                offset="95%"
+                stopColor="var(--color-unique)"
+                stopOpacity={0.1}
+              />
+            </linearGradient>
+          </defs>
+          <Area
+            dataKey="total"
+            type="monotone"
+            fill="url(#fillTotalClone)"
+            fillOpacity={1}
+            stroke="var(--color-total)"
+            strokeWidth={2}
+            isAnimationActive={false}
+          />
+          <Area
+            dataKey="unique"
+            type="monotone"
+            fill="url(#fillUniqueClone)"
+            fillOpacity={1}
+            stroke="var(--color-unique)"
+            strokeWidth={2}
+            isAnimationActive={false}
+          />
+        </ZoomableChart>
+      </CardContent>
+    </Card>
   );
 }
