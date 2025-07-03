@@ -3,7 +3,7 @@ import { ViewChart } from "./view-chart";
 import { CloneChart } from "./clone-chart";
 import { ReferrersChart } from "./referrers-chart";
 import { PopularContentChart } from "./popular-content-chart";
-import { getRepoStars, getRepoTraffic, getTopReferrers, getTopPaths } from "@/utils/repo";
+import { getRepoStars, getRepoViews, getRepoClones, getTopReferrers, getTopPaths } from "@/utils/repo";
 import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
 import { createClient } from "@/utils/supabase/server";
 
@@ -26,8 +26,9 @@ interface ViewChartWrapperProps {
 }
 
 export async function ViewChartWrapper({ fullName }: ViewChartWrapperProps) {
-  const traffic = await getRepoTraffic(await createClient(), fullName);
-  return <ViewChart traffic={traffic} />;
+  const octokit = await getUserOctokit();
+  const views = await getRepoViews(octokit, await createClient(), fullName);
+  return <ViewChart traffic={{ views }} />;
 }
 
 interface CloneChartWrapperProps {
@@ -35,8 +36,9 @@ interface CloneChartWrapperProps {
 }
 
 export async function CloneChartWrapper({ fullName }: CloneChartWrapperProps) {
-  const traffic = await getRepoTraffic(await createClient(), fullName);
-  return <CloneChart traffic={traffic} />;
+  const octokit = await getUserOctokit();
+  const clones = await getRepoClones(octokit, await createClient(), fullName);
+  return <CloneChart traffic={{ clones }} />;
 }
 
 interface ReferrersChartWrapperProps {

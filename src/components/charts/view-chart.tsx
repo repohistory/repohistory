@@ -5,10 +5,18 @@ import { Area } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig } from "@/components/ui/chart";
 import { ZoomableChart } from "./zoomable-chart";
-import { RepoTrafficData } from "@/utils/repo";
-
 interface ViewChartProps {
-  traffic: RepoTrafficData;
+  traffic: {
+    views: {
+      count: number;
+      uniques: number;
+      views: Array<{
+        timestamp: string;
+        count: number;
+        uniques: number;
+      }>;
+    };
+  };
 }
 
 const chartConfig = {

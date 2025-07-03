@@ -1,38 +1,6 @@
 import { Octokit } from "octokit";
 import { createClient } from "@/utils/supabase/server";
 
-export interface RepoTrafficData {
-  views: {
-    count: number;
-    uniques: number;
-    views: Array<{
-      timestamp: string;
-      count: number;
-      uniques: number;
-    }>;
-  };
-  clones: {
-    count: number;
-    uniques: number;
-    clones: Array<{
-      timestamp: string;
-      count: number;
-      uniques: number;
-    }>;
-  };
-  referrers: Array<{
-    referrer: string;
-    count: number;
-    uniques: number;
-  }>;
-  paths: Array<{
-    path: string;
-    title: string;
-    count: number;
-    uniques: number;
-  }>;
-}
-
 export interface RepoStarsData {
   totalStars: number;
   starsHistory: Array<{
@@ -107,65 +75,127 @@ export async function getTopPaths(
   }
 }
 
-export async function getRepoTraffic(
+export async function getRepoViews(
+  octokit: Octokit,
   supabase: Awaited<ReturnType<typeof createClient>>,
   fullName: string
-): Promise<RepoTrafficData> {
+): Promise<{ count: number; uniques: number; views: Array<{ timestamp: string; count: number; uniques: number }> }> {
   try {
-    // Get historical traffic data from Supabase
-    const { data: trafficData, error } = await supabase
-      .from('repository_traffic')
-      .select('*')
-      .eq('full_name', fullName)
-      .order('date', { ascending: true });
+    const [owner, repo] = fullName.split("/");
 
-    if (error) {
-      console.error("Error fetching traffic data from Supabase:", error);
+    // Fetch data from both sources in parallel
+    const [supabaseResult, githubResult] = await Promise.allSettled([
+      supabase
+        .from('repository_traffic')
+        .select('date, views_count, unique_views_count')
+        .eq('full_name', fullName)
+        .order('date', { ascending: true }),
+      octokit.rest.repos.getViews({ owner, repo })
+    ]);
+
+    // Process Supabase data
+    const supabaseData = supabaseResult.status === 'fulfilled' && supabaseResult.value.data || [];
+    if (supabaseResult.status === 'rejected') {
+      console.error("Error fetching views from Supabase:", supabaseResult.reason);
     }
 
-    const traffic = trafficData || [];
+    // Process GitHub data
+    const githubData = githubResult.status === 'fulfilled'
+      ? githubResult.value.data.views?.map(item => ({
+        date: item.timestamp.split('T')[0],
+        count: item.count,
+        uniques: item.uniques,
+      })) || []
+      : [];
 
-    // Calculate totals
-    const totalViews = traffic.reduce((sum, item) => sum + (item.views_count || 0), 0);
-    const totalUniqueViews = traffic.reduce((sum, item) => sum + (item.unique_views_count || 0), 0);
-    const totalClones = traffic.reduce((sum, item) => sum + (item.clones_count || 0), 0);
-    const totalUniqueClones = traffic.reduce((sum, item) => sum + (item.unique_clones_count || 0), 0);
+    if (githubResult.status === 'rejected') {
+      console.error("Error fetching views from GitHub API:", githubResult.reason);
+    }
 
-    // Format data for charts
-    const views = traffic.map(item => ({
-      timestamp: item.date,
-      count: item.views_count || 0,
-      uniques: item.unique_views_count || 0,
-    }));
+    // Merge data: GitHub overrides Supabase for matching dates
+    const dataMap = new Map(
+      supabaseData.map(item => [
+        item.date,
+        { timestamp: item.date, count: item.views_count || 0, uniques: item.unique_views_count || 0 }
+      ])
+    );
 
-    const clones = traffic.map(item => ({
-      timestamp: item.date,
-      count: item.clones_count || 0,
-      uniques: item.unique_clones_count || 0,
-    }));
+    // Override with GitHub data (more precise for recent dates)
+    githubData.forEach(item => {
+      dataMap.set(item.date, { timestamp: item.date, count: item.count, uniques: item.uniques });
+    });
 
-    return {
-      views: {
-        count: totalViews,
-        uniques: totalUniqueViews,
-        views,
-      },
-      clones: {
-        count: totalClones,
-        uniques: totalUniqueClones,
-        clones,
-      },
-      referrers: [],
-      paths: [],
-    };
+    // Convert to sorted array and calculate totals
+    const views = Array.from(dataMap.values()).sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+    const count = views.reduce((sum, item) => sum + item.count, 0);
+    const uniques = views.reduce((sum, item) => sum + item.uniques, 0);
+
+    return { count, uniques, views };
   } catch (error) {
-    console.error("Error fetching traffic data:", error);
-    return {
-      views: { count: 0, uniques: 0, views: [] },
-      clones: { count: 0, uniques: 0, clones: [] },
-      referrers: [],
-      paths: [],
-    };
+    console.error("Error fetching views data:", error);
+    return { count: 0, uniques: 0, views: [] };
+  }
+}
+
+export async function getRepoClones(
+  octokit: Octokit,
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  fullName: string
+): Promise<{ count: number; uniques: number; clones: Array<{ timestamp: string; count: number; uniques: number }> }> {
+  try {
+    const [owner, repo] = fullName.split("/");
+
+    // Fetch data from both sources in parallel
+    const [supabaseResult, githubResult] = await Promise.allSettled([
+      supabase
+        .from('repository_traffic')
+        .select('date, clones_count, unique_clones_count')
+        .eq('full_name', fullName)
+        .order('date', { ascending: true }),
+      octokit.rest.repos.getClones({ owner, repo })
+    ]);
+
+    // Process Supabase data
+    const supabaseData = supabaseResult.status === 'fulfilled' && supabaseResult.value.data || [];
+    if (supabaseResult.status === 'rejected') {
+      console.error("Error fetching clones from Supabase:", supabaseResult.reason);
+    }
+
+    // Process GitHub data
+    const githubData = githubResult.status === 'fulfilled'
+      ? githubResult.value.data.clones?.map(item => ({
+        date: item.timestamp.split('T')[0],
+        count: item.count,
+        uniques: item.uniques,
+      })) || []
+      : [];
+
+    if (githubResult.status === 'rejected') {
+      console.error("Error fetching clones from GitHub API:", githubResult.reason);
+    }
+
+    // Merge data: GitHub overrides Supabase for matching dates
+    const dataMap = new Map(
+      supabaseData.map(item => [
+        item.date,
+        { timestamp: item.date, count: item.clones_count || 0, uniques: item.unique_clones_count || 0 }
+      ])
+    );
+
+    // Override with GitHub data (more precise for recent dates)
+    githubData.forEach(item => {
+      dataMap.set(item.date, { timestamp: item.date, count: item.count, uniques: item.uniques });
+    });
+
+    // Convert to sorted array and calculate totals
+    const clones = Array.from(dataMap.values()).sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+    const count = clones.reduce((sum, item) => sum + item.count, 0);
+    const uniques = clones.reduce((sum, item) => sum + item.uniques, 0);
+
+    return { count, uniques, clones };
+  } catch (error) {
+    console.error("Error fetching clones data:", error);
+    return { count: 0, uniques: 0, clones: [] };
   }
 }
 
