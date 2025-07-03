@@ -23,13 +23,21 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
   const [isSelecting, setIsSelecting] = useState(false);
   const chartRef = useRef<HTMLDivElement>(null);
 
-  // Initialize times when data is available
+  // Initialize times when data is available or when date range changes
   useEffect(() => {
     if (originalData.length > 0) {
-      setStartTime(originalData[0].date);
-      setEndTime(originalData[originalData.length - 1].date);
+      const newStartDate = originalData[0].date;
+      const newEndDate = originalData[originalData.length - 1].date;
+      
+      // Only reset zoom if this is the first load or if the date range has actually changed
+      if (!startTime || !endTime || 
+          startTime < newStartDate || startTime > newEndDate ||
+          endTime < newStartDate || endTime > newEndDate) {
+        setStartTime(newStartDate);
+        setEndTime(newEndDate);
+      }
     }
-  }, [originalData]);
+  }, [originalData, startTime, endTime]);
 
   useEffect(() => {
     const chartElement = chartRef.current;
@@ -136,6 +144,44 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
     setIsSelecting(false);
   };
 
+  // Add global mouse event listeners when dragging
+  useEffect(() => {
+    if (!isSelecting || !chartRef.current) return;
+
+    const handleGlobalMouseUp = () => {
+      handleMouseUp();
+    };
+
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (!chartRef.current || !zoomedData.length) return;
+
+      const chartRect = chartRef.current.getBoundingClientRect();
+      const mouseX = e.clientX - chartRect.left;
+      const chartWidth = chartRect.width;
+      
+      // Calculate the position as a percentage of chart width
+      const percentage = Math.max(0, Math.min(1, mouseX / chartWidth));
+      
+      // Map percentage to data point index
+      const dataIndex = Math.round(percentage * (zoomedData.length - 1));
+      const clampedIndex = Math.max(0, Math.min(zoomedData.length - 1, dataIndex));
+      
+      // Get the corresponding date from the data
+      const targetDate = zoomedData[clampedIndex]?.date;
+      if (targetDate) {
+        setRefAreaRight(targetDate);
+      }
+    };
+
+    document.addEventListener('mouseup', handleGlobalMouseUp);
+    document.addEventListener('mousemove', handleGlobalMouseMove);
+    
+    return () => {
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+    };
+  }, [isSelecting, refAreaLeft, refAreaRight, zoomedData]);
+
   const handleReset = () => {
     if (originalData.length > 0) {
       setStartTime(originalData[0].date);
@@ -175,7 +221,6 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
             >
               <XAxis
                 dataKey="date"
@@ -209,10 +254,10 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
                 <ReferenceArea
                   x1={refAreaLeft}
                   x2={refAreaRight}
-                  strokeOpacity={0.5}
-                  stroke="hsl(var(--primary))"
-                  fill="hsl(var(--primary))"
-                  fillOpacity={0.5}
+                  strokeOpacity={0.1}
+                  stroke="white"
+                  fill="white"
+                  fillOpacity={0.1}
                 />
               )}
             </ComposedChart>
