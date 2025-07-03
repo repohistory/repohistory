@@ -35,15 +35,3 @@ export async function refreshProviderToken(refreshToken: string): Promise<GitHub
   return null;
 }
 
-export async function getValidProviderToken(): Promise<string> {
-  const cookieStore = await cookies();
-  const providerToken = cookieStore.get('provider_token')?.value;
-
-  if (providerToken) {
-    return providerToken;
-  }
-
-  // No provider token available, redirect to signin
-  // Token refresh is now handled in middleware
-  redirect('/signin');
-}

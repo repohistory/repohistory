@@ -1,13 +1,12 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import { Octokit } from "octokit";
 import { StarsChart } from "@/components/StarsChart";
 import { ViewChart } from "@/components/ViewChart";
 import { CloneChart } from "@/components/CloneChart";
 import { PopularCharts } from "@/components/PopularCharts";
 import { getRepoOverview, getRepoTraffic, getRepoStars } from "@/utils/repoData";
-import { getValidProviderToken } from "@/utils/auth/refresh-token";
+import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExternalLink, FileText } from "lucide-react";
@@ -25,8 +24,6 @@ export default async function RepoPage({ params }: PageProps) {
     redirect("/");
   }
 
-  const fullName = `${resolvedParams.fullName[0]}/${resolvedParams.fullName[1]}`;
-
   const supabase = await createClient();
   const { data: { session } } = await supabase.auth.getSession();
 
@@ -34,13 +31,9 @@ export default async function RepoPage({ params }: PageProps) {
     redirect("/signin");
   }
 
-  const providerToken = await getValidProviderToken();
-
-  const octokit = new Octokit({
-    auth: providerToken
-  });
-
+  const fullName = `${resolvedParams.fullName[0]}/${resolvedParams.fullName[1]}`;
   const [owner, repo] = fullName.split("/");
+  const octokit = await getUserOctokit();
   const overview = await getRepoOverview(octokit, owner, repo);;
 
   function RepoOverviewHeader() {

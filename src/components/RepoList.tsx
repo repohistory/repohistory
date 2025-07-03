@@ -1,16 +1,10 @@
-import { Octokit } from "octokit";
 import { getRepos } from "@/utils/octokit/get-repos";
 import { Repo } from "@/types";
 import { RepoCard } from "@/components/repo-card";
-import { getValidProviderToken } from "@/utils/auth/refresh-token";
+import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
 
 export async function RepoList() {
-  const providerToken = await getValidProviderToken();
-
-  const octokit = new Octokit({
-    auth: providerToken
-  });
-
+  const octokit = await getUserOctokit();
   const repos = await getRepos(octokit);
 
   return (
