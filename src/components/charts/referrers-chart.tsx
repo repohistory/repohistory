@@ -2,10 +2,14 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { RepoTrafficData } from "@/utils/repoData";
-
 interface ReferrersChartProps {
-  traffic: RepoTrafficData;
+  traffic: {
+    referrers: Array<{
+      referrer: string;
+      count: number;
+      uniques: number;
+    }>;
+  };
 }
 
 export function ReferrersChart({ traffic }: ReferrersChartProps) {

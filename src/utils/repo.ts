@@ -79,19 +79,39 @@ export async function getRepoOverview(
   };
 }
 
-export async function getRepoTraffic(
+export async function getTopReferrers(
   octokit: Octokit,
+  fullName: string
+): Promise<Array<{ referrer: string; count: number; uniques: number }>> {
+  try {
+    const [owner, repo] = fullName.split("/");
+    const { data } = await octokit.rest.repos.getTopReferrers({ owner, repo });
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching referrers data:", error);
+    return [];
+  }
+}
+
+export async function getTopPaths(
+  octokit: Octokit,
+  fullName: string
+): Promise<Array<{ path: string; title: string; count: number; uniques: number }>> {
+  try {
+    const [owner, repo] = fullName.split("/");
+    const { data } = await octokit.rest.repos.getTopPaths({ owner, repo });
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching paths data:", error);
+    return [];
+  }
+}
+
+export async function getRepoTraffic(
   supabase: Awaited<ReturnType<typeof createClient>>,
   fullName: string
 ): Promise<RepoTrafficData> {
   try {
-    // Get GitHub traffic data for referrers and paths (14-day data)
-    const [owner, repo] = fullName.split("/");
-    const [referrers, paths] = await Promise.all([
-      octokit.rest.repos.getTopReferrers({ owner, repo }).catch(() => ({ data: [] })),
-      octokit.rest.repos.getTopPaths({ owner, repo }).catch(() => ({ data: [] })),
-    ]);
-
     // Get historical traffic data from Supabase
     const { data: trafficData, error } = await supabase
       .from('repository_traffic')
@@ -135,8 +155,8 @@ export async function getRepoTraffic(
         uniques: totalUniqueClones,
         clones,
       },
-      referrers: referrers.data || [],
-      paths: paths.data || [],
+      referrers: [],
+      paths: [],
     };
   } catch (error) {
     console.error("Error fetching traffic data:", error);

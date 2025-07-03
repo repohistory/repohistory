@@ -3,7 +3,7 @@ import { ViewChart } from "./view-chart";
 import { CloneChart } from "./clone-chart";
 import { ReferrersChart } from "./referrers-chart";
 import { PopularContentChart } from "./popular-content-chart";
-import { getRepoStars, getRepoTraffic } from "@/utils/repoData";
+import { getRepoStars, getRepoTraffic, getTopReferrers, getTopPaths } from "@/utils/repo";
 import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
 import { createClient } from "@/utils/supabase/server";
 
@@ -26,8 +26,7 @@ interface ViewChartWrapperProps {
 }
 
 export async function ViewChartWrapper({ fullName }: ViewChartWrapperProps) {
-  const octokit = await getUserOctokit();
-  const traffic = await getRepoTraffic(octokit, await createClient(), fullName);
+  const traffic = await getRepoTraffic(await createClient(), fullName);
   return <ViewChart traffic={traffic} />;
 }
 
@@ -36,8 +35,7 @@ interface CloneChartWrapperProps {
 }
 
 export async function CloneChartWrapper({ fullName }: CloneChartWrapperProps) {
-  const octokit = await getUserOctokit();
-  const traffic = await getRepoTraffic(octokit, await createClient(), fullName);
+  const traffic = await getRepoTraffic(await createClient(), fullName);
   return <CloneChart traffic={traffic} />;
 }
 
@@ -47,8 +45,8 @@ interface ReferrersChartWrapperProps {
 
 export async function ReferrersChartWrapper({ fullName }: ReferrersChartWrapperProps) {
   const octokit = await getUserOctokit();
-  const traffic = await getRepoTraffic(octokit, await createClient(), fullName);
-  return <ReferrersChart traffic={traffic} />;
+  const referrers = await getTopReferrers(octokit, fullName);
+  return <ReferrersChart traffic={{ referrers }} />;
 }
 
 interface PopularContentChartWrapperProps {
@@ -57,6 +55,6 @@ interface PopularContentChartWrapperProps {
 
 export async function PopularContentChartWrapper({ fullName }: PopularContentChartWrapperProps) {
   const octokit = await getUserOctokit();
-  const traffic = await getRepoTraffic(octokit, await createClient(), fullName);
-  return <PopularContentChart traffic={traffic} />;
+  const paths = await getTopPaths(octokit, fullName);
+  return <PopularContentChart traffic={{ paths }} />;
 }

@@ -2,10 +2,15 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { RepoTrafficData } from "@/utils/repoData";
-
 interface PopularContentChartProps {
-  traffic: RepoTrafficData;
+  traffic: {
+    paths: Array<{
+      path: string;
+      title: string;
+      count: number;
+      uniques: number;
+    }>;
+  };
 }
 
 export function PopularContentChart({ traffic }: PopularContentChartProps) {

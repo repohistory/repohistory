@@ -5,7 +5,7 @@ import { StarsChartSkeleton } from "@/components/charts/stars-chart-skeleton";
 import { ViewChartSkeleton } from "@/components/charts/view-chart-skeleton";
 import { CloneChartSkeleton } from "@/components/charts/clone-chart-skeleton";
 import { PopularChartsSkeleton } from "@/components/charts/popular-charts-skeleton";
-import { getRepoOverview } from "@/utils/repoData";
+import { getRepoOverview } from "@/utils/repo";
 import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
 
 interface PageProps {

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Area } from "recharts";
 import { ChartConfig } from "@/components/ui/chart";
 import { ZoomableChart } from "./zoomable-chart";
-import { RepoStarsData } from "@/utils/repoData";
+import { RepoStarsData } from "@/utils/repo";
 
 interface StarsChartProps {
   starsData: RepoStarsData;
