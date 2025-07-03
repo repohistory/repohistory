@@ -143,7 +143,7 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
   };
 
 
-  const isZoomed = originalData.length > 0 && (
+  const isZoomed = originalData.length > 0 && startTime && endTime && (
     startTime !== originalData[0].date || 
     endTime !== originalData[originalData.length - 1].date
   );
