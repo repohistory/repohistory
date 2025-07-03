@@ -40,30 +40,25 @@ export default async function RepoPage({ params }: PageProps) {
     auth: providerToken
   });
 
-  // Check if repository exists and user has access
-  try {
-    await octokit.rest.repos.get({
-      owner: resolvedParams.fullName[0],
-      repo: resolvedParams.fullName[1],
-    });
-  } catch (error) {
-    console.error("Repository not found or no access:", error);
-    redirect("/");
-  }
+  const [owner, repo] = fullName.split("/");
+  const overview = await getRepoOverview(octokit, owner, repo);;
 
-  async function RepoDescriptionWrapper() {
-    const [owner, repo] = fullName.split("/");
-    const overview = await getRepoOverview(octokit, owner, repo);
-    
-    return overview.description ? (
-      <p className="text-muted-foreground">{overview.description}</p>
-    ) : null;
+  function RepoOverviewHeader() {
+    return (
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold">{fullName}</h1>
+        {overview.description && (
+          <p className="text-muted-foreground">{overview.description}</p>
+        )}
+      </div>
+    );
   }
-
 
   async function StarsChartWrapper() {
-    const [owner, repo] = fullName.split("/");
-    const stars = await getRepoStars(octokit, owner, repo);
+    const stars = await getRepoStars(octokit, {
+      fullName: overview.fullName,
+      stargazersCount: overview.stars
+    });
     return <StarsChart starsData={stars} />;
   }
 
@@ -77,36 +72,25 @@ export default async function RepoPage({ params }: PageProps) {
     return <CloneChart traffic={traffic} />;
   }
 
-
   async function PopularChartsWrapper() {
     const traffic = await getRepoTraffic(octokit, await createClient(), fullName);
     return <PopularCharts traffic={traffic} />;
   }
 
-
   return (
     <div className="container mx-auto p-4 space-y-6">
       <div className="space-y-6">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold">{fullName}</h1>
-          <Suspense fallback={<Skeleton className="h-4 w-2/3" />}>
-            <RepoDescriptionWrapper />
-          </Suspense>
-        </div>
+        <RepoOverviewHeader />
       </div>
-
       <Suspense fallback={<Skeleton className="h-80 w-full" />}>
         <StarsChartWrapper />
       </Suspense>
-
       <Suspense fallback={<Skeleton className="h-80 w-full" />}>
         <ViewChartWrapper />
       </Suspense>
-
       <Suspense fallback={<Skeleton className="h-80 w-full" />}>
         <CloneChartWrapper />
       </Suspense>
-
       <Card>
         <Suspense fallback={
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -151,32 +151,30 @@ export async function getRepoTraffic(
 
 export async function getRepoStars(
   octokit: Octokit,
-  owner: string,
-  repo: string
+  repo: { fullName: string; stargazersCount: number }
 ): Promise<RepoStarsData> {
   try {
-    const stargazers: Array<{ starred_at?: string }> = [];
-    let page = 1;
-    const perPage = 100;
-
-    while (true) {
-      const { data } = await octokit.rest.activity.listStargazersForRepo({
-        owner,
-        repo,
-        headers: {
-          Accept: "application/vnd.github.star+json",
-        },
-        per_page: perPage,
-        page,
-      });
-
-      if (data.length === 0) break;
-
-      stargazers.push(...data);
-
-      if (data.length < perPage) break;
-      page++;
+    const fetchPromises: Promise<{ data: Array<{ starred_at?: string }> }>[] = [];
+    const totalPages = Math.ceil(repo.stargazersCount / 100);
+    
+    for (let page = 1; page <= totalPages; page += 1) {
+      fetchPromises.push(
+        octokit.request(`GET /repos/${repo.fullName}/stargazers`, {
+          per_page: 100,
+          page,
+          headers: {
+            accept: 'application/vnd.github.v3.star+json',
+          },
+        }),
+      );
     }
+
+    const responses = await Promise.all(fetchPromises);
+    const stargazers: Array<{ starred_at?: string }> = [];
+    
+    responses.forEach(response => {
+      stargazers.push(...response.data);
+    });
 
     // Process stars data into daily aggregations
     const starsHistory = processStarsData(stargazers);
