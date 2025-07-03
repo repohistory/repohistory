@@ -12,9 +12,11 @@ export async function getRepos(octokit: Octokit) {
     'GET /user/installations',
   );
 
-  const installationIds = installationData.installations.map(
-    (installation) => installation.id,
-  );
+  const installationIds = installationData.installations
+    .filter(installation => installation.suspended_at === null)
+    .map(
+      (installation) => installation.id,
+    );
 
   const repos: Repo[] = [];
 
