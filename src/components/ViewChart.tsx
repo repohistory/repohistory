@@ -24,14 +24,14 @@ const chartConfig = {
 
 export function ViewChart({ traffic }: ViewChartProps) {
   const [zoomedData, setZoomedData] = useState<Array<{ date: string; unique: number; total: number }>>([]);
-  
+
   const data = useMemo(() => traffic.views.views.map((item) => ({
     date: item.timestamp,
     unique: item.uniques,
     total: item.count,
   })), [traffic.views.views]);
 
-  const handleDataChange = useCallback((newZoomedData: Array<{ date: string; [key: string]: string | number }>) => {
+  const handleDataChange = useCallback((newZoomedData: Array<{ date: string;[key: string]: string | number }>) => {
     setZoomedData(newZoomedData as Array<{ date: string; unique: number; total: number }>);
   }, []);
 
@@ -58,7 +58,7 @@ export function ViewChart({ traffic }: ViewChartProps) {
           </span>
         </div>
       </CardHeader>
-      <CardContent className="px-2 sm:p-6">
+      <CardContent>
         <ZoomableChart data={data} chartConfig={chartConfig} className="h-64 w-full" onDataChange={handleDataChange}>
           <defs>
             <linearGradient id="fillTotal" x1="0" y1="0" x2="0" y2="1">

@@ -75,7 +75,7 @@ export function StarsChart({ starsData }: StarsChartProps) {
           </span>
         </div>
       </CardHeader>
-      <CardContent className="px-2 sm:p-6">
+      <CardContent>
         <ZoomableChart data={data} chartConfig={chartConfig} className="h-64 w-full" onDataChange={handleDataChange}>
           <defs>
             <linearGradient id="fillStars" x1="0" y1="0" x2="0" y2="1">
