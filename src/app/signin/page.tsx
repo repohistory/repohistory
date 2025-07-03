@@ -18,18 +18,20 @@ export default function SignInPage() {
             <Image
               src="/icons/general.png"
               alt="Repohistory Logo"
-              width={64}
-              height={64}
+              width={82}
+              height={82}
             />
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Repohistory
+          <h1 className="text-xl font-medium text-foreground mb-2">
+            Log in to Repohistory
           </h1>
         </div>
-        <Button className="w-full" onClick={() => {
-          setIsLoading(true);
-          signin()
-        }}>
+        <Button
+          size="xl"
+          onClick={() => {
+            setIsLoading(true);
+            signin()
+          }}>
           {
             isLoading ?
               <Loader2Icon className="animate-spin" />
