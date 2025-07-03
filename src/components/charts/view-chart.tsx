@@ -4,7 +4,7 @@ import { useMemo, useState, useCallback } from "react";
 import { Area } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig } from "@/components/ui/chart";
-import { ZoomableChart } from "@/components/ZoomableChart";
+import { ZoomableChart } from "./zoomable-chart";
 import { RepoTrafficData } from "@/utils/repoData";
 
 interface ViewChartProps {

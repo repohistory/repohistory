@@ -1,6 +1,6 @@
 import { getRepos } from "@/utils/octokit/get-repos";
 import { Repo } from "@/types";
-import { RepoCard } from "@/components/repo-card";
+import { RepoCard } from "./repo-card";
 import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
 
 export async function RepoList() {

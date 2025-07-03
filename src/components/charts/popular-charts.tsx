@@ -1,6 +1,6 @@
 "use client";
 
-import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ExternalLink, FileText } from "lucide-react";
 import { RepoTrafficData } from "@/utils/repoData";
@@ -11,7 +11,7 @@ interface PopularChartsProps {
 
 export function PopularCharts({ traffic }: PopularChartsProps) {
   return (
-    <>
+    <Card>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
           <CardHeader>
@@ -89,6 +89,6 @@ export function PopularCharts({ traffic }: PopularChartsProps) {
           </CardContent>
         </div>
       </div>
-    </>
+    </Card>
   );
 }

@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Area } from "recharts";
 import { ChartConfig } from "@/components/ui/chart";
-import { ZoomableChart } from "@/components/ZoomableChart";
+import { ZoomableChart } from "./zoomable-chart";
 import { RepoStarsData } from "@/utils/repoData";
 
 interface StarsChartProps {

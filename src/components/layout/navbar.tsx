@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { User } from "@supabase/supabase-js";
-import { DropdownWrapper } from "./DropdownWrapper";
+import { DropdownWrapper } from "./dropdown-wrapper";
 
 interface NavbarProps {
   user: User;
