@@ -176,7 +176,7 @@ export async function getRepoStars(
   try {
     const fetchPromises: Promise<{ data: Array<{ starred_at?: string }> }>[] = [];
     const totalPages = Math.ceil(repo.stargazersCount / 100);
-    
+
     for (let page = 1; page <= totalPages; page += 1) {
       fetchPromises.push(
         octokit.request(`GET /repos/${repo.fullName}/stargazers`, {
@@ -191,7 +191,7 @@ export async function getRepoStars(
 
     const responses = await Promise.all(fetchPromises);
     const stargazers: Array<{ starred_at?: string }> = [];
-    
+
     responses.forEach(response => {
       stargazers.push(...response.data);
     });
@@ -223,16 +223,28 @@ function processStarsData(stargazers: Array<{ starred_at?: string }>) {
   });
 
   const sortedDates = Object.keys(dailyStars).sort();
+  if (sortedDates.length === 0) {
+    return [];
+  }
+
+  // Generate complete date range from one day before first star to last date
+  const startDate = new Date(sortedDates[0]);
+  startDate.setDate(startDate.getDate() - 1); // Start one day before first star
+  const endDate = new Date(sortedDates[sortedDates.length - 1]);
+  const completeData = [];
   let cumulative = 0;
 
-  return sortedDates.map(date => {
-    const daily = dailyStars[date];
+  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    const dateStr = d.toISOString().split('T')[0];
+    const daily = dailyStars[dateStr] || 0;
     cumulative += daily;
 
-    return {
-      date,
+    completeData.push({
+      date: dateStr,
       daily,
       cumulative,
-    };
-  });
+    });
+  }
+
+  return completeData;
 }
