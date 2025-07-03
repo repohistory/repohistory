@@ -50,22 +50,6 @@ export function StarsChart({ starsData }: StarsChartProps) {
             Repository star growth {viewType === "cumulative" ? "cumulative" : "daily"}
           </CardDescription>
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant={viewType === "cumulative" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setViewType("cumulative")}
-          >
-            Cumulative
-          </Button>
-          <Button
-            variant={viewType === "daily" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setViewType("daily")}
-          >
-            Daily
-          </Button>
-        </div>
         <div className="flex flex-col items-end gap-1">
           <span className="text-xs text-muted-foreground">
             {viewType === "cumulative" ? "Total Stars" : "Total Daily Stars"}
@@ -76,7 +60,30 @@ export function StarsChart({ starsData }: StarsChartProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <ZoomableChart data={data} chartConfig={chartConfig} className="h-64 w-full" onDataChange={handleDataChange}>
+        <ZoomableChart
+          data={data}
+          chartConfig={chartConfig}
+          className="h-64 w-full"
+          onDataChange={handleDataChange}
+          leftControls={
+            <>
+              <Button
+                variant={viewType === "cumulative" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setViewType("cumulative")}
+              >
+                Cumulative
+              </Button>
+              <Button
+                variant={viewType === "daily" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setViewType("daily")}
+              >
+                Daily
+              </Button>
+            </>
+          }
+        >
           <defs>
             <linearGradient id="fillStars" x1="0" y1="0" x2="0" y2="1">
               <stop

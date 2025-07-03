@@ -6,14 +6,15 @@ import { ComposedChart, XAxis, YAxis, ResponsiveContainer, ReferenceArea } from 
 import { Button } from "@/components/ui/button";
 
 interface ZoomableChartProps {
-  data: Array<{ date: string; [key: string]: string | number }>;
+  data: Array<{ date: string;[key: string]: string | number }>;
   chartConfig: ChartConfig;
   children: ReactNode;
   className?: string;
-  onDataChange?: (zoomedData: Array<{ date: string; [key: string]: string | number }>) => void;
+  onDataChange?: (zoomedData: Array<{ date: string;[key: string]: string | number }>) => void;
+  leftControls?: ReactNode;
 }
 
-export function ZoomableChart({ data, chartConfig, children, className = "h-64 w-full", onDataChange }: ZoomableChartProps) {
+export function ZoomableChart({ data, chartConfig, children, className = "h-64 w-full", onDataChange, leftControls }: ZoomableChartProps) {
   const originalData = data;
   const [refAreaLeft, setRefAreaLeft] = useState<string | null>(null);
   const [refAreaRight, setRefAreaRight] = useState<string | null>(null);
@@ -73,7 +74,7 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
         // If we're clamping to the exact original bounds, use the original values to ensure exact match
         const finalStartTime = clampedStartTime === originalStartTime ? originalData[0].date : new Date(clampedStartTime).toISOString();
         const finalEndTime = clampedEndTime === originalEndTime ? originalData[originalData.length - 1].date : new Date(clampedEndTime).toISOString();
-        
+
         setStartTime(finalStartTime);
         setEndTime(finalEndTime);
       }
@@ -144,18 +145,23 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
 
 
   const isZoomed = originalData.length > 0 && startTime && endTime && (
-    startTime !== originalData[0].date || 
+    startTime !== originalData[0].date ||
     endTime !== originalData[originalData.length - 1].date
   );
 
   return (
     <div className={className}>
-      <div className="h-8 flex justify-end mb-2">
-        {isZoomed && (
-          <Button variant="outline" size="sm" onClick={handleReset}>
-            Reset
-          </Button>
-        )}
+      <div className="h-8 flex justify-between items-center mb-4">
+        <div className="flex gap-2">
+          {leftControls}
+        </div>
+        <div>
+          {isZoomed && (
+            <Button variant="outline" size="sm" onClick={handleReset}>
+              Reset
+            </Button>
+          )}
+        </div>
       </div>
       <ChartContainer config={chartConfig} className="h-[calc(100%-2.5rem)] w-full">
         <div className="h-full" ref={chartRef} style={{ touchAction: 'none', userSelect: 'none' }}>

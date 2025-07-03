@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { StarsChartWrapper, ViewChartWrapper, CloneChartWrapper, PopularChartsWrapper } from "@/components/charts/chart-wrappers";
+import { StarsChartWrapper, ViewChartWrapper, CloneChartWrapper, ReferrersChartWrapper, PopularContentChartWrapper } from "@/components/charts/chart-wrappers";
 import { StarsChartSkeleton } from "@/components/charts/stars-chart-skeleton";
 import { ViewChartSkeleton } from "@/components/charts/view-chart-skeleton";
 import { CloneChartSkeleton } from "@/components/charts/clone-chart-skeleton";
@@ -27,7 +27,7 @@ export default async function RepoPage({ params }: PageProps) {
   const overview = await getRepoOverview(octokit, owner, repo);;
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
+    <div className="container mx-auto p-4 sm:p-10 space-y-6">
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">{fullName}</h1>
         {overview.description && (
@@ -44,7 +44,10 @@ export default async function RepoPage({ params }: PageProps) {
         <CloneChartWrapper fullName={fullName} />
       </Suspense>
       <Suspense fallback={<PopularChartsSkeleton />}>
-        <PopularChartsWrapper fullName={fullName} />
+        <ReferrersChartWrapper fullName={fullName} />
+      </Suspense>
+      <Suspense fallback={<PopularChartsSkeleton />}>
+        <PopularContentChartWrapper fullName={fullName} />
       </Suspense>
     </div>
   );
