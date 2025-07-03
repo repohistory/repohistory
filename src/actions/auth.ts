@@ -1,5 +1,6 @@
 'use server'
 
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 
@@ -28,6 +29,10 @@ export async function signout() {
   if (error) {
     redirect('/error')
   }
+
+  const cookieStore = await cookies()
+  cookieStore.delete('provider_token')
+  cookieStore.delete('provider_refresh_token')
 
   redirect('/signin')
 }
