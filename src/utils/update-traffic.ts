@@ -5,7 +5,7 @@ export async function updateTraffic(installationId: number) {
   const supabase = createClient();
   const octokit = await app.getInstallationOctokit(installationId);
   await app.eachRepository({ installationId }, async ({ repository }) => {
-    console.log(repository.full_name, 'start')
+    // console.log(repository.full_name, 'start')
 
     try {
       const { data: viewsData } = await octokit.request(
@@ -40,7 +40,8 @@ export async function updateTraffic(installationId: number) {
         },
       );
 
-      console.log(repository.full_name, 'done', viewsError, clonesError);
+      // console.log(repository.full_name, 'done');
+      console.log(viewsError, clonesError);
     } catch (error) {
       console.error(repository.full_name, 'error', error instanceof Error ? error.message : String(error));
     }
