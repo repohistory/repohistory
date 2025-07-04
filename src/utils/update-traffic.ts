@@ -41,7 +41,9 @@ export async function updateTraffic(installationId: number) {
       );
 
       // console.log(repository.full_name, 'done');
-      console.log(viewsError, clonesError);
+      if (viewsError || clonesError) {
+        console.log(viewsError, clonesError);
+      }
     } catch (error) {
       console.error(repository.full_name, 'error', error instanceof Error ? error.message : String(error));
     }
