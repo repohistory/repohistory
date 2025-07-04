@@ -23,21 +23,23 @@ export async function StarsChartWrapper({ fullName, stargazersCount }: StarsChar
 
 interface ViewChartWrapperProps {
   fullName: string;
+  repoId: number;
 }
 
-export async function ViewChartWrapper({ fullName }: ViewChartWrapperProps) {
+export async function ViewChartWrapper({ fullName, repoId }: ViewChartWrapperProps) {
   const octokit = await getUserOctokit();
-  const views = await getRepoViews(octokit, await createClient(), fullName);
+  const views = await getRepoViews(octokit, await createClient(), fullName, repoId);
   return <ViewChart traffic={{ views }} />;
 }
 
 interface CloneChartWrapperProps {
   fullName: string;
+  repoId: number;
 }
 
-export async function CloneChartWrapper({ fullName }: CloneChartWrapperProps) {
+export async function CloneChartWrapper({ fullName, repoId }: CloneChartWrapperProps) {
   const octokit = await getUserOctokit();
-  const clones = await getRepoClones(octokit, await createClient(), fullName);
+  const clones = await getRepoClones(octokit, await createClient(), fullName, repoId);
   return <CloneChart traffic={{ clones }} />;
 }
 

@@ -1,10 +1,6 @@
 import { Repo } from "@/types";
-import { Octokit, App } from "octokit";
-
-const app = new App({
-  appId: process.env.APP_ID!,
-  privateKey: process.env.APP_PRIVATE_KEY!,
-});
+import { Octokit } from "octokit";
+import { app } from "./app";
 
 export async function getRepos(octokit: Octokit) {
 

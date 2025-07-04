@@ -13,6 +13,7 @@ export interface RepoStarsData {
 export interface RepoOverviewData {
   name: string;
   fullName: string;
+  repoId: number;
   description: string | null;
   stars: number;
   forks: number;
@@ -36,6 +37,7 @@ export async function getRepoOverview(
   return {
     name: data.name,
     fullName: data.full_name,
+    repoId: data.id,
     description: data.description,
     stars: data.stargazers_count,
     forks: data.forks_count,
@@ -78,7 +80,8 @@ export async function getTopPaths(
 export async function getRepoViews(
   octokit: Octokit,
   supabase: Awaited<ReturnType<typeof createClient>>,
-  fullName: string
+  fullName: string,
+  repoId: number
 ): Promise<{ count: number; uniques: number; views: Array<{ timestamp: string; count: number; uniques: number }> }> {
   try {
     const [owner, repo] = fullName.split("/");
@@ -86,15 +89,16 @@ export async function getRepoViews(
     // Fetch data from both sources in parallel
     const [supabaseResult, githubResult] = await Promise.allSettled([
       supabase
-        .from('repository_traffic')
-        .select('date, views_count, unique_views_count')
-        .eq('full_name', fullName)
+        .from('views')
+        .select('date, total, unique')
+        .eq('repo_id', repoId)
         .order('date', { ascending: true }),
       octokit.rest.repos.getViews({ owner, repo })
     ]);
 
     // Process Supabase data
     const supabaseData = supabaseResult.status === 'fulfilled' && supabaseResult.value.data || [];
+
     if (supabaseResult.status === 'rejected') {
       console.error("Error fetching views from Supabase:", supabaseResult.reason);
     }
@@ -116,7 +120,7 @@ export async function getRepoViews(
     const dataMap = new Map(
       supabaseData.map(item => [
         item.date,
-        { timestamp: item.date, count: item.views_count || 0, uniques: item.unique_views_count || 0 }
+        { timestamp: item.date, count: item.total || 0, uniques: item.unique || 0 }
       ])
     );
 
@@ -140,7 +144,8 @@ export async function getRepoViews(
 export async function getRepoClones(
   octokit: Octokit,
   supabase: Awaited<ReturnType<typeof createClient>>,
-  fullName: string
+  fullName: string,
+  repoId: number
 ): Promise<{ count: number; uniques: number; clones: Array<{ timestamp: string; count: number; uniques: number }> }> {
   try {
     const [owner, repo] = fullName.split("/");
@@ -148,9 +153,9 @@ export async function getRepoClones(
     // Fetch data from both sources in parallel
     const [supabaseResult, githubResult] = await Promise.allSettled([
       supabase
-        .from('repository_traffic')
-        .select('date, clones_count, unique_clones_count')
-        .eq('full_name', fullName)
+        .from('clones')
+        .select('date, total, unique')
+        .eq('repo_id', repoId)
         .order('date', { ascending: true }),
       octokit.rest.repos.getClones({ owner, repo })
     ]);
@@ -178,7 +183,7 @@ export async function getRepoClones(
     const dataMap = new Map(
       supabaseData.map(item => [
         item.date,
-        { timestamp: item.date, count: item.clones_count || 0, uniques: item.unique_clones_count || 0 }
+        { timestamp: item.date, count: item.total || 0, uniques: item.unique || 0 }
       ])
     );
 

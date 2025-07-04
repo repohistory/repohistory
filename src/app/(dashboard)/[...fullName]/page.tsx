@@ -38,10 +38,10 @@ export default async function RepoPage({ params }: PageProps) {
         <StarsChartWrapper fullName={overview.fullName} stargazersCount={overview.stars} />
       </Suspense>
       <Suspense fallback={<ViewChartSkeleton />}>
-        <ViewChartWrapper fullName={fullName} />
+        <ViewChartWrapper fullName={fullName} repoId={overview.repoId} />
       </Suspense>
       <Suspense fallback={<CloneChartSkeleton />}>
-        <CloneChartWrapper fullName={fullName} />
+        <CloneChartWrapper fullName={fullName} repoId={overview.repoId} />
       </Suspense>
       <Suspense fallback={<PopularChartsSkeleton />}>
         <ReferrersChartWrapper fullName={fullName} />
