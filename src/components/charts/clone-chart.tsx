@@ -142,7 +142,6 @@ export function CloneChart({ traffic, repositoryName }: CloneChartProps) {
             fillOpacity={1}
             stroke="var(--color-total)"
             strokeWidth={2}
-            isAnimationActive={false}
             hide={hiddenSeries.includes("total")}
           />
           <Area
@@ -152,7 +151,6 @@ export function CloneChart({ traffic, repositoryName }: CloneChartProps) {
             fillOpacity={1}
             stroke="var(--color-unique)"
             strokeWidth={2}
-            isAnimationActive={false}
             hide={hiddenSeries.includes("unique")}
           />
         </ZoomableChart>

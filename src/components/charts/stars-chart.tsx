@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Area } from "recharts";
@@ -25,11 +25,23 @@ const chartConfig = {
 export function StarsChart({ starsData, repositoryName }: StarsChartProps) {
   const [viewType, setViewType] = useState<"cumulative" | "daily">("cumulative");
   const [zoomedData, setZoomedData] = useState<Array<{ date: string; stars: number }>>([]);
+  const [hasRendered, setHasRendered] = useState(false);
 
   const data = useMemo(() => starsData.starsHistory.map((item) => ({
     date: item.date,
     stars: viewType === "cumulative" ? item.cumulative : item.daily,
   })), [starsData.starsHistory, viewType]);
+
+  // Track first render to allow animation on initial load, then disable after delay
+  useEffect(() => {
+    if (!hasRendered) {
+      const timer = setTimeout(() => {
+        setHasRendered(true);
+      }, 700);
+
+      return () => clearTimeout(timer);
+    }
+  }, [hasRendered]);
 
   const handleDataChange = useCallback((newZoomedData: Array<{ date: string;[key: string]: string | number }>) => {
     setZoomedData(newZoomedData as Array<{ date: string; stars: number }>);
@@ -82,6 +94,7 @@ export function StarsChart({ starsData, repositoryName }: StarsChartProps) {
           chartConfig={chartConfig}
           className="h-64 w-full"
           onDataChange={handleDataChange}
+          disableAnimation={hasRendered}
           leftControls={
             <>
               <Button
@@ -128,7 +141,6 @@ export function StarsChart({ starsData, repositoryName }: StarsChartProps) {
             fillOpacity={1}
             stroke="var(--color-stars)"
             strokeWidth={2}
-            isAnimationActive={false}
           />
         </ZoomableChart>
       </CardContent>

@@ -35,7 +35,7 @@ const chartConfig = {
 
 export function ViewChart({ traffic, repositoryName }: ViewChartProps) {
   const [zoomedData, setZoomedData] = useState<Array<{ date: string; unique: number; total: number }>>([]);
-  
+
   // Track hidden series (opposite of visible)
   const [hiddenSeries, setHiddenSeries] = useState<Array<string>>([]);
 
@@ -95,10 +95,10 @@ export function ViewChart({ traffic, repositoryName }: ViewChartProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <ZoomableChart 
-          data={data} 
-          chartConfig={chartConfig} 
-          className="h-64 w-full" 
+        <ZoomableChart
+          data={data}
+          chartConfig={chartConfig}
+          className="h-64 w-full"
           onDataChange={handleDataChange}
           onLegendClick={handleLegendClick}
           hiddenSeries={hiddenSeries}
@@ -142,7 +142,6 @@ export function ViewChart({ traffic, repositoryName }: ViewChartProps) {
             fillOpacity={1}
             stroke="var(--color-total)"
             strokeWidth={2}
-            isAnimationActive={false}
             hide={hiddenSeries.includes("total")}
           />
           <Area
@@ -152,7 +151,6 @@ export function ViewChart({ traffic, repositoryName }: ViewChartProps) {
             fillOpacity={1}
             stroke="var(--color-unique)"
             strokeWidth={2}
-            isAnimationActive={false}
             hide={hiddenSeries.includes("unique")}
           />
         </ZoomableChart>
