@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Area } from "recharts";
 import { ChartConfig } from "@/components/ui/chart";
 import { ZoomableChart } from "./zoomable-chart";
@@ -96,22 +96,12 @@ export function StarsChart({ starsData, repositoryName }: StarsChartProps) {
           onDataChange={handleDataChange}
           disableAnimation={hasRendered}
           leftControls={
-            <>
-              <Button
-                variant={viewType === "cumulative" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setViewType("cumulative")}
-              >
-                Cumulative
-              </Button>
-              <Button
-                variant={viewType === "daily" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setViewType("daily")}
-              >
-                Daily
-              </Button>
-            </>
+            <Tabs value={viewType} onValueChange={(value) => setViewType(value as "cumulative" | "daily")}>
+              <TabsList>
+                <TabsTrigger value="cumulative" className="cursor-pointer">Cumulative</TabsTrigger>
+                <TabsTrigger value="daily" className="cursor-pointer">Daily</TabsTrigger>
+              </TabsList>
+            </Tabs>
           }
           rightControls={
             <ExportDropdown

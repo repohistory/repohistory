@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import Link from "next/link";
 interface PopularContentChartProps {
   traffic: {
     paths: Array<{
@@ -38,7 +39,16 @@ export function PopularContentChart({ traffic }: PopularContentChartProps) {
             <TableBody>
               {traffic.paths.map((path, index) => (
                 <TableRow key={index}>
-                  <TableCell className="font-mono text-sm">{path.path}</TableCell>
+                  <TableCell className="font-mono text-sm">
+                    <Link
+                      href={`https://github.com${path.path}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline"
+                    >
+                      {path.path}
+                    </Link>
+                  </TableCell>
                   <TableCell className="max-w-[200px] truncate">{path.title}</TableCell>
                   <TableCell className="text-right">{path.count.toLocaleString()}</TableCell>
                   <TableCell className="text-right">{path.uniques.toLocaleString()}</TableCell>

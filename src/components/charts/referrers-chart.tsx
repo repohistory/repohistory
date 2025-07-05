@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import Link from "next/link";
 interface ReferrersChartProps {
   traffic: {
     referrers: Array<{
@@ -37,7 +38,18 @@ export function ReferrersChart({ traffic }: ReferrersChartProps) {
               {traffic.referrers.map((referrer, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">
-                    {referrer.referrer || "Direct"}
+                    {referrer.referrer && referrer.referrer.includes('.') ? (
+                      <Link
+                        href={`https://${referrer.referrer}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline"
+                      >
+                        {referrer.referrer}
+                      </Link>
+                    ) : (
+                      referrer.referrer || "Direct"
+                    )}
                   </TableCell>
                   <TableCell className="text-right">{referrer.count.toLocaleString()}</TableCell>
                   <TableCell className="text-right">{referrer.uniques.toLocaleString()}</TableCell>

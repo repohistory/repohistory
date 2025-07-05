@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { StarsChartWrapper, ViewChartWrapper, CloneChartWrapper, ReferrersChartWrapper, PopularContentChartWrapper } from "@/components/charts/chart-wrappers";
 import { StarsChartSkeleton } from "@/components/charts/stars-chart-skeleton";
 import { ViewChartSkeleton } from "@/components/charts/view-chart-skeleton";
@@ -29,7 +30,16 @@ export default async function RepoPage({ params }: PageProps) {
   return (
     <div className="container mx-auto p-4 sm:p-10 space-y-6">
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold">{fullName}</h1>
+        <h1 className="text-3xl font-bold">
+          <Link
+            href={`https://github.com/${fullName}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline decoration-1"
+          >
+            {fullName}
+          </Link>
+        </h1>
         {overview.description && (
           <p className="text-muted-foreground">{overview.description}</p>
         )}
