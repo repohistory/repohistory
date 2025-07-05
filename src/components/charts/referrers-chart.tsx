@@ -38,18 +38,14 @@ export function ReferrersChart({ traffic }: ReferrersChartProps) {
               {traffic.referrers.map((referrer, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">
-                    {referrer.referrer && referrer.referrer.includes('.') ? (
-                      <Link
-                        href={`https://${referrer.referrer}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:underline"
-                      >
-                        {referrer.referrer}
-                      </Link>
-                    ) : (
-                      referrer.referrer || "Direct"
-                    )}
+                    <Link
+                      href={`https://${referrer.referrer.includes('.') ? referrer.referrer : `${referrer.referrer}.com`}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline"
+                    >
+                      {referrer.referrer}
+                    </Link>
                   </TableCell>
                   <TableCell className="text-right">{referrer.count.toLocaleString()}</TableCell>
                   <TableCell className="text-right">{referrer.uniques.toLocaleString()}</TableCell>
