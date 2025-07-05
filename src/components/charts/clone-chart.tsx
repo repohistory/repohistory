@@ -5,6 +5,8 @@ import { Area } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig } from "@/components/ui/chart";
 import { ZoomableChart } from "./zoomable-chart";
+import { ExportDropdown } from "./export-dropdown";
+import { exportChartData } from "@/utils/data-export";
 interface CloneChartProps {
   traffic: {
     clones: {
@@ -17,6 +19,7 @@ interface CloneChartProps {
       }>;
     };
   };
+  repositoryName?: string;
 }
 
 const chartConfig = {
@@ -30,7 +33,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function CloneChart({ traffic }: CloneChartProps) {
+export function CloneChart({ traffic, repositoryName }: CloneChartProps) {
   const [zoomedData, setZoomedData] = useState<Array<{ date: string; unique: number; total: number }>>([]);
 
   const data = useMemo(() => traffic.clones.clones.map((item) => ({
@@ -47,6 +50,20 @@ export function CloneChart({ traffic }: CloneChartProps) {
     const dataToUse = zoomedData.length > 0 ? zoomedData : data;
     return dataToUse.reduce((acc, curr) => acc + curr.total, 0);
   }, [zoomedData, data]);
+
+  const handleExportCSV = useCallback(() => {
+    const dataToExport = zoomedData.length > 0 ? zoomedData : data;
+    const startDate = dataToExport.length > 0 ? dataToExport[0].date : undefined;
+    const endDate = dataToExport.length > 0 ? dataToExport[dataToExport.length - 1].date : undefined;
+    exportChartData(dataToExport, 'clones', 'csv', repositoryName, startDate, endDate);
+  }, [zoomedData, data, repositoryName]);
+
+  const handleExportJSON = useCallback(() => {
+    const dataToExport = zoomedData.length > 0 ? zoomedData : data;
+    const startDate = dataToExport.length > 0 ? dataToExport[0].date : undefined;
+    const endDate = dataToExport.length > 0 ? dataToExport[dataToExport.length - 1].date : undefined;
+    exportChartData(dataToExport, 'clones', 'json', repositoryName, startDate, endDate);
+  }, [zoomedData, data, repositoryName]);
 
   return (
     <Card className="w-full">
@@ -67,7 +84,18 @@ export function CloneChart({ traffic }: CloneChartProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <ZoomableChart data={data} chartConfig={chartConfig} className="h-64 w-full" onDataChange={handleDataChange}>
+        <ZoomableChart 
+          data={data} 
+          chartConfig={chartConfig} 
+          className="h-64 w-full" 
+          onDataChange={handleDataChange}
+          rightControls={
+            <ExportDropdown
+              onExportCSV={handleExportCSV}
+              onExportJSON={handleExportJSON}
+            />
+          }
+        >
           <defs>
             <linearGradient id="fillTotalClone" x1="0" y1="0" x2="0" y2="1">
               <stop

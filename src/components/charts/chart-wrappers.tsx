@@ -18,7 +18,7 @@ export async function StarsChartWrapper({ fullName, stargazersCount }: StarsChar
     fullName,
     stargazersCount
   });
-  return <StarsChart starsData={stars} />;
+  return <StarsChart starsData={stars} repositoryName={fullName} />;
 }
 
 interface ViewChartWrapperProps {
@@ -29,7 +29,7 @@ interface ViewChartWrapperProps {
 export async function ViewChartWrapper({ fullName, repoId }: ViewChartWrapperProps) {
   const octokit = await getUserOctokit();
   const views = await getRepoViews(octokit, await createClient(), fullName, repoId);
-  return <ViewChart traffic={{ views }} />;
+  return <ViewChart traffic={{ views }} repositoryName={fullName} />;
 }
 
 interface CloneChartWrapperProps {
@@ -40,7 +40,7 @@ interface CloneChartWrapperProps {
 export async function CloneChartWrapper({ fullName, repoId }: CloneChartWrapperProps) {
   const octokit = await getUserOctokit();
   const clones = await getRepoClones(octokit, await createClient(), fullName, repoId);
-  return <CloneChart traffic={{ clones }} />;
+  return <CloneChart traffic={{ clones }} repositoryName={fullName} />;
 }
 
 interface ReferrersChartWrapperProps {

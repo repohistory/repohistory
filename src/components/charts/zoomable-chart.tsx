@@ -12,9 +12,10 @@ interface ZoomableChartProps {
   className?: string;
   onDataChange?: (zoomedData: Array<{ date: string;[key: string]: string | number }>) => void;
   leftControls?: ReactNode;
+  rightControls?: ReactNode;
 }
 
-export function ZoomableChart({ data, chartConfig, children, className = "h-64 w-full", onDataChange, leftControls }: ZoomableChartProps) {
+export function ZoomableChart({ data, chartConfig, children, className = "h-64 w-full", onDataChange, leftControls, rightControls }: ZoomableChartProps) {
   const originalData = data;
   const [refAreaLeft, setRefAreaLeft] = useState<string | null>(null);
   const [refAreaRight, setRefAreaRight] = useState<string | null>(null);
@@ -201,12 +202,13 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
         <div className="flex gap-2">
           {leftControls}
         </div>
-        <div>
+        <div className="flex gap-2 items-center">
           {isZoomed && (
             <Button variant="outline" size="sm" onClick={handleReset}>
               Reset
             </Button>
           )}
+          {rightControls}
         </div>
       </div>
       <ChartContainer config={chartConfig} className="h-[calc(100%-2.5rem)] w-full">

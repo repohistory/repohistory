@@ -6,10 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Area } from "recharts";
 import { ChartConfig } from "@/components/ui/chart";
 import { ZoomableChart } from "./zoomable-chart";
+import { ExportDropdown } from "./export-dropdown";
 import { RepoStarsData } from "@/utils/repo";
+import { exportStarsData } from "@/utils/data-export";
 
 interface StarsChartProps {
   starsData: RepoStarsData;
+  repositoryName?: string;
 }
 
 const chartConfig = {
@@ -19,7 +22,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function StarsChart({ starsData }: StarsChartProps) {
+export function StarsChart({ starsData, repositoryName }: StarsChartProps) {
   const [viewType, setViewType] = useState<"cumulative" | "daily">("cumulative");
   const [zoomedData, setZoomedData] = useState<Array<{ date: string; stars: number }>>([]);
 
@@ -40,6 +43,20 @@ export function StarsChart({ starsData }: StarsChartProps) {
       return dataToUse.reduce((acc, curr) => acc + curr.stars, 0);
     }
   }, [zoomedData, data, viewType]);
+
+  const handleExportCSV = useCallback(() => {
+    const dataToExport = zoomedData.length > 0 ? zoomedData : data;
+    const startDate = dataToExport.length > 0 ? dataToExport[0].date : undefined;
+    const endDate = dataToExport.length > 0 ? dataToExport[dataToExport.length - 1].date : undefined;
+    exportStarsData(dataToExport, viewType, 'csv', repositoryName, startDate, endDate);
+  }, [zoomedData, data, viewType, repositoryName]);
+
+  const handleExportJSON = useCallback(() => {
+    const dataToExport = zoomedData.length > 0 ? zoomedData : data;
+    const startDate = dataToExport.length > 0 ? dataToExport[0].date : undefined;
+    const endDate = dataToExport.length > 0 ? dataToExport[dataToExport.length - 1].date : undefined;
+    exportStarsData(dataToExport, viewType, 'json', repositoryName, startDate, endDate);
+  }, [zoomedData, data, viewType, repositoryName]);
 
   return (
     <Card className="w-full">
@@ -82,6 +99,12 @@ export function StarsChart({ starsData }: StarsChartProps) {
                 Daily
               </Button>
             </>
+          }
+          rightControls={
+            <ExportDropdown
+              onExportCSV={handleExportCSV}
+              onExportJSON={handleExportJSON}
+            />
           }
         >
           <defs>
