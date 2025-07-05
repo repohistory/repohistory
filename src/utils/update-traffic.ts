@@ -20,6 +20,14 @@ export async function updateTraffic(installationId: number) {
         `GET /repos/${repository.full_name}/traffic/clones`,
       );
 
+      const { data: popularPathsData } = await octokit.request(
+        `GET /repos/${repository.full_name}/traffic/popular/paths`,
+      );
+
+      const { data: popularReferrersData } = await octokit.request(
+        `GET /repos/${repository.full_name}/traffic/popular/referrers`,
+      );
+
       const { error: viewsError } = await supabase.from('views').upsert(
         viewsData.views.map((view: { timestamp: string; count: number; uniques: number }) => ({
           repo_id: repository.id,
@@ -44,9 +52,33 @@ export async function updateTraffic(installationId: number) {
         },
       );
 
+      const { error: pathsError } = await supabase.from('paths').upsert(
+        popularPathsData.map((path: { path: string; count: number; uniques: number }) => ({
+          repo_id: repository.id,
+          path: path.path,
+          total: path.count,
+          unique: path.uniques,
+        })),
+        {
+          onConflict: 'repo_id, path, date',
+        },
+      );
+
+      const { error: referrersError } = await supabase.from('referrers').upsert(
+        popularReferrersData.map((referrer: { referrer: string; count: number; uniques: number }) => ({
+          repo_id: repository.id,
+          referrer: referrer.referrer,
+          total: referrer.count,
+          unique: referrer.uniques,
+        })),
+        {
+          onConflict: 'repo_id, referrer, date',
+        },
+      );
+
       // console.log(repository.full_name, 'done');
-      if (viewsError || clonesError) {
-        console.log(viewsError, clonesError);
+      if (viewsError || clonesError || pathsError || referrersError) {
+        console.log(viewsError, clonesError, pathsError, referrersError);
       }
     } catch (error) {
       console.error(repository.full_name, 'error', error instanceof Error ? error.message : String(error));
