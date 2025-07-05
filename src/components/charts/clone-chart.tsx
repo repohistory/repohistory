@@ -35,6 +35,17 @@ const chartConfig = {
 
 export function CloneChart({ traffic, repositoryName }: CloneChartProps) {
   const [zoomedData, setZoomedData] = useState<Array<{ date: string; unique: number; total: number }>>([]);
+  
+  // Track hidden series (opposite of visible)
+  const [hiddenSeries, setHiddenSeries] = useState<Array<string>>([]);
+
+  const handleLegendClick = (dataKey: string) => {
+    if (hiddenSeries.includes(dataKey)) {
+      setHiddenSeries(hiddenSeries.filter(key => key !== dataKey));
+    } else {
+      setHiddenSeries(prev => [...prev, dataKey]);
+    }
+  };
 
   const data = useMemo(() => traffic.clones.clones.map((item) => ({
     date: item.timestamp,
@@ -89,6 +100,8 @@ export function CloneChart({ traffic, repositoryName }: CloneChartProps) {
           chartConfig={chartConfig} 
           className="h-64 w-full" 
           onDataChange={handleDataChange}
+          onLegendClick={handleLegendClick}
+          hiddenSeries={hiddenSeries}
           rightControls={
             <ExportDropdown
               onExportCSV={handleExportCSV}
@@ -130,6 +143,7 @@ export function CloneChart({ traffic, repositoryName }: CloneChartProps) {
             stroke="var(--color-total)"
             strokeWidth={2}
             isAnimationActive={false}
+            hide={hiddenSeries.includes("total")}
           />
           <Area
             dataKey="unique"
@@ -139,6 +153,7 @@ export function CloneChart({ traffic, repositoryName }: CloneChartProps) {
             stroke="var(--color-unique)"
             strokeWidth={2}
             isAnimationActive={false}
+            hide={hiddenSeries.includes("unique")}
           />
         </ZoomableChart>
       </CardContent>
