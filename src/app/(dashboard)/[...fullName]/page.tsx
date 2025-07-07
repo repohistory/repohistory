@@ -6,6 +6,7 @@ import { StarsChartSkeleton } from "@/components/charts/stars-chart-skeleton";
 import { ViewChartSkeleton } from "@/components/charts/view-chart-skeleton";
 import { CloneChartSkeleton } from "@/components/charts/clone-chart-skeleton";
 import { PopularChartsSkeleton } from "@/components/charts/popular-charts-skeleton";
+import { ExportAllData } from "@/components/export-all-data";
 import { getRepoOverview } from "@/utils/repo";
 import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
 
@@ -30,16 +31,19 @@ export default async function RepoPage({ params }: PageProps) {
   return (
     <div className="container mx-auto p-4 sm:p-10 space-y-6">
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold">
-          <Link
-            href={`https://github.com/${fullName}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:underline decoration-1"
-          >
-            {fullName}
-          </Link>
-        </h1>
+        <div className="flex items-center justify-between gap-2">
+          <h1 className="text-3xl font-bold">
+            <Link
+              href={`https://github.com/${fullName}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline decoration-1"
+            >
+              {fullName}
+            </Link>
+          </h1>
+          <ExportAllData fullName={fullName} repoId={overview.repoId} />
+        </div>
         {overview.description && (
           <p className="text-muted-foreground">{overview.description}</p>
         )}

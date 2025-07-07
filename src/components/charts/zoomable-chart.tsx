@@ -12,7 +12,6 @@ interface ZoomableChartProps {
   className?: string;
   onDataChange?: (zoomedData: Array<{ date: string;[key: string]: string | number }>) => void;
   leftControls?: ReactNode;
-  rightControls?: ReactNode;
   onLegendClick?: (dataKey: string) => void;
   hiddenSeries?: Array<string>;
   isZooming?: boolean;
@@ -65,7 +64,7 @@ function CustomLegendContent({ chartConfig, hiddenSeries, onLegendClick }: Custo
   );
 }
 
-export function ZoomableChart({ data, chartConfig, children, className = "h-64 w-full", onDataChange, leftControls, rightControls, onLegendClick, hiddenSeries = [], isZooming = false, disableAnimation = false }: ZoomableChartProps) {
+export function ZoomableChart({ data, chartConfig, children, className = "h-64 w-full", onDataChange, leftControls, onLegendClick, hiddenSeries = [], isZooming = false, disableAnimation = false }: ZoomableChartProps) {
   const originalData = data;
   const [refAreaLeft, setRefAreaLeft] = useState<string | null>(null);
   const [refAreaRight, setRefAreaRight] = useState<string | null>(null);
@@ -305,7 +304,6 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
               Reset
             </Button>
           )}
-          {rightControls}
         </div>
       </div>
       <ChartContainer config={chartConfig} className="h-[calc(100%-2.5rem)] w-full">

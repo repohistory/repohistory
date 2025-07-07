@@ -6,9 +6,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Area } from "recharts";
 import { ChartConfig } from "@/components/ui/chart";
 import { ZoomableChart } from "./zoomable-chart";
-import { ExportDropdown } from "./export-dropdown";
 import { RepoStarsData } from "@/utils/repo";
-import { exportStarsData } from "@/utils/data-export";
 
 interface StarsChartProps {
   starsData: RepoStarsData;
@@ -22,7 +20,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function StarsChart({ starsData, repositoryName }: StarsChartProps) {
+export function StarsChart({ starsData }: StarsChartProps) {
   const [viewType, setViewType] = useState<"cumulative" | "daily">("cumulative");
   const [zoomedData, setZoomedData] = useState<Array<{ date: string; stars: number }>>([]);
   const [hasRendered, setHasRendered] = useState(false);
@@ -56,19 +54,6 @@ export function StarsChart({ starsData, repositoryName }: StarsChartProps) {
     }
   }, [zoomedData, data, viewType]);
 
-  const handleExportCSV = useCallback(() => {
-    const dataToExport = zoomedData.length > 0 ? zoomedData : data;
-    const startDate = dataToExport.length > 0 ? dataToExport[0].date : undefined;
-    const endDate = dataToExport.length > 0 ? dataToExport[dataToExport.length - 1].date : undefined;
-    exportStarsData(dataToExport, viewType, 'csv', repositoryName, startDate, endDate);
-  }, [zoomedData, data, viewType, repositoryName]);
-
-  const handleExportJSON = useCallback(() => {
-    const dataToExport = zoomedData.length > 0 ? zoomedData : data;
-    const startDate = dataToExport.length > 0 ? dataToExport[0].date : undefined;
-    const endDate = dataToExport.length > 0 ? dataToExport[dataToExport.length - 1].date : undefined;
-    exportStarsData(dataToExport, viewType, 'json', repositoryName, startDate, endDate);
-  }, [zoomedData, data, viewType, repositoryName]);
 
   return (
     <Card className="w-full">
@@ -102,12 +87,6 @@ export function StarsChart({ starsData, repositoryName }: StarsChartProps) {
                 <TabsTrigger value="daily" className="cursor-pointer">Daily</TabsTrigger>
               </TabsList>
             </Tabs>
-          }
-          rightControls={
-            <ExportDropdown
-              onExportCSV={handleExportCSV}
-              onExportJSON={handleExportJSON}
-            />
           }
         >
           <defs>

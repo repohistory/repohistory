@@ -1,12 +1,10 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo } from "react";
 import { Line } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig } from "@/components/ui/chart";
 import { ZoomableChart } from "./zoomable-chart";
-import { ExportDropdown } from "./export-dropdown";
-import { exportDynamicChartData } from "@/utils/data-export";
 
 interface ReferrersChartProps {
   traffic: {
@@ -34,8 +32,7 @@ const COLORS = [
   "#6278f8",
 ];
 
-export function ReferrersChart({ traffic, repositoryName }: ReferrersChartProps) {
-  const [zoomedData, setZoomedData] = useState<Array<{ date: string;[key: string]: string | number }>>([]);
+export function ReferrersChart({ traffic }: ReferrersChartProps) {
 
   const { data, chartConfig } = useMemo(() => {
     if (!traffic.referrers.length) return { data: [], chartConfig: {} };
@@ -76,23 +73,7 @@ export function ReferrersChart({ traffic, repositoryName }: ReferrersChartProps)
     return { data: chartData, chartConfig: config };
   }, [traffic.referrers]);
 
-  const handleDataChange = useCallback((newZoomedData: Array<{ date: string;[key: string]: string | number }>) => {
-    setZoomedData(newZoomedData);
-  }, []);
 
-  const handleExportCSV = useCallback(() => {
-    const dataToExport = zoomedData.length > 0 ? zoomedData : data;
-    const startDate = dataToExport.length > 0 ? dataToExport[0].date : undefined;
-    const endDate = dataToExport.length > 0 ? dataToExport[dataToExport.length - 1].date : undefined;
-    exportDynamicChartData(dataToExport, 'referrers', 'csv', repositoryName, startDate, endDate);
-  }, [zoomedData, data, repositoryName]);
-
-  const handleExportJSON = useCallback(() => {
-    const dataToExport = zoomedData.length > 0 ? zoomedData : data;
-    const startDate = dataToExport.length > 0 ? dataToExport[0].date : undefined;
-    const endDate = dataToExport.length > 0 ? dataToExport[dataToExport.length - 1].date : undefined;
-    exportDynamicChartData(dataToExport, 'referrers', 'json', repositoryName, startDate, endDate);
-  }, [zoomedData, data, repositoryName]);
 
   return (
     <Card className="w-full">
@@ -110,13 +91,6 @@ export function ReferrersChart({ traffic, repositoryName }: ReferrersChartProps)
             data={data}
             chartConfig={chartConfig}
             className="h-64 w-full"
-            onDataChange={handleDataChange}
-            rightControls={
-              <ExportDropdown
-                onExportCSV={handleExportCSV}
-                onExportJSON={handleExportJSON}
-              />
-            }
           >
             {Object.keys(chartConfig).map(referrer => (
               <Line

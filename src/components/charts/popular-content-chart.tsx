@@ -1,12 +1,10 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo } from "react";
 import { Line } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig } from "@/components/ui/chart";
 import { ZoomableChart } from "./zoomable-chart";
-import { ExportDropdown } from "./export-dropdown";
-import { exportDynamicChartData } from "@/utils/data-export";
 
 interface PopularContentChartProps {
   traffic: {
@@ -35,8 +33,7 @@ const COLORS = [
   "#6278f8",
 ];
 
-export function PopularContentChart({ traffic, repositoryName }: PopularContentChartProps) {
-  const [zoomedData, setZoomedData] = useState<Array<{ date: string;[key: string]: string | number }>>([]);
+export function PopularContentChart({ traffic }: PopularContentChartProps) {
 
   const { data, chartConfig } = useMemo(() => {
     if (!traffic.paths.length) return { data: [], chartConfig: {} };
@@ -78,23 +75,7 @@ export function PopularContentChart({ traffic, repositoryName }: PopularContentC
     return { data: chartData, chartConfig: config };
   }, [traffic.paths]);
 
-  const handleDataChange = useCallback((newZoomedData: Array<{ date: string;[key: string]: string | number }>) => {
-    setZoomedData(newZoomedData);
-  }, []);
 
-  const handleExportCSV = useCallback(() => {
-    const dataToExport = zoomedData.length > 0 ? zoomedData : data;
-    const startDate = dataToExport.length > 0 ? dataToExport[0].date : undefined;
-    const endDate = dataToExport.length > 0 ? dataToExport[dataToExport.length - 1].date : undefined;
-    exportDynamicChartData(dataToExport, 'popular-content', 'csv', repositoryName, startDate, endDate);
-  }, [zoomedData, data, repositoryName]);
-
-  const handleExportJSON = useCallback(() => {
-    const dataToExport = zoomedData.length > 0 ? zoomedData : data;
-    const startDate = dataToExport.length > 0 ? dataToExport[0].date : undefined;
-    const endDate = dataToExport.length > 0 ? dataToExport[dataToExport.length - 1].date : undefined;
-    exportDynamicChartData(dataToExport, 'popular-content', 'json', repositoryName, startDate, endDate);
-  }, [zoomedData, data, repositoryName]);
 
   return (
     <Card className="w-full">
@@ -112,13 +93,6 @@ export function PopularContentChart({ traffic, repositoryName }: PopularContentC
             data={data}
             chartConfig={chartConfig}
             className="h-64 w-full"
-            onDataChange={handleDataChange}
-            rightControls={
-              <ExportDropdown
-                onExportCSV={handleExportCSV}
-                onExportJSON={handleExportJSON}
-              />
-            }
           >
             {Object.keys(chartConfig).map(path => (
               <Line
