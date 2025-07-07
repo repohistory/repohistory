@@ -54,10 +54,10 @@ export default async function RepoPage({ params }: PageProps) {
         <CloneChartWrapper fullName={fullName} repoId={overview.repoId} />
       </Suspense>
       <Suspense fallback={<PopularChartsSkeleton />}>
-        <ReferrersChartWrapper fullName={fullName} />
+        <ReferrersChartWrapper fullName={fullName} repoId={overview.repoId} />
       </Suspense>
       <Suspense fallback={<PopularChartsSkeleton />}>
-        <PopularContentChartWrapper fullName={fullName} />
+        <PopularContentChartWrapper fullName={fullName} repoId={overview.repoId} />
       </Suspense>
     </div>
   );

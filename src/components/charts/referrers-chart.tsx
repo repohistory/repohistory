@@ -1,60 +1,136 @@
 "use client";
 
+import { useMemo, useState, useCallback } from "react";
+import { Line } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import Link from "next/link";
+import { ChartConfig } from "@/components/ui/chart";
+import { ZoomableChart } from "./zoomable-chart";
+import { ExportDropdown } from "./export-dropdown";
+import { exportDynamicChartData } from "@/utils/data-export";
+
 interface ReferrersChartProps {
   traffic: {
     referrers: Array<{
       referrer: string;
-      count: number;
-      uniques: number;
+      data: Array<{
+        timestamp: string;
+        count: number;
+        uniques: number;
+      }>;
     }>;
   };
+  repositoryName?: string;
 }
 
-export function ReferrersChart({ traffic }: ReferrersChartProps) {
+const COLORS = [
+  "#62C3F8",
+  "#62f888",
+  "#b5f862",
+  "#f8d862",
+  "#f88d62",
+  "#f86262",
+  "#f862d3",
+  "#b562f8",
+  "#6278f8",
+];
+
+export function ReferrersChart({ traffic, repositoryName }: ReferrersChartProps) {
+  const [zoomedData, setZoomedData] = useState<Array<{ date: string;[key: string]: string | number }>>([]);
+
+  const { data, chartConfig } = useMemo(() => {
+    if (!traffic.referrers.length) return { data: [], chartConfig: {} };
+
+    // Use all referrers
+    const topReferrers = traffic.referrers;
+
+    // Create a map of dates to referrer data
+    const dateMap = new Map<string, Record<string, number>>();
+
+    topReferrers.forEach(referrer => {
+      referrer.data.forEach(item => {
+        if (!dateMap.has(item.timestamp)) {
+          dateMap.set(item.timestamp, {});
+        }
+        const dateEntry = dateMap.get(item.timestamp)!;
+        dateEntry[referrer.referrer] = item.count;
+      });
+    });
+
+    // Convert to array format
+    const chartData = Array.from(dateMap.entries())
+      .map(([date, referrers]) => ({
+        date,
+        ...referrers
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    // Create chart config
+    const config: ChartConfig = {};
+    topReferrers.forEach((referrer, index) => {
+      config[referrer.referrer] = {
+        label: referrer.referrer,
+        color: COLORS[index % COLORS.length],
+      };
+    });
+
+    return { data: chartData, chartConfig: config };
+  }, [traffic.referrers]);
+
+  const handleDataChange = useCallback((newZoomedData: Array<{ date: string;[key: string]: string | number }>) => {
+    setZoomedData(newZoomedData);
+  }, []);
+
+  const handleExportCSV = useCallback(() => {
+    const dataToExport = zoomedData.length > 0 ? zoomedData : data;
+    const startDate = dataToExport.length > 0 ? dataToExport[0].date : undefined;
+    const endDate = dataToExport.length > 0 ? dataToExport[dataToExport.length - 1].date : undefined;
+    exportDynamicChartData(dataToExport, 'referrers', 'csv', repositoryName, startDate, endDate);
+  }, [zoomedData, data, repositoryName]);
+
+  const handleExportJSON = useCallback(() => {
+    const dataToExport = zoomedData.length > 0 ? zoomedData : data;
+    const startDate = dataToExport.length > 0 ? dataToExport[0].date : undefined;
+    const endDate = dataToExport.length > 0 ? dataToExport[dataToExport.length - 1].date : undefined;
+    exportDynamicChartData(dataToExport, 'referrers', 'json', repositoryName, startDate, endDate);
+  }, [zoomedData, data, repositoryName]);
+
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b">
         <div className="flex flex-1 flex-col justify-center gap-1">
-          <CardTitle>Referrering Sites</CardTitle>
+          <CardTitle>Referring Sites</CardTitle>
           <CardDescription>
-            Sources driving traffic to your repository
+            Sources driving traffic to your repository over time
           </CardDescription>
         </div>
       </CardHeader>
       <CardContent>
-        {traffic.referrers.length > 0 ? (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Source</TableHead>
-                <TableHead className="text-right">Views</TableHead>
-                <TableHead className="text-right">Unique</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {traffic.referrers.map((referrer, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-medium">
-                    <Link
-                      href={`https://${referrer.referrer.includes('.') ? referrer.referrer : `${referrer.referrer}.com`}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline"
-                    >
-                      {referrer.referrer}
-                    </Link>
-                  </TableCell>
-                  <TableCell className="text-right">{referrer.count.toLocaleString()}</TableCell>
-                  <TableCell className="text-right">{referrer.uniques.toLocaleString()}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        {data.length > 0 ? (
+          <ZoomableChart
+            data={data}
+            chartConfig={chartConfig}
+            className="h-64 w-full"
+            onDataChange={handleDataChange}
+            rightControls={
+              <ExportDropdown
+                onExportCSV={handleExportCSV}
+                onExportJSON={handleExportJSON}
+              />
+            }
+          >
+            {Object.keys(chartConfig).map(referrer => (
+              <Line
+                key={referrer}
+                dataKey={referrer}
+                type="monotone"
+                stroke={chartConfig[referrer].color}
+                strokeWidth={2}
+                dot={false}
+              />
+            ))}
+          </ZoomableChart>
         ) : (
-          <div className="flex items-center justify-center h-32 text-muted-foreground">
+          <div className="flex items-center justify-center h-64 text-muted-foreground">
             No referrer data available
           </div>
         )}

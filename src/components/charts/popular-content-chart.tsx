@@ -1,63 +1,138 @@
 "use client";
 
+import { useMemo, useState, useCallback } from "react";
+import { Line } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import Link from "next/link";
+import { ChartConfig } from "@/components/ui/chart";
+import { ZoomableChart } from "./zoomable-chart";
+import { ExportDropdown } from "./export-dropdown";
+import { exportDynamicChartData } from "@/utils/data-export";
+
 interface PopularContentChartProps {
   traffic: {
     paths: Array<{
       path: string;
       title: string;
-      count: number;
-      uniques: number;
+      data: Array<{
+        timestamp: string;
+        count: number;
+        uniques: number;
+      }>;
     }>;
   };
+  repositoryName?: string;
 }
 
-export function PopularContentChart({ traffic }: PopularContentChartProps) {
+const COLORS = [
+  "#62C3F8",
+  "#62f888",
+  "#b5f862",
+  "#f8d862",
+  "#f88d62",
+  "#f86262",
+  "#f862d3",
+  "#b562f8",
+  "#6278f8",
+];
+
+export function PopularContentChart({ traffic, repositoryName }: PopularContentChartProps) {
+  const [zoomedData, setZoomedData] = useState<Array<{ date: string;[key: string]: string | number }>>([]);
+
+  const { data, chartConfig } = useMemo(() => {
+    if (!traffic.paths.length) return { data: [], chartConfig: {} };
+
+    // Use all paths
+    const topPaths = traffic.paths;
+
+    // Create a map of dates to path data
+    const dateMap = new Map<string, Record<string, number>>();
+
+    topPaths.forEach(pathItem => {
+      pathItem.data.forEach(item => {
+        if (!dateMap.has(item.timestamp)) {
+          dateMap.set(item.timestamp, {});
+        }
+        const dateEntry = dateMap.get(item.timestamp)!;
+        // Use path as the key, but we'll display the title in the legend
+        dateEntry[pathItem.path] = item.count;
+      });
+    });
+
+    // Convert to array format
+    const chartData = Array.from(dateMap.entries())
+      .map(([date, paths]) => ({
+        date,
+        ...paths
+      }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    // Create chart config
+    const config: ChartConfig = {};
+    topPaths.forEach((pathItem, index) => {
+      config[pathItem.path] = {
+        label: pathItem.path,
+        color: COLORS[index % COLORS.length],
+      };
+    });
+
+    return { data: chartData, chartConfig: config };
+  }, [traffic.paths]);
+
+  const handleDataChange = useCallback((newZoomedData: Array<{ date: string;[key: string]: string | number }>) => {
+    setZoomedData(newZoomedData);
+  }, []);
+
+  const handleExportCSV = useCallback(() => {
+    const dataToExport = zoomedData.length > 0 ? zoomedData : data;
+    const startDate = dataToExport.length > 0 ? dataToExport[0].date : undefined;
+    const endDate = dataToExport.length > 0 ? dataToExport[dataToExport.length - 1].date : undefined;
+    exportDynamicChartData(dataToExport, 'popular-content', 'csv', repositoryName, startDate, endDate);
+  }, [zoomedData, data, repositoryName]);
+
+  const handleExportJSON = useCallback(() => {
+    const dataToExport = zoomedData.length > 0 ? zoomedData : data;
+    const startDate = dataToExport.length > 0 ? dataToExport[0].date : undefined;
+    const endDate = dataToExport.length > 0 ? dataToExport[dataToExport.length - 1].date : undefined;
+    exportDynamicChartData(dataToExport, 'popular-content', 'json', repositoryName, startDate, endDate);
+  }, [zoomedData, data, repositoryName]);
+
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b">
         <div className="flex flex-1 flex-col justify-center gap-1">
           <CardTitle>Popular Content</CardTitle>
           <CardDescription>
-            Most visited pages in your repository
+            Most visited pages in your repository over time
           </CardDescription>
         </div>
       </CardHeader>
       <CardContent>
-        {traffic.paths.length > 0 ? (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Path</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead className="text-right">Views</TableHead>
-                <TableHead className="text-right">Unique</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {traffic.paths.map((path, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-mono text-sm">
-                    <Link
-                      href={`https://github.com${path.path}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline"
-                    >
-                      {path.path}
-                    </Link>
-                  </TableCell>
-                  <TableCell className="max-w-[200px] truncate">{path.title}</TableCell>
-                  <TableCell className="text-right">{path.count.toLocaleString()}</TableCell>
-                  <TableCell className="text-right">{path.uniques.toLocaleString()}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        {data.length > 0 ? (
+          <ZoomableChart
+            data={data}
+            chartConfig={chartConfig}
+            className="h-64 w-full"
+            onDataChange={handleDataChange}
+            rightControls={
+              <ExportDropdown
+                onExportCSV={handleExportCSV}
+                onExportJSON={handleExportJSON}
+              />
+            }
+          >
+            {Object.keys(chartConfig).map(path => (
+              <Line
+                key={path}
+                dataKey={path}
+                type="monotone"
+                stroke={chartConfig[path].color}
+                strokeWidth={2}
+                dot={false}
+              />
+            ))}
+          </ZoomableChart>
         ) : (
-          <div className="flex items-center justify-center h-32 text-muted-foreground">
+          <div className="flex items-center justify-center h-64 text-muted-foreground">
             No content data available
           </div>
         )}

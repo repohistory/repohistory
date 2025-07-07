@@ -3,7 +3,7 @@ import { ViewChart } from "./view-chart";
 import { CloneChart } from "./clone-chart";
 import { ReferrersChart } from "./referrers-chart";
 import { PopularContentChart } from "./popular-content-chart";
-import { getRepoStars, getRepoViews, getRepoClones, getTopReferrers, getTopPaths } from "@/utils/repo";
+import { getRepoStars, getRepoViews, getRepoClones, getRepoReferrers, getRepoPaths } from "@/utils/repo";
 import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
 import { createClient } from "@/utils/supabase/server";
 
@@ -45,20 +45,24 @@ export async function CloneChartWrapper({ fullName, repoId }: CloneChartWrapperP
 
 interface ReferrersChartWrapperProps {
   fullName: string;
+  repoId: number;
 }
 
-export async function ReferrersChartWrapper({ fullName }: ReferrersChartWrapperProps) {
+export async function ReferrersChartWrapper({ fullName, repoId }: ReferrersChartWrapperProps) {
   const octokit = await getUserOctokit();
-  const referrers = await getTopReferrers(octokit, fullName);
-  return <ReferrersChart traffic={{ referrers }} />;
+  const supabase = await createClient();
+  const { referrers } = await getRepoReferrers(octokit, supabase, fullName, repoId);
+  return <ReferrersChart traffic={{ referrers }} repositoryName={fullName} />;
 }
 
 interface PopularContentChartWrapperProps {
   fullName: string;
+  repoId: number;
 }
 
-export async function PopularContentChartWrapper({ fullName }: PopularContentChartWrapperProps) {
+export async function PopularContentChartWrapper({ fullName, repoId }: PopularContentChartWrapperProps) {
   const octokit = await getUserOctokit();
-  const paths = await getTopPaths(octokit, fullName);
-  return <PopularContentChart traffic={{ paths }} />;
+  const supabase = await createClient();
+  const { paths } = await getRepoPaths(octokit, supabase, fullName, repoId);
+  return <PopularContentChart traffic={{ paths }} repositoryName={fullName} />;
 }

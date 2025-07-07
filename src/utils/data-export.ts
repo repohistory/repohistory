@@ -108,7 +108,7 @@ export function downloadJSON(jsonContent: string, filename: string): void {
 }
 
 export function generateFilename(
-  type: 'views' | 'clones' | 'stars', 
+  type: 'views' | 'clones' | 'stars' | 'referrers' | 'popular-content', 
   format: 'csv' | 'json',
   repositoryName?: string,
   startDate?: string,
@@ -169,6 +169,55 @@ export function exportStarsData(
     }
   } else {
     const jsonContent = convertStarsToJSON(data, viewType);
+    downloadJSON(jsonContent, filename);
+  }
+}
+
+export function convertDynamicChartToCSV(data: Array<{ date: string; [key: string]: string | number }>): string {
+  if (data.length === 0) {
+    return '';
+  }
+
+  // Get all keys except 'date' for the headers
+  const dataKeys = Object.keys(data[0]).filter(key => key !== 'date');
+  const headers = ['Date', ...dataKeys];
+
+  const csvRows = [
+    headers.join(','),
+    ...data.map(row => [
+      row.date,
+      ...dataKeys.map(key => row[key]?.toString() || '0')
+    ].join(','))
+  ];
+
+  return csvRows.join('\n');
+}
+
+export function convertDynamicChartToJSON(data: Array<{ date: string; [key: string]: string | number }>): string {
+  if (data.length === 0) {
+    return JSON.stringify([], null, 2);
+  }
+
+  return JSON.stringify(data, null, 2);
+}
+
+export function exportDynamicChartData(
+  data: Array<{ date: string; [key: string]: string | number }>, 
+  type: 'referrers' | 'popular-content',
+  format: 'csv' | 'json',
+  repositoryName?: string,
+  startDate?: string,
+  endDate?: string
+): void {
+  const filename = generateFilename(type, format, repositoryName, startDate, endDate);
+  
+  if (format === 'csv') {
+    const csvContent = convertDynamicChartToCSV(data);
+    if (csvContent) {
+      downloadCSV(csvContent, filename);
+    }
+  } else {
+    const jsonContent = convertDynamicChartToJSON(data);
     downloadJSON(jsonContent, filename);
   }
 }
