@@ -85,9 +85,9 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
     if (zoomTimeoutRef.current) {
       clearTimeout(zoomTimeoutRef.current);
     }
-    
+
     setInternalIsZooming(true);
-    
+
     // Set new timeout
     zoomTimeoutRef.current = setTimeout(() => {
       setInternalIsZooming(false);
@@ -341,6 +341,7 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
                 axisLine={false}
                 tickMargin={8}
                 style={{ fontSize: '12px', userSelect: 'none' }}
+                allowDecimals={false}
                 tickFormatter={(value) => value.toLocaleString()}
               />
               <ChartTooltip

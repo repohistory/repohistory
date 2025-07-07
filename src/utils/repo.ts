@@ -129,8 +129,21 @@ export async function getRepoViews(
       dataMap.set(item.date, { timestamp: item.date, count: item.count, uniques: item.uniques });
     });
 
-    // Convert to sorted array and calculate totals
-    const views = Array.from(dataMap.values()).sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+    // Fill missing dates with 0 values
+    const sortedViews = Array.from(dataMap.values()).sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+    const views = [];
+    
+    if (sortedViews.length > 0) {
+      const startDate = new Date(sortedViews[0].timestamp);
+      const endDate = new Date();
+      
+      for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+        const dateStr = d.toISOString().split('T')[0];
+        const existingData = dataMap.get(dateStr);
+        views.push(existingData || { timestamp: dateStr, count: 0, uniques: 0 });
+      }
+    }
+    
     const count = views.reduce((sum, item) => sum + item.count, 0);
     const uniques = views.reduce((sum, item) => sum + item.uniques, 0);
 
@@ -192,8 +205,21 @@ export async function getRepoClones(
       dataMap.set(item.date, { timestamp: item.date, count: item.count, uniques: item.uniques });
     });
 
-    // Convert to sorted array and calculate totals
-    const clones = Array.from(dataMap.values()).sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+    // Fill missing dates with 0 values
+    const sortedClones = Array.from(dataMap.values()).sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+    const clones = [];
+    
+    if (sortedClones.length > 0) {
+      const startDate = new Date(sortedClones[0].timestamp);
+      const endDate = new Date();
+      
+      for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+        const dateStr = d.toISOString().split('T')[0];
+        const existingData = dataMap.get(dateStr);
+        clones.push(existingData || { timestamp: dateStr, count: 0, uniques: 0 });
+      }
+    }
+    
     const count = clones.reduce((sum, item) => sum + item.count, 0);
     const uniques = clones.reduce((sum, item) => sum + item.uniques, 0);
 
@@ -262,10 +288,10 @@ function processStarsData(stargazers: Array<{ starred_at?: string }>) {
     return [];
   }
 
-  // Generate complete date range from one day before first star to last date
+  // Generate complete date range from one day before first star to today
   const startDate = new Date(sortedDates[0]);
   startDate.setDate(startDate.getDate() - 1); // Start one day before first star
-  const endDate = new Date(sortedDates[sortedDates.length - 1]);
+  const endDate = new Date(); // Use today's date
   const completeData = [];
   let cumulative = 0;
 
