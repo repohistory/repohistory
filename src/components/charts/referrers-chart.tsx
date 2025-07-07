@@ -94,6 +94,7 @@ export function ReferrersChart({ traffic }: ReferrersChartProps) {
           >
             {Object.keys(chartConfig).map(referrer => (
               <Line
+                isAnimationActive={false}
                 key={referrer}
                 dataKey={referrer}
                 type="monotone"

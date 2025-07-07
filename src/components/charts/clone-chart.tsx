@@ -33,7 +33,7 @@ const chartConfig = {
 
 export function CloneChart({ traffic }: CloneChartProps) {
   const [zoomedData, setZoomedData] = useState<Array<{ date: string; unique: number; total: number }>>([]);
-  
+
   // Track hidden series (opposite of visible)
   const [hiddenSeries, setHiddenSeries] = useState<Array<string>>([]);
 
@@ -80,10 +80,10 @@ export function CloneChart({ traffic }: CloneChartProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <ZoomableChart 
-          data={data} 
-          chartConfig={chartConfig} 
-          className="h-64 w-full" 
+        <ZoomableChart
+          data={data}
+          chartConfig={chartConfig}
+          className="h-64 w-full"
           onDataChange={handleDataChange}
           onLegendClick={handleLegendClick}
           hiddenSeries={hiddenSeries}
@@ -115,6 +115,7 @@ export function CloneChart({ traffic }: CloneChartProps) {
             </linearGradient>
           </defs>
           <Area
+            isAnimationActive={false}
             dataKey="total"
             type="monotone"
             fill="url(#fillTotalClone)"
@@ -124,6 +125,7 @@ export function CloneChart({ traffic }: CloneChartProps) {
             hide={hiddenSeries.includes("total")}
           />
           <Area
+            isAnimationActive={false}
             dataKey="unique"
             type="monotone"
             fill="url(#fillUniqueClone)"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect, ReactNode, useCallback, Children, cloneElement, isValidElement } from "react";
+import { useState, useMemo, useRef, useEffect, ReactNode, useCallback } from "react";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend } from "@/components/ui/chart";
 import { ComposedChart, XAxis, YAxis, ResponsiveContainer, ReferenceArea } from "recharts";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,6 @@ interface ZoomableChartProps {
   onLegendClick?: (dataKey: string) => void;
   hiddenSeries?: Array<string>;
   isZooming?: boolean;
-  disableAnimation?: boolean;
 }
 
 interface CustomLegendContentProps {
@@ -46,7 +45,7 @@ function CustomLegendContent({ chartConfig, hiddenSeries, onLegendClick }: Custo
             key={entry.dataKey}
             variant="outline"
             size="sm"
-            className={`rounded-full cursor-pointer select-none transition-all hover:opacity-80 gap-1.5 ${isHidden ? "opacity-50" : "opacity-100"
+            className={`rounded-full cursor-pointer select-none hover:opacity-80 gap-1.5 ${isHidden ? "opacity-50" : "opacity-100"
               }`}
             onClick={() => onLegendClick(entry.dataKey)}
           >
@@ -64,36 +63,14 @@ function CustomLegendContent({ chartConfig, hiddenSeries, onLegendClick }: Custo
   );
 }
 
-export function ZoomableChart({ data, chartConfig, children, className = "h-64 w-full", onDataChange, onLegendClick, hiddenSeries = [], isZooming = false, disableAnimation = false }: ZoomableChartProps) {
+export function ZoomableChart({ data, chartConfig, children, className = "h-64 w-full", onDataChange, onLegendClick, hiddenSeries = [] }: ZoomableChartProps) {
   const originalData = data;
   const [refAreaLeft, setRefAreaLeft] = useState<string | null>(null);
   const [refAreaRight, setRefAreaRight] = useState<string | null>(null);
   const [startTime, setStartTime] = useState<string | null>(null);
   const [endTime, setEndTime] = useState<string | null>(null);
   const [isSelecting, setIsSelecting] = useState(false);
-  const [internalIsZooming, setInternalIsZooming] = useState(false);
   const chartRef = useRef<HTMLDivElement>(null);
-  const zoomTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Use external isZooming, internal state, or disableAnimation prop
-  const shouldDisableAnimation = isZooming || internalIsZooming || disableAnimation;
-
-  // Helper to manage zoom timeout
-  const setZoomingWithTimeout = useCallback(() => {
-    // Clear any existing timeout
-    if (zoomTimeoutRef.current) {
-      clearTimeout(zoomTimeoutRef.current);
-    }
-
-    setInternalIsZooming(true);
-
-    // Set new timeout
-    zoomTimeoutRef.current = setTimeout(() => {
-      setInternalIsZooming(false);
-      zoomTimeoutRef.current = null;
-    }, 100);
-  }, []);
-
 
   // Initialize times when data is available or when date range changes
   useEffect(() => {
@@ -155,7 +132,6 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
         const finalStartTime = clampedStartTime === originalStartTime ? originalData[0].date : new Date(clampedStartTime).toISOString();
         const finalEndTime = clampedEndTime === originalEndTime ? originalData[originalData.length - 1].date : new Date(clampedEndTime).toISOString();
 
-        setZoomingWithTimeout();
         setStartTime(finalStartTime);
         setEndTime(finalEndTime);
       }
@@ -166,7 +142,7 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
     return () => {
       chartElement.removeEventListener('wheel', handleWheel);
     };
-  }, [originalData, startTime, endTime, setZoomingWithTimeout]);
+  }, [originalData, startTime, endTime]);
 
   const zoomedData = useMemo(() => {
     if (!originalData.length || !startTime || !endTime) {
@@ -209,14 +185,13 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
   const handleMouseUp = useCallback(() => {
     if (refAreaLeft && refAreaRight) {
       const [left, right] = [refAreaLeft, refAreaRight].sort();
-      setZoomingWithTimeout();
       setStartTime(left);
       setEndTime(right);
     }
     setRefAreaLeft(null);
     setRefAreaRight(null);
     setIsSelecting(false);
-  }, [refAreaLeft, refAreaRight, setZoomingWithTimeout]);
+  }, [refAreaLeft, refAreaRight]);
 
   // Add global mouse event listeners when dragging
   useEffect(() => {
@@ -258,7 +233,6 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
 
   const handleReset = () => {
     if (originalData.length > 0) {
-      setZoomingWithTimeout();
       setStartTime(originalData[0].date);
       setEndTime(originalData[originalData.length - 1].date);
     }
@@ -269,28 +243,6 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
     startTime !== originalData[0].date ||
     endTime !== originalData[originalData.length - 1].date
   );
-
-  // Process children to inject animationDuration
-  const processedChildren = useMemo(() => {
-    return Children.map(children, (child) => {
-      if (isValidElement(child) && (child.type as { displayName?: string }).displayName?.includes('Area')) {
-        return cloneElement(child, {
-          ...(child.props as object),
-          animationDuration: shouldDisableAnimation ? 0 : 500,
-        } as React.ComponentProps<React.ElementType>);
-      }
-      return child;
-    });
-  }, [children, shouldDisableAnimation]);
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (zoomTimeoutRef.current) {
-        clearTimeout(zoomTimeoutRef.current);
-      }
-    };
-  }, []);
 
   return (
     <div className={className}>
@@ -342,7 +294,7 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
                 content={<ChartTooltipContent indicator="line" />}
                 labelFormatter={(value) => new Date(value).toLocaleDateString()}
               />
-              {processedChildren}
+              {children}
               {onLegendClick && (
                 <ChartLegend
                   content={

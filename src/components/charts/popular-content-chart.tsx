@@ -75,8 +75,6 @@ export function PopularContentChart({ traffic }: PopularContentChartProps) {
     return { data: chartData, chartConfig: config };
   }, [traffic.paths]);
 
-
-
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b">
@@ -96,6 +94,7 @@ export function PopularContentChart({ traffic }: PopularContentChartProps) {
           >
             {Object.keys(chartConfig).map(path => (
               <Line
+                isAnimationActive={false}
                 key={path}
                 dataKey={path}
                 type="monotone"

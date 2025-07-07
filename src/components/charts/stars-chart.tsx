@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Area } from "recharts";
@@ -23,23 +23,11 @@ const chartConfig = {
 export function StarsChart({ starsData }: StarsChartProps) {
   const [viewType, setViewType] = useState<"cumulative" | "daily">("cumulative");
   const [zoomedData, setZoomedData] = useState<Array<{ date: string; stars: number }>>([]);
-  const [hasRendered, setHasRendered] = useState(false);
 
   const data = useMemo(() => starsData.starsHistory.map((item) => ({
     date: item.date,
     stars: viewType === "cumulative" ? item.cumulative : item.daily,
   })), [starsData.starsHistory, viewType]);
-
-  // Track first render to allow animation on initial load, then disable after delay
-  useEffect(() => {
-    if (!hasRendered) {
-      const timer = setTimeout(() => {
-        setHasRendered(true);
-      }, 700);
-
-      return () => clearTimeout(timer);
-    }
-  }, [hasRendered]);
 
   const handleDataChange = useCallback((newZoomedData: Array<{ date: string;[key: string]: string | number }>) => {
     setZoomedData(newZoomedData as Array<{ date: string; stars: number }>);
@@ -79,7 +67,6 @@ export function StarsChart({ starsData }: StarsChartProps) {
           chartConfig={chartConfig}
           className="h-64 w-full"
           onDataChange={handleDataChange}
-          disableAnimation={hasRendered}
         >
           <defs>
             <linearGradient id="fillStars" x1="0" y1="0" x2="0" y2="1">
@@ -96,6 +83,7 @@ export function StarsChart({ starsData }: StarsChartProps) {
             </linearGradient>
           </defs>
           <Area
+            isAnimationActive={false}
             dataKey="stars"
             type="monotone"
             fill="url(#fillStars)"

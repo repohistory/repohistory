@@ -115,6 +115,7 @@ export function ViewChart({ traffic }: ViewChartProps) {
             </linearGradient>
           </defs>
           <Area
+            isAnimationActive={false}
             dataKey="total"
             type="monotone"
             fill="url(#fillTotal)"
@@ -124,6 +125,7 @@ export function ViewChart({ traffic }: ViewChartProps) {
             hide={hiddenSeries.includes("total")}
           />
           <Area
+            isAnimationActive={false}
             dataKey="unique"
             type="monotone"
             fill="url(#fillUnique)"
