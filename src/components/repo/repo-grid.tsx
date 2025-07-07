@@ -2,6 +2,9 @@ import { getRepos } from "@/utils/octokit/get-repos";
 import { Repo } from "@/types";
 import { RepoCard } from "./repo-card";
 import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
+import { Card, CardContent } from "@/components/ui/card";
+import { Plus } from "lucide-react";
+import Link from "next/link";
 
 export async function RepoGrid() {
   const octokit = await getUserOctokit();
@@ -15,6 +18,13 @@ export async function RepoGrid() {
           .map((repo: Repo) => (
             <RepoCard key={repo.id} repo={repo} />
           ))}
+        <Link href="https://github.com/apps/repohistory/installations/new" target="_blank" rel="noopener noreferrer">
+          <Card className="h-56 w-full cursor-pointer transition-colors hover:bg-accent border-2 border-dashed border-muted-foreground/50 flex items-center justify-center">
+            <CardContent className="flex flex-col items-center justify-center gap-2">
+              <Plus className="h-6 w-6 text-muted-foreground" />
+            </CardContent>
+          </Card>
+        </Link>
       </div>
     </div>
   );
