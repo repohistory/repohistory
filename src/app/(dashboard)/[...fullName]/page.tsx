@@ -3,9 +3,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { StarsChartWrapper, ViewChartWrapper, CloneChartWrapper, ReferrersChartWrapper, PopularContentChartWrapper } from "@/components/charts/chart-wrappers";
 import { StarsChartSkeleton } from "@/components/charts/stars-chart-skeleton";
-import { ViewChartSkeleton } from "@/components/charts/view-chart-skeleton";
-import { CloneChartSkeleton } from "@/components/charts/clone-chart-skeleton";
-import { PopularChartsSkeleton } from "@/components/charts/popular-charts-skeleton";
+import { AreaChartSkeleton } from "@/components/charts/area-chart-skeleton";
+import { TrafficChartSkeleton } from "@/components/charts/traffic-chart-skeleton";
 import { ExportAllData } from "@/components/export-all-data";
 import { getRepoOverview } from "@/utils/repo";
 import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
@@ -51,16 +50,16 @@ export default async function RepoPage({ params }: PageProps) {
       <Suspense fallback={<StarsChartSkeleton />}>
         <StarsChartWrapper fullName={overview.fullName} stargazersCount={overview.stars} />
       </Suspense>
-      <Suspense fallback={<ViewChartSkeleton />}>
+      <Suspense fallback={<AreaChartSkeleton type="views" />}>
         <ViewChartWrapper fullName={fullName} repoId={overview.repoId} />
       </Suspense>
-      <Suspense fallback={<CloneChartSkeleton />}>
+      <Suspense fallback={<AreaChartSkeleton type="clones" />}>
         <CloneChartWrapper fullName={fullName} repoId={overview.repoId} />
       </Suspense>
-      <Suspense fallback={<PopularChartsSkeleton />}>
+      <Suspense fallback={<TrafficChartSkeleton type="referrers" />}>
         <ReferrersChartWrapper fullName={fullName} repoId={overview.repoId} />
       </Suspense>
-      <Suspense fallback={<PopularChartsSkeleton />}>
+      <Suspense fallback={<TrafficChartSkeleton type="popular-content" />}>
         <PopularContentChartWrapper fullName={fullName} repoId={overview.repoId} />
       </Suspense>
     </div>
