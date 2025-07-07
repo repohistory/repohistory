@@ -80,14 +80,6 @@ export function StarsChart({ starsData }: StarsChartProps) {
           className="h-64 w-full"
           onDataChange={handleDataChange}
           disableAnimation={hasRendered}
-          leftControls={
-            <Tabs value={viewType} onValueChange={(value) => setViewType(value as "cumulative" | "daily")}>
-              <TabsList>
-                <TabsTrigger value="cumulative" className="cursor-pointer">Cumulative</TabsTrigger>
-                <TabsTrigger value="daily" className="cursor-pointer">Daily</TabsTrigger>
-              </TabsList>
-            </Tabs>
-          }
         >
           <defs>
             <linearGradient id="fillStars" x1="0" y1="0" x2="0" y2="1">
@@ -112,6 +104,14 @@ export function StarsChart({ starsData }: StarsChartProps) {
             strokeWidth={2}
           />
         </ZoomableChart>
+        <div className="flex justify-center mt-6">
+          <Tabs value={viewType} onValueChange={(value) => setViewType(value as "cumulative" | "daily")}>
+            <TabsList>
+              <TabsTrigger value="cumulative" className="cursor-pointer">Cumulative</TabsTrigger>
+              <TabsTrigger value="daily" className="cursor-pointer">Daily</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
       </CardContent>
     </Card>
   );

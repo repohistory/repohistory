@@ -4,6 +4,7 @@ import { useState, useMemo, useRef, useEffect, ReactNode, useCallback, Children,
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend } from "@/components/ui/chart";
 import { ComposedChart, XAxis, YAxis, ResponsiveContainer, ReferenceArea } from "recharts";
 import { Button } from "@/components/ui/button";
+import { Maximize } from "lucide-react";
 
 interface ZoomableChartProps {
   data: Array<{ date: string;[key: string]: string | number }>;
@@ -11,7 +12,6 @@ interface ZoomableChartProps {
   children: ReactNode;
   className?: string;
   onDataChange?: (zoomedData: Array<{ date: string;[key: string]: string | number }>) => void;
-  leftControls?: ReactNode;
   onLegendClick?: (dataKey: string) => void;
   hiddenSeries?: Array<string>;
   isZooming?: boolean;
@@ -64,7 +64,7 @@ function CustomLegendContent({ chartConfig, hiddenSeries, onLegendClick }: Custo
   );
 }
 
-export function ZoomableChart({ data, chartConfig, children, className = "h-64 w-full", onDataChange, leftControls, onLegendClick, hiddenSeries = [], isZooming = false, disableAnimation = false }: ZoomableChartProps) {
+export function ZoomableChart({ data, chartConfig, children, className = "h-64 w-full", onDataChange, onLegendClick, hiddenSeries = [], isZooming = false, disableAnimation = false }: ZoomableChartProps) {
   const originalData = data;
   const [refAreaLeft, setRefAreaLeft] = useState<string | null>(null);
   const [refAreaRight, setRefAreaRight] = useState<string | null>(null);
@@ -294,17 +294,12 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
 
   return (
     <div className={className}>
-      <div className="h-8 flex justify-between items-center mb-4">
-        <div className="flex gap-2">
-          {leftControls}
-        </div>
-        <div className="flex gap-2 items-center">
-          {isZoomed && (
-            <Button variant="outline" size="sm" onClick={handleReset}>
-              Reset
-            </Button>
-          )}
-        </div>
+      <div className="h-8 flex justify-end items-center mb-4">
+        {isZoomed && (
+          <Button variant="outline" size="icon" onClick={handleReset} className="size-8">
+            <Maximize />
+          </Button>
+        )}
       </div>
       <ChartContainer config={chartConfig} className="h-[calc(100%-2.5rem)] w-full">
         <div className="h-full" ref={chartRef} style={{ touchAction: 'none', userSelect: 'none' }}>
