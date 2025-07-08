@@ -20,9 +20,9 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          run_install:
-            - cwd: ./web
           package_json_file: ./web/package.json
+          run_install: |
+            - cwd: ./web
 
       - name: Run the script
         env:
