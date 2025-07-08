@@ -1,37 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { unstable_cache } from 'next/cache';
 import { app } from '@/utils/octokit/app';
 import { JSDOM } from 'jsdom';
 import { optimize, Config } from 'svgo';
 import XYChart from '@/shared/packages/xy-chart';
 import { convertDataToChartData } from '@/shared/common/chart';
-import { replaceSVGContentFilterWithCamelcase, getBase64Image } from '@/shared/common/star-utils';
+import { replaceSVGContentFilterWithCamelcase, getBase64Image, getChartWidthWithSize } from '@/shared/common/star-utils';
 import { getRepoStars } from '@/utils/repo';
 
-export const dynamic = 'force-static'
-export const revalidate = 86400 // 24 hours
+// Cache only the repo data (GitHub API calls), not the SVG output
+const getCachedRepoData = unstable_cache(
+  async (repo: string) => {
+    const [owner, repoName] = repo.split('/');
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ params: string[] }> }
-) {
-  const { params: urlParams } = await params;
-
-  // URL structure: /api/svg/owner/repo/type/theme/transparent/color
-  // Example: /api/svg/m4xshen/hardtime.nvim/Date/light/false/ff6b6b
-  if (urlParams.length < 4 || urlParams.length > 6) {
-    throw new Error('Invalid URL format. Use: /api/svg/owner/repo/type/theme/transparent/color');
-  }
-
-  const [owner, repoName, type = 'Date', theme = 'light', transparent = 'false', color] = urlParams;
-  const repo = `${owner}/${repoName}`;
-
-  try {
-    // Validate parameters
-    if (!owner || !repoName) {
-      throw new Error('Invalid repository format. Use owner/repo');
-    }
-
-    // Check if repo has app installation (simpler approach)
+    // Check if repo has app installation
     const appOctokit = app.octokit;
     const { data: installation } = await appOctokit.rest.apps.getRepoInstallation({
       owner,
@@ -59,11 +41,42 @@ export async function GET(
     const avatarUrl = repoInfo.data.owner.avatar_url;
     const logoUrl = avatarUrl ? await getBase64Image(`${avatarUrl}&size=22`) : '';
 
-    const repoData = [{
-      repo: repo,
-      starRecords: starRecords,
-      logoUrl: logoUrl,
-    }];
+    return {
+      repo,
+      starRecords,
+      logoUrl,
+    };
+  },
+  ['repo-data'],
+  {
+    revalidate: 86400, // 24 hours
+    tags: ['repo-data']
+  }
+);
+
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+
+  // API design: /svg?repo=owner/repo&type=Date&theme=light&transparent=false&size=laptop&color=ff6b6b
+  const repo = searchParams.get('repo') || '';
+  const type = searchParams.get('type') || 'Date';
+  const theme = searchParams.get('theme') || 'light';
+  const transparent = searchParams.get('transparent') || 'false';
+  const size = searchParams.get('size') || 'laptop';
+  const color = searchParams.get('color'); // Custom color parameter
+
+  try {
+    // Validate repo parameter
+    if (!repo) {
+      throw new Error('Repository parameter is required');
+    }
+    const [owner, repoName] = repo.split('/');
+    if (!owner || !repoName) {
+      throw new Error('Invalid repository format. Use owner/repo');
+    }
+
+    // Get cached repo data
+    const repoData = await getCachedRepoData(repo);
 
     // Create virtual DOM
     const dom = new JSDOM(`<!DOCTYPE html><body></body>`);
@@ -75,7 +88,7 @@ export async function GET(
     }
 
     body.append(svg);
-    svg.setAttribute("width", "800");
+    svg.setAttribute("width", `${getChartWidthWithSize(size)}`);
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 
     // Prepare chart options with custom color if provided
@@ -85,7 +98,7 @@ export async function GET(
       dataColors?: string[];
     } = {
       xTickLabelType: type === "Date" ? "Date" : "Number",
-      chartWidth: 800,
+      chartWidth: getChartWidthWithSize(size),
     };
 
     // Add custom color if provided (hex color without #)
@@ -93,14 +106,14 @@ export async function GET(
       chartOptions.dataColors = [`#${color}`];
     }
 
-    // Generate chart
+    // Generate chart (always fresh)
     XYChart(
       svg,
       {
         title: "Star History",
         xLabel: type === "Date" ? "Date" : "Timeline",
         yLabel: "GitHub Stars",
-        data: convertDataToChartData(repoData, type as "Date" | "Timeline"),
+        data: convertDataToChartData([repoData], type as "Date" | "Timeline"),
         showDots: false,
         transparent: transparent.toLowerCase() === "true",
         theme: theme === "dark" ? "dark" : "light",
