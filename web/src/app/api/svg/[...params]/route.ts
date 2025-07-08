@@ -4,29 +4,32 @@ import { JSDOM } from 'jsdom';
 import { optimize, Config } from 'svgo';
 import XYChart from '@/shared/packages/xy-chart';
 import { convertDataToChartData } from '@/shared/common/chart';
-import { getChartWidthWithSize, replaceSVGContentFilterWithCamelcase } from '@/shared/common/star-utils';
+import { replaceSVGContentFilterWithCamelcase } from '@/shared/common/star-utils';
 import { getRepoStars } from '@/utils/repo';
+
+export const dynamic = 'force-static'
+export const revalidate = 86400 // 24 hours
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ fullName: string[] }> }
+  { params }: { params: Promise<{ params: string[] }> }
 ) {
-  const { searchParams } = new URL(request.url);
-  const { fullName } = await params;
+  const { params: urlParams } = await params;
 
-  const repo = fullName.join('/');
-  const type = searchParams.get('type') || 'Date';
-  const size = searchParams.get('size') || 'laptop';
-  const theme = searchParams.get('theme') || 'light';
-  const transparent = searchParams.get('transparent') || 'false';
+  // URL structure: /api/svg/owner/repo/type/theme/transparent
+  // Example: /api/svg/m4xshen/hardtime.nvim/Date/light/false
+  if (urlParams.length < 4 || urlParams.length > 5) {
+    throw new Error('Invalid URL format. Use: /api/svg/owner/repo/type/theme/transparent');
+  }
+
+  const [owner, repoName, type = 'Date', theme = 'light', transparent = 'false'] = urlParams;
+  const repo = `${owner}/${repoName}`;
 
   try {
-    // Validate repo parameter
-    if (!repo || fullName.length !== 2) {
+    // Validate parameters
+    if (!owner || !repoName) {
       throw new Error('Invalid repository format. Use owner/repo');
     }
-
-    const [owner, repoName] = fullName;
 
     // Check if repo has app installation (simpler approach)
     const appOctokit = app.octokit;
@@ -68,7 +71,7 @@ export async function GET(
     }
 
     body.append(svg);
-    svg.setAttribute("width", `${getChartWidthWithSize(size)}`);
+    svg.setAttribute("width", "800");
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 
     // Generate chart
@@ -85,7 +88,7 @@ export async function GET(
       },
       {
         xTickLabelType: type === "Date" ? "Date" : "Number",
-        chartWidth: getChartWidthWithSize(size),
+        chartWidth: 800,
       }
     );
 
