@@ -1,11 +1,12 @@
 <div align="center">
+  
+![github-banner](https://github.com/user-attachments/assets/ed888af7-14fa-42cc-9695-2bc887b7531a)
 
-![Screenshot](https://github.com/user-attachments/assets/eef7ab94-9251-4735-8d6d-2edfb630d0cc)
-
+Repohistory is a beautiful dashboard for tracking GitHub repo traffic history longer than 14 days.<br/>
 **[repohistory.com »](https://repohistory.com)**
 
 </div>
-
+<br/>
 
 GitHub's 14-day limit on repository data often leaves developers without vital long-term insights. Repohistory addresses this by offering an easy-to-setup, beautifully designed interface for extended repository tracking. This gives developers a powerful tool to analyze trends and progress over time, not just a brief snapshot.
 
