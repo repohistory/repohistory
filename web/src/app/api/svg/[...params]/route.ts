@@ -16,13 +16,13 @@ export async function GET(
 ) {
   const { params: urlParams } = await params;
 
-  // URL structure: /api/svg/owner/repo/type/theme/transparent
-  // Example: /api/svg/m4xshen/hardtime.nvim/Date/light/false
-  if (urlParams.length < 4 || urlParams.length > 5) {
-    throw new Error('Invalid URL format. Use: /api/svg/owner/repo/type/theme/transparent');
+  // URL structure: /api/svg/owner/repo/type/theme/transparent/color
+  // Example: /api/svg/m4xshen/hardtime.nvim/Date/light/false/ff6b6b
+  if (urlParams.length < 4 || urlParams.length > 6) {
+    throw new Error('Invalid URL format. Use: /api/svg/owner/repo/type/theme/transparent/color');
   }
 
-  const [owner, repoName, type = 'Date', theme = 'light', transparent = 'false'] = urlParams;
+  const [owner, repoName, type = 'Date', theme = 'light', transparent = 'false', color] = urlParams;
   const repo = `${owner}/${repoName}`;
 
   try {
@@ -78,6 +78,21 @@ export async function GET(
     svg.setAttribute("width", "800");
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 
+    // Prepare chart options with custom color if provided
+    const chartOptions: {
+      xTickLabelType: "Date" | "Number";
+      chartWidth: number;
+      dataColors?: string[];
+    } = {
+      xTickLabelType: type === "Date" ? "Date" : "Number",
+      chartWidth: 800,
+    };
+
+    // Add custom color if provided (hex color without #)
+    if (color && /^[0-9A-Fa-f]{6}$/.test(color)) {
+      chartOptions.dataColors = [`#${color}`];
+    }
+
     // Generate chart
     XYChart(
       svg,
@@ -90,10 +105,7 @@ export async function GET(
         transparent: transparent.toLowerCase() === "true",
         theme: theme === "dark" ? "dark" : "light",
       },
-      {
-        xTickLabelType: type === "Date" ? "Date" : "Number",
-        chartWidth: 800,
-      }
+      chartOptions
     );
 
     // Optimize SVG
