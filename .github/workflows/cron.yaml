@@ -8,9 +8,6 @@ on:
 jobs:
   execute-script:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./web
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -23,7 +20,9 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          run_install: true
+          run_install:
+            - cwd: ./web
+          package_json_file: ./web/package.json
 
       - name: Run the script
         env:
@@ -31,4 +30,5 @@ jobs:
           APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        working-directory: ./web
         run: pnpm dlx tsx src/cron.ts
