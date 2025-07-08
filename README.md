@@ -16,6 +16,6 @@ GitHub's 14-day limit on repository data often leaves developers without vital l
 - 📈 **All-Time Stars History**: Visualize the growth of your repo with an all-time stars history graph.
 - 🖥️ **Dashboard Overview**: Easily access a dashboard view for an overview of all your projects.
 
-## ⭐ Star history
+## ⭐ Star History
 
-[![Star History Chart](https://app.repohistory.com/api/svg/repohistory/repohistory/Date/dark/false/62C3F8)](https://repohistory.com)
+[![Star History Chart](https://app.repohistory.com/api/svg?repo=repohistory/repohistory&type=Date&theme=dark&transparent=false&color=62C3F8)](https://repohistory.com)
