@@ -10,7 +10,6 @@ import { getRepoStars } from '@/utils/repo';
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
-  // Extract query parameters (similar to star-history but with 'repo' instead of 'repos')
   const repo = searchParams.get('repo') || 'No repo specified';
   const type = searchParams.get('type') || 'Date';
   const size = searchParams.get('size') || 'laptop';
@@ -35,33 +34,23 @@ export async function GET(request: NextRequest) {
       repo: repoName,
     });
 
-    console.log('Found installation:', installation.id, 'for repo:', repo);
-
-    // Get octokit for this installation
     const octokit = await app.getInstallationOctokit(installation.id);
 
-    // Get repository info
     const repoInfo = await octokit.rest.repos.get({
       owner,
       repo: repoName,
     });
 
-    // Get full star history using getRepoStars
     const repoStarsData = await getRepoStars(octokit, {
       fullName: repo,
       stargazersCount: repoInfo.data.stargazers_count,
     });
 
-    console.log('Total stars:', repoStarsData.totalStars);
-    console.log('Stars history entries:', repoStarsData.starsHistory.length);
-
-    // Convert stars history to chart format
     const starRecords = repoStarsData.starsHistory.map((entry) => ({
       date: entry.date,
       count: entry.cumulative,
     }));
 
-    // Prepare repo data for chart
     const repoData = [{
       repo: repo,
       starRecords: starRecords,
