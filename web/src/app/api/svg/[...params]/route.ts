@@ -108,8 +108,6 @@ export async function GET(
         'Content-Type': 'image/svg+xml;charset=utf-8',
         'Cache-Control': 'max-age=86400',
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET',
-        'Access-Control-Allow-Headers': 'Content-Type',
       }
     });
 
