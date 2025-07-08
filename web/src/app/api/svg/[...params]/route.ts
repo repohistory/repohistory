@@ -102,7 +102,10 @@ export async function GET(
     return new NextResponse(optimized, {
       headers: {
         'Content-Type': 'image/svg+xml;charset=utf-8',
-        'Cache-Control': 'max-age=86400'
+        'Cache-Control': 'max-age=86400',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET',
+        'Access-Control-Allow-Headers': 'Content-Type',
       }
     });
 
