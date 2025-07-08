@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { app } from '@/utils/octokit/app';
+import { JSDOM } from 'jsdom';
+import { optimize, Config } from 'svgo';
+import XYChart from '@/shared/packages/xy-chart';
+import { convertDataToChartData } from '@/shared/common/chart';
+import { getChartWidthWithSize, replaceSVGContentFilterWithCamelcase } from '@/shared/common/star-utils';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -40,12 +45,6 @@ export async function GET(request: NextRequest) {
       repo: repoName,
     });
 
-    console.log('Repository info:', {
-      name: repoInfo.data.full_name,
-      stars: repoInfo.data.stargazers_count,
-      created: repoInfo.data.created_at,
-    });
-
     // Get stargazers (first page for testing)
     const stargazers = await octokit.rest.activity.listStargazersForRepo({
       owner,
@@ -56,31 +55,71 @@ export async function GET(request: NextRequest) {
       per_page: 100,
     });
 
-    console.log('Stargazers data:', stargazers.data.slice(0, 5)); // Log first 5 entries
     console.log('Total stargazers in this page:', stargazers.data.length);
+
+    // Convert stargazers data to chart format (simple version with 1 page)
+    const starRecords = stargazers.data
+      .filter((star) => star.starred_at) // Filter out entries without starred_at
+      .map((star, index: number) => ({
+        date: star.starred_at!,
+        count: index + 1, // Simple increment for demo
+      }));
+
+    // Prepare repo data for chart
+    const repoData = [{
+      repo: repo,
+      starRecords: starRecords,
+      logoUrl: repoInfo.data.owner.avatar_url || '',
+    }];
+
+    // Create virtual DOM
+    const dom = new JSDOM(`<!DOCTYPE html><body></body>`);
+    const body = dom.window.document.querySelector("body");
+    const svg = dom.window.document.createElement("svg") as unknown as SVGSVGElement;
+
+    if (!dom || !body || !svg) {
+      throw new Error('Failed to mock dom with JSDOM');
+    }
+
+    body.append(svg);
+    svg.setAttribute("width", `${getChartWidthWithSize(size)}`);
+    svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+
+    // Generate chart
+    XYChart(
+      svg,
+      {
+        title: "Star History",
+        xLabel: type === "Date" ? "Date" : "Timeline",
+        yLabel: "GitHub Stars",
+        data: convertDataToChartData(repoData, type as "Date" | "Timeline"),
+        showDots: false,
+        transparent: transparent.toLowerCase() === "true",
+        theme: theme === "dark" ? "dark" : "light",
+      },
+      {
+        xTickLabelType: type === "Date" ? "Date" : "Number",
+        chartWidth: getChartWidthWithSize(size),
+      }
+    );
+
+    // Optimize SVG
+    const svgContent = replaceSVGContentFilterWithCamelcase(svg.outerHTML);
+    const options: Config = {
+      multipass: true,
+    };
+    const optimized = optimize(svgContent, options).data;
+
+    return new NextResponse(optimized, {
+      headers: {
+        'Content-Type': 'image/svg+xml;charset=utf-8',
+        'Cache-Control': 'max-age=86400'
+      }
+    });
+
   } catch (error) {
     console.error('Error fetching GitHub data:', error);
     // If repo is not accessible, redirect to repohistory.com
     return NextResponse.redirect('https://repohistory.com');
   }
-
-  // Create display text from parameters
-  const displayText = `repo: ${repo}, type: ${type}, size: ${size}, theme: ${theme}, transparent: ${transparent}`;
-
-  const svg = `
-    <svg width="600" height="100" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100%" height="100%" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
-      <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" 
-            font-family="Arial, sans-serif" font-size="12" fill="#333">
-        ${displayText}
-      </text>
-    </svg>
-  `;
-
-  return new NextResponse(svg, {
-    headers: {
-      'Content-Type': 'image/svg+xml',
-      'Cache-Control': 'max-age=3600'
-    }
-  });
 }
