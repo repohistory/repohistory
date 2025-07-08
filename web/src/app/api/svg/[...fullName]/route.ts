@@ -7,10 +7,14 @@ import { convertDataToChartData } from '@/shared/common/chart';
 import { getChartWidthWithSize, replaceSVGContentFilterWithCamelcase } from '@/shared/common/star-utils';
 import { getRepoStars } from '@/utils/repo';
 
-export async function GET(request: NextRequest) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ fullName: string[] }> }
+) {
   const { searchParams } = new URL(request.url);
+  const { fullName } = await params;
 
-  const repo = searchParams.get('repo') || 'No repo specified';
+  const repo = fullName.join('/');
   const type = searchParams.get('type') || 'Date';
   const size = searchParams.get('size') || 'laptop';
   const theme = searchParams.get('theme') || 'light';
@@ -18,14 +22,11 @@ export async function GET(request: NextRequest) {
 
   try {
     // Validate repo parameter
-    if (repo === 'No repo specified') {
-      throw new Error('Repository parameter is required');
-    }
-
-    const [owner, repoName] = repo.split('/');
-    if (!owner || !repoName) {
+    if (!repo || fullName.length !== 2) {
       throw new Error('Invalid repository format. Use owner/repo');
     }
+
+    const [owner, repoName] = fullName;
 
     // Check if repo has app installation (simpler approach)
     const appOctokit = app.octokit;
