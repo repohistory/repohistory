@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { User } from "@supabase/supabase-js";
+import { Button } from "@/components/ui/button";
 import { DropdownWrapper } from "./dropdown-wrapper";
 
 interface NavbarProps {
@@ -20,7 +21,18 @@ export function Navbar({ user }: NavbarProps) {
             unoptimized
           />
         </Link>
-        <DropdownWrapper user={user} />
+        <div className="flex items-center gap-5">
+          <Button size="sm" variant="outline" asChild>
+            <Link
+              href="https://github.com/repohistory/repohistory/issues/new"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Feedback
+            </Link>
+          </Button>
+          <DropdownWrapper user={user} />
+        </div>
       </div>
     </nav>
   );
