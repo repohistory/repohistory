@@ -5,6 +5,7 @@ import { optimize, Config } from 'svgo';
 import XYChart from '@/shared/packages/xy-chart';
 import { convertDataToChartData } from '@/shared/common/chart';
 import { getChartWidthWithSize, replaceSVGContentFilterWithCamelcase } from '@/shared/common/star-utils';
+import { getRepoStars } from '@/utils/repo';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -45,25 +46,20 @@ export async function GET(request: NextRequest) {
       repo: repoName,
     });
 
-    // Get stargazers (first page for testing)
-    const stargazers = await octokit.rest.activity.listStargazersForRepo({
-      owner,
-      repo: repoName,
-      headers: {
-        accept: 'application/vnd.github.v3.star+json',
-      },
-      per_page: 100,
+    // Get full star history using getRepoStars
+    const repoStarsData = await getRepoStars(octokit, {
+      fullName: repo,
+      stargazersCount: repoInfo.data.stargazers_count,
     });
 
-    console.log('Total stargazers in this page:', stargazers.data.length);
+    console.log('Total stars:', repoStarsData.totalStars);
+    console.log('Stars history entries:', repoStarsData.starsHistory.length);
 
-    // Convert stargazers data to chart format (simple version with 1 page)
-    const starRecords = stargazers.data
-      .filter((star) => star.starred_at) // Filter out entries without starred_at
-      .map((star, index: number) => ({
-        date: star.starred_at!,
-        count: index + 1, // Simple increment for demo
-      }));
+    // Convert stars history to chart format
+    const starRecords = repoStarsData.starsHistory.map((entry) => ({
+      date: entry.date,
+      count: entry.cumulative,
+    }));
 
     // Prepare repo data for chart
     const repoData = [{
