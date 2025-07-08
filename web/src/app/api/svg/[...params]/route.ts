@@ -4,7 +4,7 @@ import { JSDOM } from 'jsdom';
 import { optimize, Config } from 'svgo';
 import XYChart from '@/shared/packages/xy-chart';
 import { convertDataToChartData } from '@/shared/common/chart';
-import { replaceSVGContentFilterWithCamelcase } from '@/shared/common/star-utils';
+import { replaceSVGContentFilterWithCamelcase, getBase64Image } from '@/shared/common/star-utils';
 import { getRepoStars } from '@/utils/repo';
 
 export const dynamic = 'force-static'
@@ -55,10 +55,14 @@ export async function GET(
       count: entry.cumulative,
     }));
 
+    // Convert avatar to base64 for GitHub markdown compatibility
+    const avatarUrl = repoInfo.data.owner.avatar_url;
+    const logoUrl = avatarUrl ? await getBase64Image(`${avatarUrl}&size=22`) : '';
+
     const repoData = [{
       repo: repo,
       starRecords: starRecords,
-      logoUrl: repoInfo.data.owner.avatar_url || '',
+      logoUrl: logoUrl,
     }];
 
     // Create virtual DOM
