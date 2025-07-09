@@ -250,12 +250,12 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
   return (
     <div className={className}>
       <div className="h-8 flex justify-end items-center mb-4 gap-2">
-        {extraButtons}
         {isZoomed && (
           <Button variant="outline" size="icon" onClick={handleReset} className="size-8">
             <Maximize />
           </Button>
         )}
+        {extraButtons}
       </div>
       <ChartContainer config={chartConfig} className="h-[calc(100%-2.5rem)] w-full">
         <div className="h-full" ref={chartRef} style={{ touchAction: 'none', userSelect: 'none' }}>
