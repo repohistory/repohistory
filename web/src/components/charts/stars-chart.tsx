@@ -3,14 +3,19 @@
 import { useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Images } from "lucide-react";
 import { Area } from "recharts";
 import { ChartConfig } from "@/components/ui/chart";
 import { ZoomableChart } from "./zoomable-chart";
+import { ShareImage } from "./share-image";
 import { RepoStarsData } from "@/utils/repo";
 
 interface StarsChartProps {
   starsData: RepoStarsData;
   repositoryName?: string;
+  fullName?: string;
 }
 
 const chartConfig = {
@@ -20,7 +25,8 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function StarsChart({ starsData }: StarsChartProps) {
+
+export function StarsChart({ starsData, fullName }: StarsChartProps) {
   const [viewType, setViewType] = useState<"cumulative" | "daily">("cumulative");
   const [zoomedData, setZoomedData] = useState<Array<{ date: string; stars: number }>>([]);
 
@@ -67,6 +73,23 @@ export function StarsChart({ starsData }: StarsChartProps) {
           chartConfig={chartConfig}
           className="h-64 w-full"
           onDataChange={handleDataChange}
+          extraButtons={
+            fullName && (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="icon" className="size-8 hidden md:inline-flex">
+                    <Images />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Share Star History Image</DialogTitle>
+                  </DialogHeader>
+                  <ShareImage fullName={fullName} />
+                </DialogContent>
+              </Dialog>
+            )
+          }
         >
           <defs>
             <linearGradient id="fillStars" x1="0" y1="0" x2="0" y2="1">

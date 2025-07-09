@@ -19,7 +19,7 @@ export async function StarsChartWrapper({ fullName, stargazersCount }: StarsChar
     fullName,
     stargazersCount
   });
-  return <StarsChart starsData={stars} />;
+  return <StarsChart starsData={stars} fullName={fullName} />;
 }
 
 interface ViewChartWrapperProps {

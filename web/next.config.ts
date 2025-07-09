@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  images: {
+    dangerouslyAllowSVG: true,
+  },
 };
 
 export default nextConfig;

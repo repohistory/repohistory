@@ -17,6 +17,7 @@ interface ZoomableChartProps {
   isZooming?: boolean;
   customTooltip?: ReactNode;
   hideZeroValues?: boolean;
+  extraButtons?: ReactNode;
 }
 
 interface CustomLegendContentProps {
@@ -65,7 +66,7 @@ function CustomLegendContent({ chartConfig, hiddenSeries, onLegendClick }: Custo
   );
 }
 
-export function ZoomableChart({ data, chartConfig, children, className = "h-64 w-full", onDataChange, onLegendClick, hiddenSeries = [], customTooltip, hideZeroValues = false }: ZoomableChartProps) {
+export function ZoomableChart({ data, chartConfig, children, className = "h-64 w-full", onDataChange, onLegendClick, hiddenSeries = [], customTooltip, hideZeroValues = false, extraButtons }: ZoomableChartProps) {
   const originalData = data;
   const [refAreaLeft, setRefAreaLeft] = useState<string | null>(null);
   const [refAreaRight, setRefAreaRight] = useState<string | null>(null);
@@ -248,7 +249,8 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
 
   return (
     <div className={className}>
-      <div className="h-8 flex justify-end items-center mb-4">
+      <div className="h-8 flex justify-end items-center mb-4 gap-2">
+        {extraButtons}
         {isZoomed && (
           <Button variant="outline" size="icon" onClick={handleReset} className="size-8">
             <Maximize />
