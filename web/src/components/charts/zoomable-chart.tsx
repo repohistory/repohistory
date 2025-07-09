@@ -15,6 +15,8 @@ interface ZoomableChartProps {
   onLegendClick?: (dataKey: string) => void;
   hiddenSeries?: Array<string>;
   isZooming?: boolean;
+  customTooltip?: ReactNode;
+  hideZeroValues?: boolean;
 }
 
 interface CustomLegendContentProps {
@@ -63,7 +65,7 @@ function CustomLegendContent({ chartConfig, hiddenSeries, onLegendClick }: Custo
   );
 }
 
-export function ZoomableChart({ data, chartConfig, children, className = "h-64 w-full", onDataChange, onLegendClick, hiddenSeries = [] }: ZoomableChartProps) {
+export function ZoomableChart({ data, chartConfig, children, className = "h-64 w-full", onDataChange, onLegendClick, hiddenSeries = [], customTooltip, hideZeroValues = false }: ZoomableChartProps) {
   const originalData = data;
   const [refAreaLeft, setRefAreaLeft] = useState<string | null>(null);
   const [refAreaRight, setRefAreaRight] = useState<string | null>(null);
@@ -289,11 +291,13 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
                 allowDecimals={false}
                 tickFormatter={(value) => value.toLocaleString()}
               />
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent indicator="line" />}
-                labelFormatter={(value) => new Date(value).toLocaleDateString()}
-              />
+              {customTooltip || (
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent indicator="line" hideZeroValues={hideZeroValues} />}
+                  labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                />
+              )}
               {children}
               {onLegendClick && (
                 <ChartLegend

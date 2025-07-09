@@ -1,10 +1,11 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { StarsChartWrapper, ViewChartWrapper, CloneChartWrapper, ReferrersChartWrapper, PopularContentChartWrapper } from "@/components/charts/chart-wrappers";
+import { StarsChartWrapper, ViewChartWrapper, CloneChartWrapper, ReferrersChartWrapper, PopularContentChartWrapper, ReleaseChartWrapper } from "@/components/charts/chart-wrappers";
 import { StarsChartSkeleton } from "@/components/charts/stars-chart-skeleton";
 import { AreaChartSkeleton } from "@/components/charts/area-chart-skeleton";
 import { TrafficChartSkeleton } from "@/components/charts/traffic-chart-skeleton";
+import { ReleaseChartSkeleton } from "@/components/charts/release-chart-skeleton";
 import { ExportAllData } from "@/components/export-all-data";
 import { getRepoOverview } from "@/utils/repo";
 import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
@@ -61,6 +62,9 @@ export default async function RepoPage({ params }: PageProps) {
       </Suspense>
       <Suspense fallback={<TrafficChartSkeleton type="popular-content" />}>
         <PopularContentChartWrapper fullName={fullName} repoId={overview.repoId} />
+      </Suspense>
+      <Suspense fallback={<ReleaseChartSkeleton />}>
+        <ReleaseChartWrapper fullName={fullName} />
       </Suspense>
     </div>
   );

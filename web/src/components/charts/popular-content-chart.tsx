@@ -91,6 +91,7 @@ export function PopularContentChart({ traffic }: PopularContentChartProps) {
             data={data}
             chartConfig={chartConfig}
             className="h-64 w-full"
+            hideZeroValues
           >
             {Object.keys(chartConfig).map(path => (
               <Line

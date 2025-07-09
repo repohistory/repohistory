@@ -111,6 +111,7 @@ function ChartTooltipContent({
   indicator = "dot",
   hideLabel = false,
   hideIndicator = false,
+  hideZeroValues = false,
   label,
   labelFormatter,
   labelClassName,
@@ -122,6 +123,7 @@ function ChartTooltipContent({
   React.ComponentProps<"div"> & {
     hideLabel?: boolean
     hideIndicator?: boolean
+    hideZeroValues?: boolean
     indicator?: "line" | "dot" | "dashed"
     nameKey?: string
     labelKey?: string
@@ -185,7 +187,7 @@ function ChartTooltipContent({
     >
       {!nestLabel ? tooltipLabel : null}
       <div className="grid gap-1.5">
-        {payload.filter(item => item.value !== 0).sort((a, b) => (Number(b.value) || 0) - (Number(a.value) || 0)).map((item, index) => {
+        {payload.filter(item => hideZeroValues ? item.value !== 0 : true).sort((a, b) => (Number(b.value) || 0) - (Number(a.value) || 0)).map((item, index) => {
           const key = `${nameKey || item.name || item.dataKey || "value"}`
           const itemConfig = getPayloadConfigFromPayload(config, item, key)
           const indicatorColor = color || (item.payload as { fill?: string })?.fill || item.color
@@ -239,7 +241,7 @@ function ChartTooltipContent({
                       </span>
                     </div>
                     {item.value != null && (
-                      <span className="text-foreground font-mono font-medium tabular-nums">
+                      <span className="text-foreground font-mono font-medium tabular-nums ml-4">
                         {typeof item.value === 'number' ? item.value.toLocaleString() : String(item.value)}
                       </span>
                     )}
