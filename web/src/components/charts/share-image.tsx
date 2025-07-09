@@ -12,6 +12,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Check, Clipboard } from "lucide-react";
+import { toast } from "sonner";
 
 interface ShareImageProps {
   fullName: string;
@@ -32,8 +33,10 @@ export function ShareImage({ fullName }: ShareImageProps) {
       await navigator.clipboard.writeText(markdownCode);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      toast.success("Copied to clipboard! You can now paste it to your README.md");
     } catch (err) {
       console.error('Failed to copy:', err);
+      toast.error("Failed to copy to clipboard");
     }
   };
 
