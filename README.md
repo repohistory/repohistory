@@ -2,20 +2,22 @@
   
 ![github-banner](https://github.com/user-attachments/assets/ed888af7-14fa-42cc-9695-2bc887b7531a)
 
-Repohistory is a beautiful dashboard for tracking GitHub repo traffic history longer than 14 days.<br/>
+Repohistory is a beautiful dashboard for tracking GitHub repo traffic history longer than 14 days<br/>
 **[repohistory.com »](https://repohistory.com)**
 
 </div>
 <br/>
 
-GitHub's 14-day limit on repository data often leaves developers without vital long-term insights. Repohistory addresses this by offering an easy-to-setup, beautifully designed interface for extended repository tracking. This gives developers a powerful tool to analyze trends and progress over time, not just a brief snapshot.
+## Motivation
 
-## ✨ Features
+GitHub limits access to only the past 14 days of your repo’s traffic data, making it hard to track long-term trends. Repohistory solves this by helping you save traffic data every day, starting from first sign-in. You can then explore full traffic history in a beautifully designed dashboard, allowing you to analyze trends and get insights over time.
 
-- 📊 **Data Tracking**: Start tracking clones and views data from your first login.
-- 📈 **All-Time Stars History**: Visualize the growth of your repo with an all-time stars history graph.
-- 🖥️ **Dashboard Overview**: Easily access a dashboard view for an overview of all your projects.
+## Features
 
-## ⭐ Star History
+- 📊 **Extended Data Tracking**: Track repo clones, views, referrers and popular pages data for more than 14 days.
+- ✨ **Beautiful Visualization**: View your repo’s trends with clear, attractive charts.
+- 📈 **Stars History**: Watch your repo’s star growth over time with customizable chart.
+
+## Star History
 
 [![Star History Chart](https://app.repohistory.com/api/svg?repo=repohistory/repohistory&type=Date&theme=dark&transparent=false&color=62C3F8)](https://repohistory.com)
