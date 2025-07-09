@@ -3,7 +3,8 @@ import { ViewChart } from "./view-chart";
 import { CloneChart } from "./clone-chart";
 import { ReferrersChart } from "./referrers-chart";
 import { PopularContentChart } from "./popular-content-chart";
-import { getRepoStars, getRepoViews, getRepoClones, getRepoReferrers, getRepoPaths } from "@/utils/repo";
+import { ReleaseChart } from "./release-chart";
+import { getRepoStars, getRepoViews, getRepoClones, getRepoReferrers, getRepoPaths, getRepoReleases } from "@/utils/repo";
 import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
 import { createClient } from "@/utils/supabase/server";
 
@@ -65,4 +66,15 @@ export async function PopularContentChartWrapper({ fullName, repoId }: PopularCo
   const supabase = await createClient();
   const { paths } = await getRepoPaths(octokit, supabase, fullName, repoId);
   return <PopularContentChart traffic={{ paths }} />;
+}
+
+interface ReleaseChartWrapperProps {
+  fullName: string;
+}
+
+export async function ReleaseChartWrapper({ fullName }: ReleaseChartWrapperProps) {
+  const octokit = await getUserOctokit();
+  const [owner, repo] = fullName.split("/");
+  const releases = await getRepoReleases(octokit, owner, repo);
+  return <ReleaseChart releasesData={releases} />;
 }

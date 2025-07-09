@@ -91,6 +91,7 @@ export function ReferrersChart({ traffic }: ReferrersChartProps) {
             data={data}
             chartConfig={chartConfig}
             className="h-64 w-full"
+            hideZeroValues
           >
             {Object.keys(chartConfig).map(referrer => (
               <Line

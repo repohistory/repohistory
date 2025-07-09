@@ -6,12 +6,12 @@ import { ComposedChart, XAxis, YAxis, ResponsiveContainer, ReferenceArea } from 
 import { Button } from "@/components/ui/button";
 import { Maximize } from "lucide-react";
 
-interface ZoomableChartProps {
-  data: Array<{ date: string;[key: string]: string | number }>;
+interface TimestampZoomableChartProps {
+  data: Array<{ date: string; timestamp: number; [key: string]: string | number }>;
   chartConfig: ChartConfig;
   children: ReactNode;
   className?: string;
-  onDataChange?: (zoomedData: Array<{ date: string;[key: string]: string | number }>) => void;
+  onDataChange?: (zoomedData: Array<{ date: string; timestamp: number; [key: string]: string | number }>) => void;
   onLegendClick?: (dataKey: string) => void;
   hiddenSeries?: Array<string>;
   isZooming?: boolean;
@@ -65,27 +65,27 @@ function CustomLegendContent({ chartConfig, hiddenSeries, onLegendClick }: Custo
   );
 }
 
-export function ZoomableChart({ data, chartConfig, children, className = "h-64 w-full", onDataChange, onLegendClick, hiddenSeries = [], customTooltip, hideZeroValues = false }: ZoomableChartProps) {
+export function TimestampZoomableChart({ data, chartConfig, children, className = "h-64 w-full", onDataChange, onLegendClick, hiddenSeries = [], customTooltip, hideZeroValues = false }: TimestampZoomableChartProps) {
   const originalData = data;
-  const [refAreaLeft, setRefAreaLeft] = useState<string | null>(null);
-  const [refAreaRight, setRefAreaRight] = useState<string | null>(null);
-  const [startTime, setStartTime] = useState<string | null>(null);
-  const [endTime, setEndTime] = useState<string | null>(null);
+  const [refAreaLeft, setRefAreaLeft] = useState<number | null>(null);
+  const [refAreaRight, setRefAreaRight] = useState<number | null>(null);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [endTime, setEndTime] = useState<number | null>(null);
   const [isSelecting, setIsSelecting] = useState(false);
   const chartRef = useRef<HTMLDivElement>(null);
 
   // Initialize times when data is available or when date range changes
   useEffect(() => {
     if (originalData.length > 0) {
-      const newStartDate = originalData[0].date;
-      const newEndDate = originalData[originalData.length - 1].date;
+      const newStartTime = originalData[0].timestamp;
+      const newEndTime = originalData[originalData.length - 1].timestamp;
 
-      // Only reset zoom if this is the first load or if the date range has actually changed
+      // Only reset zoom if this is the first load or if the time range has actually changed
       if (!startTime || !endTime ||
-        startTime < newStartDate || startTime > newEndDate ||
-        endTime < newStartDate || endTime > newEndDate) {
-        setStartTime(newStartDate);
-        setEndTime(newEndDate);
+        startTime < newStartTime || startTime > newEndTime ||
+        endTime < newStartTime || endTime > newEndTime) {
+        setStartTime(newStartTime);
+        setEndTime(newEndTime);
       }
     }
   }, [originalData, startTime, endTime]);
@@ -101,8 +101,7 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
       const direction = e.deltaY < 0 ? 1 : -1;
       const clientX = e.clientX;
 
-      const currentRange = new Date(endTime || originalData[originalData.length - 1].date).getTime() -
-        new Date(startTime || originalData[0].date).getTime();
+      const currentRange = endTime - startTime;
       const zoomAmount = currentRange * zoomFactor * direction;
 
       const chartRect = chartRef.current.getBoundingClientRect();
@@ -110,32 +109,25 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
       const chartWidth = chartRect.width;
       const mousePercentage = mouseX / chartWidth;
 
-      const currentStartTime = new Date(startTime || originalData[0].date).getTime();
-      const currentEndTime = new Date(endTime || originalData[originalData.length - 1].date).getTime();
-
-      const newStartTime = new Date(currentStartTime + zoomAmount * mousePercentage);
-      const newEndTime = new Date(currentEndTime - zoomAmount * (1 - mousePercentage));
+      const newStartTime = startTime + zoomAmount * mousePercentage;
+      const newEndTime = endTime - zoomAmount * (1 - mousePercentage);
 
       // Check original bounds
-      const originalStartTime = new Date(originalData[0].date).getTime();
-      const originalEndTime = new Date(originalData[originalData.length - 1].date).getTime();
+      const originalStartTime = originalData[0].timestamp;
+      const originalEndTime = originalData[originalData.length - 1].timestamp;
 
       // Clamp the new times to not exceed original data bounds
-      const clampedStartTime = Math.max(newStartTime.getTime(), originalStartTime);
-      const clampedEndTime = Math.min(newEndTime.getTime(), originalEndTime);
+      const clampedStartTime = Math.max(newStartTime, originalStartTime);
+      const clampedEndTime = Math.min(newEndTime, originalEndTime);
 
       // Always prevent scroll propagation
       e.preventDefault();
       e.stopPropagation();
 
       // Apply zoom if there's actually a change
-      if (clampedStartTime !== currentStartTime || clampedEndTime !== currentEndTime) {
-        // If we're clamping to the exact original bounds, use the original values to ensure exact match
-        const finalStartTime = clampedStartTime === originalStartTime ? originalData[0].date : new Date(clampedStartTime).toISOString();
-        const finalEndTime = clampedEndTime === originalEndTime ? originalData[originalData.length - 1].date : new Date(clampedEndTime).toISOString();
-
-        setStartTime(finalStartTime);
-        setEndTime(finalEndTime);
+      if (clampedStartTime !== startTime || clampedEndTime !== endTime) {
+        setStartTime(clampedStartTime);
+        setEndTime(clampedEndTime);
       }
     };
 
@@ -152,7 +144,7 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
     }
 
     const dataPointsInRange = originalData.filter(
-      (dataPoint) => dataPoint.date >= startTime && dataPoint.date <= endTime
+      (dataPoint) => dataPoint.timestamp >= startTime && dataPoint.timestamp <= endTime
     );
 
     return dataPointsInRange.length > 1 ? dataPointsInRange : originalData.slice(0, 2);
@@ -173,20 +165,20 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
 
   const handleMouseDown = (e: { activeLabel?: string }) => {
     if (e.activeLabel) {
-      setRefAreaLeft(e.activeLabel);
+      setRefAreaLeft(Number(e.activeLabel));
       setIsSelecting(true);
     }
   };
 
   const handleMouseMove = (e: { activeLabel?: string }) => {
     if (isSelecting && e.activeLabel) {
-      setRefAreaRight(e.activeLabel);
+      setRefAreaRight(Number(e.activeLabel));
     }
   };
 
   const handleMouseUp = useCallback(() => {
     if (refAreaLeft && refAreaRight) {
-      const [left, right] = [refAreaLeft, refAreaRight].sort();
+      const [left, right] = [refAreaLeft, refAreaRight].sort((a, b) => a - b);
       setStartTime(left);
       setEndTime(right);
     }
@@ -213,15 +205,11 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
       // Calculate the position as a percentage of chart width
       const percentage = Math.max(0, Math.min(1, mouseX / chartWidth));
 
-      // Map percentage to data point index
-      const dataIndex = Math.round(percentage * (zoomedData.length - 1));
-      const clampedIndex = Math.max(0, Math.min(zoomedData.length - 1, dataIndex));
+      // Map percentage to timestamp range
+      const timeRange = (endTime || zoomedData[zoomedData.length - 1].timestamp) - (startTime || zoomedData[0].timestamp);
+      const targetTimestamp = (startTime || zoomedData[0].timestamp) + timeRange * percentage;
 
-      // Get the corresponding date from the data
-      const targetDate = zoomedData[clampedIndex]?.date;
-      if (targetDate) {
-        setRefAreaRight(targetDate);
-      }
+      setRefAreaRight(targetTimestamp);
     };
 
     document.addEventListener('mouseup', handleGlobalMouseUp);
@@ -231,19 +219,18 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
       document.removeEventListener('mouseup', handleGlobalMouseUp);
       document.removeEventListener('mousemove', handleGlobalMouseMove);
     };
-  }, [isSelecting, refAreaLeft, refAreaRight, zoomedData, handleMouseUp]);
+  }, [isSelecting, startTime, endTime, zoomedData, handleMouseUp]);
 
   const handleReset = () => {
     if (originalData.length > 0) {
-      setStartTime(originalData[0].date);
-      setEndTime(originalData[originalData.length - 1].date);
+      setStartTime(originalData[0].timestamp);
+      setEndTime(originalData[originalData.length - 1].timestamp);
     }
   };
 
-
   const isZoomed = originalData.length > 0 && startTime && endTime && (
-    startTime !== originalData[0].date ||
-    endTime !== originalData[originalData.length - 1].date
+    startTime !== originalData[0].timestamp ||
+    endTime !== originalData[originalData.length - 1].timestamp
   );
 
   return (
@@ -269,7 +256,10 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
               onMouseUp={handleMouseUp}
             >
               <XAxis
-                dataKey="date"
+                dataKey="timestamp"
+                type="number"
+                scale="time"
+                domain={['dataMin', 'dataMax']}
                 tickLine={false}
                 axisLine={false}
                 tickMargin={8}
@@ -295,7 +285,7 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
                 <ChartTooltip
                   cursor={false}
                   content={<ChartTooltipContent indicator="line" hideZeroValues={hideZeroValues} />}
-                  labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                  labelFormatter={(value) => new Date(Number(value)).toLocaleDateString()}
                 />
               )}
               {children}
@@ -327,4 +317,3 @@ export function ZoomableChart({ data, chartConfig, children, className = "h-64 w
     </div>
   );
 }
-
