@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Area } from "recharts";
 import { ChartConfig, ChartTooltip } from "@/components/ui/chart";
-import { ZoomableChart } from "./zoomable-chart";
+import { TimestampZoomableChart } from "./timestamp-zoomable-chart";
 import { RepoReleaseData } from "@/utils/repo";
 
 interface ReleaseChartProps {
@@ -19,7 +19,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ReleaseChart({ releasesData }: ReleaseChartProps) {
-  const [zoomedData, setZoomedData] = useState<Array<{ date: string; downloads: number }>>([]);
+  const [zoomedData, setZoomedData] = useState<Array<{ date: string; timestamp: number; downloads: number }>>([]);
 
   const data = useMemo(() => {
     if (!releasesData.releases || releasesData.releases.length === 0) {
@@ -29,14 +29,15 @@ export function ReleaseChart({ releasesData }: ReleaseChartProps) {
       .sort((a, b) => new Date(a.publishedAt).getTime() - new Date(b.publishedAt).getTime())
       .map(release => ({
         date: release.publishedAt.split('T')[0],
+        timestamp: new Date(release.publishedAt).getTime(),
         downloads: release.downloadCount,
         name: release.name,
         tagName: release.tagName,
       }));
   }, [releasesData.releases]);
 
-  const handleDataChange = useCallback((newZoomedData: Array<{ date: string;[key: string]: string | number }>) => {
-    setZoomedData(newZoomedData as Array<{ date: string; downloads: number }>);
+  const handleDataChange = useCallback((newZoomedData: Array<{ date: string; timestamp: number;[key: string]: string | number }>) => {
+    setZoomedData(newZoomedData as Array<{ date: string; timestamp: number; downloads: number }>);
   }, []);
 
   const total = useMemo(() => {
@@ -50,7 +51,7 @@ export function ReleaseChart({ releasesData }: ReleaseChartProps) {
       return (
         <div className="border-border/50 bg-background grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl">
           <div className="font-medium">
-            {label ? new Date(label).toLocaleDateString() : ''}
+            {label ? new Date(Number(label)).toLocaleDateString() : ''}
           </div>
           <div className="grid gap-1.5">
             <div className="flex w-full items-center gap-2">
@@ -80,7 +81,7 @@ export function ReleaseChart({ releasesData }: ReleaseChartProps) {
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b">
         <div className="flex flex-col justify-center gap-1">
-          <CardTitle>Release Downloads Over Time</CardTitle>
+          <CardTitle>Release Downloads</CardTitle>
           <CardDescription>
             Download count for all releases
           </CardDescription>
@@ -95,7 +96,7 @@ export function ReleaseChart({ releasesData }: ReleaseChartProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <ZoomableChart
+        <TimestampZoomableChart
           data={data}
           chartConfig={chartConfig}
           className="h-64 w-full"
@@ -127,7 +128,7 @@ export function ReleaseChart({ releasesData }: ReleaseChartProps) {
             dot={{ fill: "var(--color-downloads)", strokeWidth: 0, r: 3 }}
             activeDot={{ r: 4, stroke: "var(--color-downloads)", strokeWidth: 2 }}
           />
-        </ZoomableChart>
+        </TimestampZoomableChart>
       </CardContent>
     </Card>
   );

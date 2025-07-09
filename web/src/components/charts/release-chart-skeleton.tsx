@@ -8,7 +8,7 @@ export function ReleaseChartSkeleton() {
         <div className="flex flex-col justify-center gap-1">
           <CardTitle>Release Downloads</CardTitle>
           <CardDescription>
-            Download count for the latest 10 releases
+            Download count for all releases
           </CardDescription>
         </div>
         <div className="flex flex-col items-end gap-1">
