@@ -5,7 +5,7 @@ import { optimize, Config } from 'svgo';
 import XYChart from '@/shared/packages/xy-chart';
 import { convertDataToChartData } from '@/shared/common/chart';
 import { replaceSVGContentFilterWithCamelcase, getBase64Image, getChartWidthWithSize } from '@/shared/common/star-utils';
-import { getRepoStars } from '@/utils/repo/stars';
+import { getRepoStarsChart } from '@/utils/repo/stars';
 import { getRepoInfo } from '@/utils/repo/info';
 
 export async function GET(request: NextRequest) {
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
 
     const repoInfo = await getRepoInfo(octokit, owner, repo);
 
-    const repoStarsData = await getRepoStars(octokit, {
+    const repoStarsData = await getRepoStarsChart(octokit, {
       fullName: fullName,
       stargazersCount: repoInfo.stargazers_count,
     });
