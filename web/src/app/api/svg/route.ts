@@ -6,6 +6,7 @@ import XYChart from '@/shared/packages/xy-chart';
 import { convertDataToChartData } from '@/shared/common/chart';
 import { replaceSVGContentFilterWithCamelcase, getBase64Image, getChartWidthWithSize } from '@/shared/common/star-utils';
 import { getRepoStars } from '@/utils/repo/stars';
+import { getRepoInfo } from '@/utils/repo/info';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -34,14 +35,11 @@ export async function GET(request: NextRequest) {
     });
     const octokit = await app.getInstallationOctokit(installation.id);
 
-    const repoInfo = await octokit.rest.repos.get({
-      owner,
-      repo,
-    });
+    const repoInfo = await getRepoInfo(octokit, owner, repo);
 
     const repoStarsData = await getRepoStars(octokit, {
       fullName: fullName,
-      stargazersCount: repoInfo.data.stargazers_count,
+      stargazersCount: repoInfo.stargazers_count,
     });
 
     const starRecords = repoStarsData.starsHistory.map((entry) => ({
@@ -49,7 +47,7 @@ export async function GET(request: NextRequest) {
       count: entry.cumulative,
     }));
 
-    const avatarUrl = repoInfo.data.owner.avatar_url;
+    const avatarUrl = repoInfo.owner.avatar_url;
     const logoUrl = avatarUrl ? await getBase64Image(`${avatarUrl}&size=22`) : '';
 
     const repoData = {

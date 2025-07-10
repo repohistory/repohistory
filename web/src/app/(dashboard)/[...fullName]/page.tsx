@@ -7,7 +7,7 @@ import { AreaChartSkeleton } from "@/components/charts/area-chart-skeleton";
 import { TrafficChartSkeleton } from "@/components/charts/traffic-chart-skeleton";
 import { ReleaseChartSkeleton } from "@/components/charts/release-chart-skeleton";
 import { ExportAllData } from "@/components/export-all-data";
-import { getRepoOverview } from "@/utils/repo/overview";
+import { getRepoInfo } from "@/utils/repo/info";
 import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
 
 interface PageProps {
@@ -26,7 +26,7 @@ export default async function RepoPage({ params }: PageProps) {
   const fullName = `${resolvedParams.fullName[0]}/${resolvedParams.fullName[1]}`;
   const [owner, repo] = fullName.split("/");
   const octokit = await getUserOctokit();
-  const overview = await getRepoOverview(octokit, owner, repo);;
+  const repoInfo = await getRepoInfo(octokit, owner, repo);
 
   return (
     <div className="container mx-auto p-4 sm:p-10 space-y-6">
@@ -42,26 +42,26 @@ export default async function RepoPage({ params }: PageProps) {
               {fullName}
             </Link>
           </h1>
-          <ExportAllData fullName={fullName} repoId={overview.repoId} />
+          <ExportAllData fullName={fullName} repoId={repoInfo.id} />
         </div>
-        {overview.description && (
-          <p className="text-muted-foreground">{overview.description}</p>
+        {repoInfo.description && (
+          <p className="text-muted-foreground">{repoInfo.description}</p>
         )}
       </div>
       <Suspense fallback={<StarsChartSkeleton />}>
-        <StarsChartWrapper fullName={overview.fullName} stargazersCount={overview.stars} />
+        <StarsChartWrapper fullName={repoInfo.full_name} stargazersCount={repoInfo.stargazers_count} />
       </Suspense>
       <Suspense fallback={<AreaChartSkeleton type="views" />}>
-        <ViewChartWrapper fullName={fullName} repoId={overview.repoId} />
+        <ViewChartWrapper fullName={fullName} repoId={repoInfo.id} />
       </Suspense>
       <Suspense fallback={<AreaChartSkeleton type="clones" />}>
-        <CloneChartWrapper fullName={fullName} repoId={overview.repoId} />
+        <CloneChartWrapper fullName={fullName} repoId={repoInfo.id} />
       </Suspense>
       <Suspense fallback={<TrafficChartSkeleton type="referrers" />}>
-        <ReferrersChartWrapper fullName={fullName} repoId={overview.repoId} />
+        <ReferrersChartWrapper fullName={fullName} repoId={repoInfo.id} />
       </Suspense>
       <Suspense fallback={<TrafficChartSkeleton type="popular-content" />}>
-        <PopularContentChartWrapper fullName={fullName} repoId={overview.repoId} />
+        <PopularContentChartWrapper fullName={fullName} repoId={repoInfo.id} />
       </Suspense>
       <Suspense fallback={<ReleaseChartSkeleton />}>
         <ReleaseChartWrapper fullName={fullName} />

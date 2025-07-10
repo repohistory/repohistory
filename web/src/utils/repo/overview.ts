@@ -1,44 +1,5 @@
 import { Octokit } from "octokit";
 
-export interface RepoOverviewData {
-  name: string;
-  fullName: string;
-  repoId: number;
-  description: string | null;
-  stars: number;
-  forks: number;
-  issues: number;
-  language: string | null;
-  createdAt: string;
-  updatedAt: string;
-  htmlUrl: string;
-}
-
-export async function getRepoOverview(
-  octokit: Octokit,
-  owner: string,
-  repo: string
-): Promise<RepoOverviewData> {
-  const { data } = await octokit.rest.repos.get({
-    owner,
-    repo,
-  });
-
-  return {
-    name: data.name,
-    fullName: data.full_name,
-    repoId: data.id,
-    description: data.description,
-    stars: data.stargazers_count,
-    forks: data.forks_count,
-    issues: data.open_issues_count,
-    language: data.language,
-    createdAt: data.created_at,
-    updatedAt: data.updated_at,
-    htmlUrl: data.html_url,
-  };
-}
-
 export async function getTopReferrers(
   octokit: Octokit,
   fullName: string
