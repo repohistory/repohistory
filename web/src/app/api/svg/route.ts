@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { unstable_cache } from 'next/cache';
 import { app } from '@/utils/octokit/app';
 import { JSDOM } from 'jsdom';
 import { optimize, Config } from 'svgo';
@@ -8,27 +7,40 @@ import { convertDataToChartData } from '@/shared/common/chart';
 import { replaceSVGContentFilterWithCamelcase, getBase64Image, getChartWidthWithSize } from '@/shared/common/star-utils';
 import { getRepoStars } from '@/utils/repo/stars';
 
-// Cache only the repo data (GitHub API calls), not the SVG output
-const getCachedRepoData = unstable_cache(
-  async (repo: string) => {
-    const [owner, repoName] = repo.split('/');
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
 
-    // Check if repo has app installation
+  // API design: /svg?repo=owner/repo&type=Date&theme=light&transparent=false&size=laptop&color=ff6b6b
+  const fullName = searchParams.get('repo') || '';
+  const type = searchParams.get('type') || 'Date';
+  const theme = searchParams.get('theme') || 'light';
+  const transparent = searchParams.get('transparent') || 'false';
+  const size = searchParams.get('size') || 'laptop';
+  const color = searchParams.get('color');
+
+  try {
+    if (!fullName) {
+      throw new Error('Repository parameter is required');
+    }
+    const [owner, repo] = fullName.split('/');
+    if (!owner || !repo) {
+      throw new Error('Invalid repository format. Use owner/repo');
+    }
+
     const appOctokit = app.octokit;
     const { data: installation } = await appOctokit.rest.apps.getRepoInstallation({
       owner,
-      repo: repoName,
+      repo,
     });
-
     const octokit = await app.getInstallationOctokit(installation.id);
 
     const repoInfo = await octokit.rest.repos.get({
       owner,
-      repo: repoName,
+      repo,
     });
 
     const repoStarsData = await getRepoStars(octokit, {
-      fullName: repo,
+      fullName: fullName,
       stargazersCount: repoInfo.data.stargazers_count,
     });
 
@@ -37,48 +49,15 @@ const getCachedRepoData = unstable_cache(
       count: entry.cumulative,
     }));
 
-    // Convert avatar to base64 for GitHub markdown compatibility
     const avatarUrl = repoInfo.data.owner.avatar_url;
     const logoUrl = avatarUrl ? await getBase64Image(`${avatarUrl}&size=22`) : '';
 
-    return {
-      repo,
+    const repoData = {
+      repo: fullName,
       starRecords,
       logoUrl,
     };
-  },
-  ['repo-data'],
-  {
-    revalidate: 86400, // 24 hours
-    tags: ['repo-data']
-  }
-);
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-
-  // API design: /svg?repo=owner/repo&type=Date&theme=light&transparent=false&size=laptop&color=ff6b6b
-  const repo = searchParams.get('repo') || '';
-  const type = searchParams.get('type') || 'Date';
-  const theme = searchParams.get('theme') || 'light';
-  const transparent = searchParams.get('transparent') || 'false';
-  const size = searchParams.get('size') || 'laptop';
-  const color = searchParams.get('color'); // Custom color parameter
-
-  try {
-    // Validate repo parameter
-    if (!repo) {
-      throw new Error('Repository parameter is required');
-    }
-    const [owner, repoName] = repo.split('/');
-    if (!owner || !repoName) {
-      throw new Error('Invalid repository format. Use owner/repo');
-    }
-
-    // Get cached repo data
-    const repoData = await getCachedRepoData(repo);
-
-    // Create virtual DOM
     const dom = new JSDOM(`<!DOCTYPE html><body></body>`);
     const body = dom.window.document.querySelector("body");
     const svg = dom.window.document.createElement("svg") as unknown as SVGSVGElement;
@@ -91,7 +70,6 @@ export async function GET(request: NextRequest) {
     svg.setAttribute("width", `${getChartWidthWithSize(size)}`);
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 
-    // Prepare chart options with custom color if provided
     const chartOptions: {
       xTickLabelType: "Date" | "Number";
       chartWidth: number;
@@ -101,12 +79,10 @@ export async function GET(request: NextRequest) {
       chartWidth: getChartWidthWithSize(size),
     };
 
-    // Add custom color if provided (hex color without #)
     if (color && /^[0-9A-Fa-f]{6}$/.test(color)) {
       chartOptions.dataColors = [`#${color}`];
     }
 
-    // Generate chart (always fresh)
     XYChart(
       svg,
       {
@@ -121,7 +97,6 @@ export async function GET(request: NextRequest) {
       chartOptions
     );
 
-    // Optimize SVG
     const svgContent = replaceSVGContentFilterWithCamelcase(svg.outerHTML);
     const options: Config = {
       multipass: true,
@@ -138,7 +113,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Error fetching GitHub data:', error);
-    // If repo is not accessible, redirect to repohistory.com
+
     return NextResponse.redirect('https://repohistory.com');
   }
 }

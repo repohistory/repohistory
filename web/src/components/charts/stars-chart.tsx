@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -30,15 +30,6 @@ const chartConfig = {
 export function StarsChart({ starsData, fullName }: StarsChartProps) {
   const [viewType, setViewType] = useState<"cumulative" | "daily">("cumulative");
   const [zoomedData, setZoomedData] = useState<Array<{ date: string; stars: number }>>([]);
-
-  // Preload default share image for better UX
-  useEffect(() => {
-    if (fullName) {
-      const defaultImageUrl = `/api/svg?repo=${fullName}&type=Date&theme=dark&transparent=false`;
-      const img = new Image();
-      img.src = defaultImageUrl;
-    }
-  }, [fullName]);
 
   const data = useMemo(() => starsData.starsHistory.map((item) => ({
     date: item.date,

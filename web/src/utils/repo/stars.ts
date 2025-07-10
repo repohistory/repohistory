@@ -1,4 +1,5 @@
 import { Octokit } from "octokit";
+import { unstable_cache } from "next/cache";
 
 export interface RepoStarsData {
   totalStars: number;
@@ -14,29 +15,38 @@ export async function getRepoStars(
   repo: { fullName: string; stargazersCount: number }
 ): Promise<RepoStarsData> {
   try {
-    const fetchPromises: Promise<{ data: Array<{ starred_at?: string }> }>[] = [];
-    const totalPages = Math.ceil(repo.stargazersCount / 100);
-
-    for (let page = 1; page <= totalPages; page += 1) {
-      fetchPromises.push(
-        octokit.request(`GET /repos/${repo.fullName}/stargazers`, {
+    const getCachedStargazersPage = unstable_cache(
+      async (fullName: string, page: number) => {
+        const response = await octokit.request(`GET /repos/${fullName}/stargazers`, {
           per_page: 100,
           page,
           headers: {
             accept: 'application/vnd.github.v3.star+json',
           },
-        }),
-      );
+        });
+        return response.data;
+      },
+      [],
+      {
+        tags: ['repo-stargazers'],
+        revalidate: 86400, // 24 hours
+      }
+    );
+
+    const totalPages = Math.ceil(repo.stargazersCount / 100);
+    const fetchPromises: Promise<Array<{ starred_at: string }>>[] = [];
+
+    for (let page = 1; page <= totalPages; page += 1) {
+      fetchPromises.push(getCachedStargazersPage(repo.fullName, page));
     }
 
     const responses = await Promise.all(fetchPromises);
-    const stargazers: Array<{ starred_at?: string }> = [];
+    const stargazers: Array<{ starred_at: string }> = [];
 
     responses.forEach(response => {
-      stargazers.push(...response.data);
+      stargazers.push(...response);
     });
 
-    // Process stars data into daily aggregations
     const starsHistory = processStarsData(stargazers, repo);
 
     return {
