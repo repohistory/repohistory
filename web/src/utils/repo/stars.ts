@@ -1,7 +1,14 @@
 import { Octokit } from "octokit";
 import { unstable_cache } from "next/cache";
 
-export function getStargazersPage(octokit: Octokit, fullName: string, page: number) {
+type StargazerResponse = {
+  data: Array<{ starred_at: string }>;
+  headers: {
+    link?: string;
+  };
+};
+
+function getStargazersPage(octokit: Octokit, fullName: string, page: number): Promise<StargazerResponse> {
   return unstable_cache(
     async (fullName: string, page: number) => {
       const response = await octokit.request(`GET /repos/${fullName}/stargazers`, {
@@ -11,7 +18,7 @@ export function getStargazersPage(octokit: Octokit, fullName: string, page: numb
           accept: 'application/vnd.github.v3.star+json',
         },
       });
-      return response.data;
+      return response;
     },
     [],
     {
@@ -38,7 +45,7 @@ export async function getRepoStars(
     const totalPages = Math.ceil(repo.stargazersCount / 100);
     const pagesToFetch = Math.min(totalPages, 400);
 
-    const fetchPromises: Promise<Array<{ starred_at: string }>>[] = [];
+    const fetchPromises: Promise<StargazerResponse>[] = [];
     for (let page = 1; page <= pagesToFetch; page += 1) {
       fetchPromises.push(getStargazersPage(octokit, repo.fullName, page));
     }
@@ -47,7 +54,7 @@ export async function getRepoStars(
     const stargazers: Array<{ starred_at: string }> = [];
 
     responses.forEach(response => {
-      stargazers.push(...response);
+      stargazers.push(...response.data);
     });
 
     const starsHistory = processStarsDataFull(stargazers, repo);
@@ -71,13 +78,7 @@ export async function getRepoStarsChart(
 ): Promise<RepoStarsData> {
   try {
     const maxRequestAmount = 15;
-    const initialResponse = await octokit.request(`GET /repos/${repo.fullName}/stargazers`, {
-      per_page: 100,
-      page: 1,
-      headers: {
-        accept: 'application/vnd.github.v3.star+json',
-      },
-    });
+    const initialResponse = await getStargazersPage(octokit, repo.fullName, 1);
 
     const headerLink = initialResponse.headers.link || '';
     let pageCount = 1;
@@ -104,14 +105,15 @@ export async function getRepoStarsChart(
       }
     }
 
-    const fetchPromises: Promise<Array<{ starred_at: string }>>[] = [];
+    const fetchPromises: Promise<StargazerResponse>[] = [];
     for (const page of requestPages) {
       fetchPromises.push(getStargazersPage(octokit, repo.fullName, page));
     }
 
     const responses = await Promise.all(fetchPromises);
+    const responseData = responses.map(response => response.data);
 
-    const starsHistory = processStarsDataSampled(responses, repo, requestPages, pageCount <= maxRequestAmount);
+    const starsHistory = processStarsDataSampled(responseData, repo, requestPages, pageCount <= maxRequestAmount);
 
     return {
       totalStars: repo.stargazersCount,

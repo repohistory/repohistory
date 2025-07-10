@@ -21,3 +21,5 @@ This project uses pnpm as the package manager.
 ## Code Style Guidelines
 
 When coding, only write comments when the code is extremely difficult to understand by just reading the code. Only add comments in cases where the logic is genuinely complex or non-obvious. Otherwise, write plain code without comments (following clean code methodology).
+
+Never use the `any` type in TypeScript. Always use proper type definitions, interfaces, or union types to maintain type safety.
