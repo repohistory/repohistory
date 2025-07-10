@@ -142,18 +142,18 @@ export async function getRepoViews(
     // Fill missing dates with 0 values
     const sortedViews = Array.from(dataMap.values()).sort((a, b) => a.timestamp.localeCompare(b.timestamp));
     const views = [];
-    
+
     if (sortedViews.length > 0) {
       const startDate = new Date(sortedViews[0].timestamp);
       const endDate = new Date();
-      
+
       for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
         const dateStr = d.toISOString().split('T')[0];
         const existingData = dataMap.get(dateStr);
         views.push(existingData || { timestamp: dateStr, count: 0, uniques: 0 });
       }
     }
-    
+
     const count = views.reduce((sum, item) => sum + item.count, 0);
     const uniques = views.reduce((sum, item) => sum + item.uniques, 0);
 
@@ -218,18 +218,18 @@ export async function getRepoClones(
     // Fill missing dates with 0 values
     const sortedClones = Array.from(dataMap.values()).sort((a, b) => a.timestamp.localeCompare(b.timestamp));
     const clones = [];
-    
+
     if (sortedClones.length > 0) {
       const startDate = new Date(sortedClones[0].timestamp);
       const endDate = new Date();
-      
+
       for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
         const dateStr = d.toISOString().split('T')[0];
         const existingData = dataMap.get(dateStr);
         clones.push(existingData || { timestamp: dateStr, count: 0, uniques: 0 });
       }
     }
-    
+
     const count = clones.reduce((sum, item) => sum + item.count, 0);
     const uniques = clones.reduce((sum, item) => sum + item.uniques, 0);
 
@@ -302,11 +302,11 @@ export async function getRepoReferrers(
     const referrers = Array.from(referrerMap.entries()).map(([referrer, dataMap]) => {
       const sortedData = Array.from(dataMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
       const data = [];
-      
+
       if (sortedData.length > 0) {
         const startDate = new Date(sortedData[0][0]);
         const endDate = new Date();
-        
+
         for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
           const dateStr = d.toISOString().split('T')[0];
           const existingData = dataMap.get(dateStr);
@@ -317,7 +317,7 @@ export async function getRepoReferrers(
           });
         }
       }
-      
+
       return { referrer, data };
     });
 
@@ -400,11 +400,11 @@ export async function getRepoPaths(
     const paths = Array.from(pathMap.entries()).map(([path, pathInfo]) => {
       const sortedData = Array.from(pathInfo.data.entries()).sort((a, b) => a[0].localeCompare(b[0]));
       const data = [];
-      
+
       if (sortedData.length > 0) {
         const startDate = new Date(sortedData[0][0]);
         const endDate = new Date();
-        
+
         for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
           const dateStr = d.toISOString().split('T')[0];
           const existingData = pathInfo.data.get(dateStr);
@@ -415,7 +415,7 @@ export async function getRepoPaths(
           });
         }
       }
-      
+
       return { path, title: pathInfo.title, data };
     });
 
@@ -461,10 +461,10 @@ export async function getRepoStars(
     });
 
     // Process stars data into daily aggregations
-    const starsHistory = processStarsData(stargazers);
+    const starsHistory = processStarsData(stargazers, repo);
 
     return {
-      totalStars: stargazers.length,
+      totalStars: repo.stargazersCount,
       starsHistory,
     };
   } catch (error) {
@@ -476,7 +476,7 @@ export async function getRepoStars(
   }
 }
 
-function processStarsData(stargazers: Array<{ starred_at?: string }>) {
+function processStarsData(stargazers: Array<{ starred_at?: string }>, repo: { stargazersCount: number }) {
   const dailyStars: Record<string, number> = {};
 
   stargazers.forEach(({ starred_at }) => {
@@ -493,12 +493,13 @@ function processStarsData(stargazers: Array<{ starred_at?: string }>) {
 
   // Generate complete date range from one day before first star to today
   const startDate = new Date(sortedDates[0]);
-  startDate.setDate(startDate.getDate() - 1); // Start one day before first star
-  const endDate = new Date(); // Use today's date
+  startDate.setDate(startDate.getDate() - 1);
+  const today = new Date().toISOString().split('T')[0];
+  const endDate = new Date(today);
   const completeData = [];
   let cumulative = 0;
 
-  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+  for (let d = new Date(startDate); d < endDate; d.setDate(d.getDate() + 1)) {
     const dateStr = d.toISOString().split('T')[0];
     const daily = dailyStars[dateStr] || 0;
     cumulative += daily;
@@ -509,6 +510,15 @@ function processStarsData(stargazers: Array<{ starred_at?: string }>) {
       cumulative,
     });
   }
+
+  // Add today's data
+  const lastCumulative = completeData.length > 0 ? completeData[completeData.length - 1].cumulative : 0;
+  const dailyToday = repo.stargazersCount - lastCumulative;
+  completeData.push({
+    date: today,
+    daily: dailyToday,
+    cumulative: repo.stargazersCount,
+  });
 
   return completeData;
 }
