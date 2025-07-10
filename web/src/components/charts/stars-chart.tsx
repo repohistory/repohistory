@@ -11,7 +11,6 @@ import { ChartConfig } from "@/components/ui/chart";
 import { ZoomableChart } from "./zoomable-chart";
 import { ShareImage } from "./share-image";
 import { RepoStarsData } from "@/utils/repo/stars";
-import { BorderBeam } from "../magicui/border-beam";
 
 interface StarsChartProps {
   starsData: RepoStarsData;
@@ -78,8 +77,7 @@ export function StarsChart({ starsData, fullName }: StarsChartProps) {
             fullName && (
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" size="icon" className="size-8 hidden relative md:inline-flex">
-                    <BorderBeam duration={1} size={100} colorFrom="#62C3F8" colorTo="#315B73" />
+                  <Button variant="outline" size="icon" className="size-8 hidden md:inline-flex">
                     <Images />
                   </Button>
                 </DialogTrigger>
