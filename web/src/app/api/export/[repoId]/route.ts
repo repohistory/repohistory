@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserOctokit } from '@/utils/octokit/get-user-octokit';
 import { createClient } from '@/utils/supabase/server';
-import { getRepoViews, getRepoClones, getRepoReferrers, getRepoPaths } from '@/utils/repo';
+import { getRepoViews } from '@/utils/repo/views';
+import { getRepoClones } from '@/utils/repo/clones';
+import { getRepoReferrers } from '@/utils/repo/referrers';
+import { getRepoPaths } from '@/utils/repo/paths';
 import JSZip from 'jszip';
 
 export async function GET(

@@ -6,7 +6,7 @@ import { optimize, Config } from 'svgo';
 import XYChart from '@/shared/packages/xy-chart';
 import { convertDataToChartData } from '@/shared/common/chart';
 import { replaceSVGContentFilterWithCamelcase, getBase64Image, getChartWidthWithSize } from '@/shared/common/star-utils';
-import { getRepoStars } from '@/utils/repo';
+import { getRepoStars } from '@/utils/repo/stars';
 
 // Cache only the repo data (GitHub API calls), not the SVG output
 const getCachedRepoData = unstable_cache(

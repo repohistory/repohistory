@@ -7,7 +7,7 @@ import { AreaChartSkeleton } from "@/components/charts/area-chart-skeleton";
 import { TrafficChartSkeleton } from "@/components/charts/traffic-chart-skeleton";
 import { ReleaseChartSkeleton } from "@/components/charts/release-chart-skeleton";
 import { ExportAllData } from "@/components/export-all-data";
-import { getRepoOverview } from "@/utils/repo";
+import { getRepoOverview } from "@/utils/repo/overview";
 import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
 
 interface PageProps {

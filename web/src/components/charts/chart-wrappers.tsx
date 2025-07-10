@@ -4,7 +4,12 @@ import { CloneChart } from "./clone-chart";
 import { ReferrersChart } from "./referrers-chart";
 import { PopularContentChart } from "./popular-content-chart";
 import { ReleaseChart } from "./release-chart";
-import { getRepoStars, getRepoViews, getRepoClones, getRepoReferrers, getRepoPaths, getRepoReleases } from "@/utils/repo";
+import { getRepoStars } from "@/utils/repo/stars";
+import { getRepoViews } from "@/utils/repo/views";
+import { getRepoClones } from "@/utils/repo/clones";
+import { getRepoReferrers } from "@/utils/repo/referrers";
+import { getRepoPaths } from "@/utils/repo/paths";
+import { getRepoReleases } from "@/utils/repo/releases";
 import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
 import { createClient } from "@/utils/supabase/server";
 

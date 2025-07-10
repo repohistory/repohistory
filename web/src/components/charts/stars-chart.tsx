@@ -10,7 +10,7 @@ import { Area } from "recharts";
 import { ChartConfig } from "@/components/ui/chart";
 import { ZoomableChart } from "./zoomable-chart";
 import { ShareImage } from "./share-image";
-import { RepoStarsData } from "@/utils/repo";
+import { RepoStarsData } from "@/utils/repo/stars";
 import { BorderBeam } from "../magicui/border-beam";
 
 interface StarsChartProps {

@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Area } from "recharts";
 import { ChartConfig, ChartTooltip } from "@/components/ui/chart";
 import { TimestampZoomableChart } from "./timestamp-zoomable-chart";
-import { RepoReleaseData } from "@/utils/repo";
+import { RepoReleaseData } from "@/utils/repo/releases";
 
 interface ReleaseChartProps {
   releasesData: RepoReleaseData;
