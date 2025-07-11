@@ -23,23 +23,21 @@ export default async function StarHistoryPage({ searchParams }: PageProps) {
 
   if (!fullName) {
     return (
-      <div className="relative min-h-screen">
+      <div className="relative h-dvh px-2 z-10 flex flex-col space-y-8 justify-center items-center">
         <BackgroundCharts />
-        <div className="relative z-10 flex flex-col space-y-8 h-screen justify-center items-center">
-          <div className="text-center space-y-2">
-            <h1 className="text-3xl font-semibold">Star History Chart Generator</h1>
-            <p className="text-muted-foreground">
-              Create customizable star history charts for your GitHub repo
-            </p>
-          </div>
-          <StarHistoryForm initialOwner={owner} initialRepo={repo} />
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-semibold">Star History Chart Generator</h1>
+          <p className="text-muted-foreground">
+            Create customizable star history charts for your GitHub repo
+          </p>
         </div>
+        <StarHistoryForm initialOwner={owner} initialRepo={repo} />
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto flex items-center justify-center min-h-dvh py-8 px-4">
       <div className="max-w-5xl mx-auto space-y-8">
         <StarHistoryChart
           initialOwner={owner}

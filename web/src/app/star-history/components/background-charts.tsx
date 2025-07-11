@@ -57,7 +57,7 @@ export function BackgroundCharts() {
           }}
         >
           <BlurFade delay={0.25 + index * 0.2}>
-            <div className="opacity-50">
+            <div className="brightness-60">
               <Image
                 src={chart.src}
                 alt=""

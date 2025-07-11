@@ -77,22 +77,24 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <Card className="lg:col-span-2">
         <CardHeader>
-          <div className="flex justify-center items-center gap-2">
-            <Input
-              placeholder="facebook"
-              value={owner}
-              onChange={(e) => setOwner(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="w-40"
-            />
-            <span className="text-muted-foreground text-xl">/</span>
-            <Input
-              placeholder="react"
-              value={repo}
-              onChange={(e) => setRepo(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="w-40"
-            />
+          <div className="flex justify-center flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2">
+              <Input
+                placeholder="facebook"
+                value={owner}
+                onChange={(e) => setOwner(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="w-40"
+              />
+              <span className="text-muted-foreground text-xl">/</span>
+              <Input
+                placeholder="react"
+                value={repo}
+                onChange={(e) => setRepo(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="w-40"
+              />
+            </div>
             <Button
               onClick={handleGenerate}
               disabled={!owner || !repo || fullName === `${owner}/${repo}`}
