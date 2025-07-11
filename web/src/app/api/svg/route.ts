@@ -7,6 +7,7 @@ import { convertDataToChartData } from '@/shared/common/chart';
 import { replaceSVGContentFilterWithCamelcase, getBase64Image, getChartWidthWithSize } from '@/shared/common/star-utils';
 import { getRepoStarsChart } from '@/utils/repo/stars';
 import { getRepoInfo } from '@/utils/repo/info';
+import { unstable_cache } from 'next/cache';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -30,15 +31,26 @@ export async function GET(request: NextRequest) {
 
     const appOctokit = app.octokit;
     const { data: installations } = await appOctokit.rest.apps.listInstallations();
-    
+
     if (installations.length === 0) {
       throw new Error('No installations found');
     }
-    
+
     const randomInstallation = installations[Math.floor(Math.random() * installations.length)];
     const octokit = await app.getInstallationOctokit(randomInstallation.id);
 
-    const repoInfo = await getRepoInfo(octokit, owner, repo);
+    const getCachedRepoInfo = unstable_cache(
+      async (owner: string, repo: string) => {
+        return await getRepoInfo(octokit, owner, repo);
+      },
+      [],
+      {
+        tags: ['repo-info'],
+        revalidate: 86400, // 24 hours
+      }
+    );
+
+    const repoInfo = await getCachedRepoInfo(owner, repo);
 
     const repoStarsData = await getRepoStarsChart(octokit, {
       fullName: fullName,
