@@ -38,6 +38,7 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
   const [transparent, setTransparent] = useState<string>("false");
   const [color, setColor] = useState<string>("f86262");
   const [isImageLoading, setIsImageLoading] = useState(true);
+  const [isCustomizing, setIsCustomizing] = useState(false);
 
   const handleGenerate = () => {
     if (owner && repo) {
@@ -56,7 +57,8 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
     }
   };
 
-  const imageUrl = `/api/svg?repo=${fullName}&type=${type}&theme=${theme}&transparent=${transparent}${color ? `&color=${color}` : ''}`;
+  const isValidColor = color && /^[0-9A-Fa-f]{6}$/.test(color);
+  const imageUrl = `/api/svg?repo=${fullName}&type=${type}&theme=${theme}&transparent=${transparent}${isValidColor ? `&color=${color}` : ''}`;
   const markdownCode = `[![Star History Chart](${process.env.NEXT_PUBLIC_SITE_URL}${imageUrl})](${process.env.NEXT_PUBLIC_SITE_URL}/star-history)`;
 
   const copyMarkdown = async () => {
@@ -109,15 +111,29 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
                   </div>
                 </div>
               )}
+              {isCustomizing && !isImageLoading && (
+                <div className="absolute inset-0 bg-black/50 border rounded-lg flex items-center justify-center z-10">
+                  <div className="flex flex-col items-center gap-2">
+                    <Loader className="h-5 w-5 animate-spin text-white" />
+                  </div>
+                </div>
+              )}
               <Image
                 src={imageUrl}
                 unoptimized
                 alt="Star History Chart"
                 width={800}
                 height={533}
-                className={`w-full border rounded-lg transition-opacity duration-300 ${isImageLoading ? 'opacity-0' : 'opacity-100'}`}
-                onLoad={() => setIsImageLoading(false)}
-                onError={() => setIsImageLoading(false)}
+                className={`w-full border rounded-lg transition-all duration-300 ${isImageLoading ? 'opacity-0' : isCustomizing ? 'opacity-100 brightness-50' : 'opacity-100'
+                  }`}
+                onLoad={() => {
+                  setIsImageLoading(false);
+                  setIsCustomizing(false);
+                }}
+                onError={() => {
+                  setIsImageLoading(false);
+                  setIsCustomizing(false);
+                }}
               />
             </div>
             <div className="space-y-4">
@@ -157,7 +173,10 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
           <div className="space-y-4">
             <div className="space-y-2">
               <div className="text-muted-foreground text-sm">Theme</div>
-              <Select defaultValue={theme} onValueChange={setTheme}>
+              <Select defaultValue={theme} onValueChange={(value) => {
+                setTheme(value);
+                setIsCustomizing(true);
+              }}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -169,7 +188,10 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
             </div>
             <div className="space-y-2">
               <div className="text-muted-foreground text-sm">Chart Type</div>
-              <Select defaultValue={type} onValueChange={setType}>
+              <Select defaultValue={type} onValueChange={(value) => {
+                setType(value);
+                setIsCustomizing(true);
+              }}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -181,7 +203,10 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
             </div>
             <div className="space-y-2">
               <div className="text-muted-foreground text-sm">Transparent</div>
-              <Select defaultValue={transparent} onValueChange={setTransparent}>
+              <Select defaultValue={transparent} onValueChange={(value) => {
+                setTransparent(value);
+                setIsCustomizing(true);
+              }}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -199,7 +224,13 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
                 value={`#${color}`}
                 onChange={(e) => {
                   const value = e.target.value.replace('#', '');
-                  setColor(value);
+                  const isValid = value.length === 6 && /^[0-9A-Fa-f]{6}$/.test(value);
+                  if (isValid) {
+                    setColor(value);
+                    setIsCustomizing(true);
+                  } else if (value.length <= 6) {
+                    setColor(value);
+                  }
                 }}
                 maxLength={7}
               />
@@ -209,7 +240,10 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
                   return (
                     <button
                       key={presetColor}
-                      onClick={() => setColor(presetColor.replace("#", ""))}
+                      onClick={() => {
+                        setColor(presetColor.replace("#", ""));
+                        setIsCustomizing(true);
+                      }}
                       className="w-8 h-8 rounded-full cursor-pointer transition-all hover:scale-105 relative flex items-center justify-center"
                       style={{ backgroundColor: presetColor }}
                       title={presetColor}
