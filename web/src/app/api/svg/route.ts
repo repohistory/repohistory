@@ -29,11 +29,14 @@ export async function GET(request: NextRequest) {
     }
 
     const appOctokit = app.octokit;
-    const { data: installation } = await appOctokit.rest.apps.getRepoInstallation({
-      owner,
-      repo,
-    });
-    const octokit = await app.getInstallationOctokit(installation.id);
+    const { data: installations } = await appOctokit.rest.apps.listInstallations();
+    
+    if (installations.length === 0) {
+      throw new Error('No installations found');
+    }
+    
+    const randomInstallation = installations[Math.floor(Math.random() * installations.length)];
+    const octokit = await app.getInstallationOctokit(randomInstallation.id);
 
     const repoInfo = await getRepoInfo(octokit, owner, repo);
 

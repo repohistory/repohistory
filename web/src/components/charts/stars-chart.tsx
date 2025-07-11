@@ -4,12 +4,11 @@ import { useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Images } from "lucide-react";
+import Link from "next/link";
 import { Area } from "recharts";
 import { ChartConfig } from "@/components/ui/chart";
 import { ZoomableChart } from "./zoomable-chart";
-import { ShareImage } from "./share-image";
 import { RepoStarsData } from "@/utils/repo/stars";
 
 interface StarsChartProps {
@@ -75,19 +74,11 @@ export function StarsChart({ starsData, fullName }: StarsChartProps) {
           onDataChange={handleDataChange}
           extraButtons={
             fullName && (
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="icon" className="size-8 hidden md:inline-flex">
-                    <Images />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-2xl">
-                  <DialogHeader>
-                    <DialogTitle>Share Star History Image</DialogTitle>
-                  </DialogHeader>
-                  <ShareImage fullName={fullName} />
-                </DialogContent>
-              </Dialog>
+              <Link href={`/star-history?owner=${fullName.split('/')[0]}&repo=${fullName.split('/')[1]}`}>
+                <Button variant="outline" size="icon" className="size-8 hidden md:inline-flex">
+                  <Images />
+                </Button>
+              </Link>
             )
           }
         >

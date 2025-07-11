@@ -11,12 +11,17 @@ Repohistory is a Next.js web application that provides an open-source dashboard 
 This project uses pnpm as the package manager.
 
 ## Key Components Structure
+
 - `src/app/(dashboard)/` - Protected dashboard pages
 - `src/components/charts/` - Chart components using D3 and Recharts
 - `src/components/repo/` - Repository-related UI components
 - `src/components/ui/` - Shadcn/ui components (button, card, tooltip, etc.)
 - `src/utils/supabase/` - Supabase client utilities
 - `src/utils/octokit/` - GitHub API integration
+
+## UI Components
+
+This project uses shadcn/ui components. If you need a component that's not currently installed, you can ask the user to install it using command like: `pnpm dlx shadcn@latest add label`.
 
 ## Code Style Guidelines
 
