@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { BlurFade } from "@/components/magicui/blur-fade";
 
 interface ChartPosition {
   id: string;
@@ -45,7 +46,7 @@ export function BackgroundCharts() {
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-      {charts.map((chart) => (
+      {charts.map((chart, index) => (
         <div
           key={chart.id}
           className="absolute"
@@ -53,17 +54,20 @@ export function BackgroundCharts() {
             left: `${chart.x}%`,
             top: `${chart.y}%`,
             transform: `translate(-50%, -50%) rotate(${chart.rotation}deg)`,
-            opacity: 0.5,
           }}
         >
-          <Image
-            src={chart.src}
-            alt=""
-            width={400}
-            height={250}
-            className="select-none w-80 scale-130 h-auto"
-            quality={100}
-          />
+          <BlurFade delay={0.25 + index * 0.2}>
+            <div className="opacity-50">
+              <Image
+                src={chart.src}
+                alt=""
+                width={400}
+                height={250}
+                className="select-none w-80 scale-130 h-auto"
+                quality={100}
+              />
+            </div>
+          </BlurFade>
         </div>
       ))}
     </div>
