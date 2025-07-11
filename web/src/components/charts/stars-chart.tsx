@@ -74,7 +74,7 @@ export function StarsChart({ starsData, fullName }: StarsChartProps) {
           onDataChange={handleDataChange}
           extraButtons={
             fullName && (
-              <Link href={`/star-history?owner=${fullName.split('/')[0]}&repo=${fullName.split('/')[1]}`}>
+              <Link target="_blank" href={`/star-history?owner=${fullName.split('/')[0]}&repo=${fullName.split('/')[1]}`}>
                 <Button variant="outline" size="icon" className="size-8 hidden md:inline-flex">
                   <Images />
                 </Button>

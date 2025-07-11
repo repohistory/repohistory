@@ -95,7 +95,7 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
               onClick={handleGenerate}
               disabled={!owner || !repo || fullName === `${owner}/${repo}`}
             >
-              Generate Chart
+              Generate
             </Button>
           </div>
         </CardHeader>
@@ -194,11 +194,14 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
             <div className="space-y-4">
               <div className="text-muted-foreground text-sm">Color (HEX)</div>
               <Input
-                placeholder="62C3F8"
+                placeholder="#f86262"
                 type="text"
-                value={color}
-                onChange={(e) => setColor(e.target.value)}
-                maxLength={6}
+                value={`#${color}`}
+                onChange={(e) => {
+                  const value = e.target.value.replace('#', '');
+                  setColor(value);
+                }}
+                maxLength={7}
               />
               <div className="grid grid-cols-7 gap-2">
                 {COLORS.map((presetColor) => {
