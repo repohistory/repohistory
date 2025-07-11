@@ -20,4 +20,4 @@ GitHub limits access to only the past 14 days of your repo’s traffic data, mak
 
 ## Star History
 
-[![Star History Chart](https://app.repohistory.com/api/svg?repo=repohistory/repohistory&type=Date&theme=dark&transparent=false&color=62C3F8)](https://repohistory.com)
+[![Star History Chart](https://app.repohistory.com/api/svg?repo=repohistory/repohistory&type=Date&theme=dark&transparent=false&color=62C3F8)](https://app.repohistory.com/star-history)
