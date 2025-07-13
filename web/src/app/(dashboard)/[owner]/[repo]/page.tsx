@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { StarsChartWrapper, ViewChartWrapper, CloneChartWrapper, ReferrersChartWrapper, PopularContentChartWrapper, ReleaseChartWrapper } from "@/components/charts/chart-wrappers";
 import { StarsChartSkeleton } from "@/components/charts/stars-chart-skeleton";
@@ -12,19 +11,14 @@ import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
 
 interface PageProps {
   params: Promise<{
-    fullName: string[];
+    owner: string;
+    repo: string;
   }>;
 }
 
 export default async function RepoPage({ params }: PageProps) {
-  const resolvedParams = await params;
-
-  if (!resolvedParams.fullName || resolvedParams.fullName.length !== 2) {
-    redirect("/");
-  }
-
-  const fullName = `${resolvedParams.fullName[0]}/${resolvedParams.fullName[1]}`;
-  const [owner, repo] = fullName.split("/");
+  const { owner, repo } = await params;
+  const fullName = `${owner}/${repo}`;
   const octokit = await getUserOctokit();
   const repoInfo = await getRepoInfo(octokit, owner, repo);
 
