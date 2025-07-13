@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { GitHub } from "@/components/icons";
 import { signin } from "@/actions/auth";
 import { useState } from "react";
-import { Loader2Icon } from "lucide-react"
+import { Loader } from "lucide-react"
 
 export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +34,7 @@ export default function SignInPage() {
           }}>
           {
             isLoading ?
-              <Loader2Icon className="animate-spin" />
+              <Loader className="animate-spin" />
               :
               <GitHub />
           }
