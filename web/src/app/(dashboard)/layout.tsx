@@ -17,7 +17,7 @@ export default async function DashboardLayout({
   return (
     <>
       <Navbar user={session.user} />
-      <div className="w-full overflow-y-auto">
+      <div className="w-full overflow-y-auto pt-16">
         {children}
       </div>
     </>
