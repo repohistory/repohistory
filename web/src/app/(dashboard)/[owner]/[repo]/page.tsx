@@ -18,6 +18,11 @@ interface PageProps {
 
 export default async function RepoPage({ params }: PageProps) {
   const { owner, repo } = await params;
+
+  if (owner === 'icons') {
+    return;
+  }
+
   const fullName = `${owner}/${repo}`;
   const octokit = await getUserOctokit();
   const repoInfo = await getRepoInfo(octokit, owner, repo);
