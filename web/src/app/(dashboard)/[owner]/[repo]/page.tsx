@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { StarsChartWrapper, ViewChartWrapper, CloneChartWrapper, ReferrersChartWrapper, PopularContentChartWrapper, ReleaseChartWrapper } from "@/components/charts/chart-wrappers";
 import { StarsChartSkeleton } from "@/components/charts/stars-chart-skeleton";
 import { AreaChartSkeleton } from "@/components/charts/area-chart-skeleton";
@@ -14,6 +15,14 @@ interface PageProps {
     owner: string;
     repo: string;
   }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { owner, repo } = await params;
+
+  return {
+    title: `${owner}/${repo} | Repohistory`,
+  };
 }
 
 export default async function RepoPage({ params }: PageProps) {

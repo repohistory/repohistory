@@ -11,7 +11,7 @@ interface PageProps {
 }
 
 export const metadata: Metadata = {
-  title: 'GitHub Repo Star History Chart Generator',
+  title: 'GitHub Repo Star History Chart Generator | Repohistory',
   description: 'Generate customizable star history charts for your GitHub repositories. Input the owner and repository name to visualize star growth over time. Perfect for showcasing project popularity in your README.',
 }
 
