@@ -4,7 +4,6 @@ import { useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Images } from "lucide-react";
 import Link from "next/link";
 import { Area } from "recharts";
 import { ChartConfig } from "@/components/ui/chart";
@@ -75,8 +74,8 @@ export function StarsChart({ starsData, fullName }: StarsChartProps) {
           extraButtons={
             fullName && (
               <Link target="_blank" href={`/star-history?owner=${fullName.split('/')[0]}&repo=${fullName.split('/')[1]}`}>
-                <Button variant="outline" size="icon" className="size-8 hidden md:inline-flex">
-                  <Images />
+                <Button variant="outline" size="sm" className="hidden md:inline-flex">
+                  Share Chart
                 </Button>
               </Link>
             )
