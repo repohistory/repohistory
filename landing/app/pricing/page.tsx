@@ -1,23 +1,16 @@
-"use client";
-
-import { Switch } from "@/components/ui/switch";
 import { PricingCard } from "@/components/pricing-card";
-import { useState } from "react";
+import { ProCard } from "./pro-card";
+
+export const metadata = {
+  title: "Pricing | Repohistory"
+};
 
 export default function PricingPage() {
-  const [isYearly, setIsYearly] = useState(true);
-
   const freeFeatures = [
     { text: "Track 1 repository" },
     { text: "Traffic history beyond 14 days" },
     { text: "Advanced analytics & insights" },
     { text: "Data export capabilities" }
-  ];
-
-  const proFeatures = [
-    { text: "Track unlimited repositories" },
-    { text: "All features in Free" },
-    { text: "Priority support" }
   ];
 
   return (
@@ -41,19 +34,7 @@ export default function PricingPage() {
               features={freeFeatures}
               buttonVariant="outline"
             />
-            <PricingCard
-              title="Pro"
-              price={isYearly ? 7.5 : 9}
-              period="month"
-              features={proFeatures}
-              buttonVariant="default"
-              middleSection={
-                <div className="flex items-center gap-2">
-                  <Switch checked={isYearly} onCheckedChange={setIsYearly} />
-                  <span className="text-sm text-muted-foreground">Billed yearly</span>
-                </div>
-              }
-            />
+            <ProCard />
           </div>
         </div>
       </div>

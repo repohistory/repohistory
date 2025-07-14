@@ -2,6 +2,10 @@ import { promises as fs } from 'fs';
 import { join } from 'path';
 import ReactMarkdown from 'react-markdown';
 
+export const metadata = {
+  title: "Privacy Policy | Repohistory"
+};
+
 export default async function PrivacyPage() {
   const privacyContent = await fs.readFile(
     join(process.cwd(), 'privacy.md'),
