@@ -31,7 +31,6 @@ export function DropdownWrapper({ user }: DropdownWrapperProps) {
         <DropdownMenuItem asChild>
           <a
             href="https://github.com/apps/repohistory/installations/new"
-            target="_blank"
             rel="noopener noreferrer"
             className="cursor-pointer"
           >

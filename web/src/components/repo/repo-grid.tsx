@@ -18,7 +18,7 @@ export async function RepoGrid() {
           .map((repo: Repo) => (
             <RepoCard key={repo.id} repo={repo} />
           ))}
-        <Link href="https://github.com/apps/repohistory/installations/new" target="_blank" rel="noopener noreferrer">
+        <Link href="https://github.com/apps/repohistory/installations/new" rel="noopener noreferrer">
           <Card className="h-56 w-full cursor-pointer transition-colors hover:bg-accent border-2 border-dashed border-muted-foreground/50 flex items-center justify-center">
             <CardContent className="flex flex-col items-center justify-center gap-2">
               <Plus className="h-6 w-6 text-muted-foreground" />
