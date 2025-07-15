@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Repohistory | Beautiful GitHub repository traffic dashboard without 14 days limit",
-  description: "Repohistory is a open-source dashboard for tracking GitHub repository traffic history longer than 14 days with beautiful visualizations.",
+  title: "Repohistory | GitHub repository traffic analytics without 14 days limit",
+  description: "Repohistory is a open-source analytics platform for tracking GitHub repository traffic history longer than 14 days with beautiful visualizations.",
 };
 
 export default function RootLayout({

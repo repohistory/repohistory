@@ -9,7 +9,7 @@ export function Hero() {
     <section className="flex flex-col overflow-hidden justify-center min-h-screen items-center px-5 sm:px-10 pt-30 relative">
       <div className="z-10 max-w-4xl space-y-8 flex flex-col text-center md:text-start items-center md:items-start">
         <h1 className="text-5xl sm:text-6xl font-medium bg-gradient-to-br from-white to-neutral-400 bg-clip-text text-transparent">
-          Beautiful GitHub Repository Traffic Dashboard
+          GitHub Repository Analytics Platform
         </h1>
         <h2 className="text-lg font-medium text-neutral-300 max-w-lg">
           Track your repository traffic history longer than 14 days with beautiful visualizations
