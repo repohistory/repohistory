@@ -13,7 +13,7 @@ export function CTA() {
       />
       <div className="max-w-4xl mx-auto text-center space-y-8">
         <h2 className="text-4xl md:text-5xl font-semibold">
-          Ready to track your repository traffic?
+          Ready to track your repo traffic?
         </h2>
         <p className="text-lg text-neutral-300 font-medium max-w-2xl mx-auto">
           Start monitoring your GitHub repository traffic and get insights that matter.
