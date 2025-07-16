@@ -79,7 +79,7 @@ export function ViewChart({ traffic }: ViewChartProps) {
           </span>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pl-0">
         <ZoomableChart
           data={data}
           chartConfig={chartConfig}

@@ -85,7 +85,7 @@ export function PopularContentChart({ traffic }: PopularContentChartProps) {
           </CardDescription>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pl-0">
         {data.length > 0 ? (
           <ZoomableChart
             data={data}

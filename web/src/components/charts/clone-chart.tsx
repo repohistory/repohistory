@@ -79,7 +79,7 @@ export function CloneChart({ traffic }: CloneChartProps) {
           </span>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pl-0">
         <ZoomableChart
           data={data}
           chartConfig={chartConfig}

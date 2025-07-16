@@ -65,7 +65,7 @@ export function StarsChart({ starsData, fullName }: StarsChartProps) {
           </span>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pl-0">
         <ZoomableChart
           data={data}
           chartConfig={chartConfig}

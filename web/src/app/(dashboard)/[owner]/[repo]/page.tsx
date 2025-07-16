@@ -40,7 +40,7 @@ export default async function RepoPage({ params }: PageProps) {
     <div className="container mx-auto p-4 sm:p-10 space-y-6">
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-2">
-          <h1 className="text-3xl font-bold">
+          <h1 className="text-2xl font-semibold sm:text-3xl sm:font-bold">
             <Link
               href={`https://github.com/${fullName}`}
               target="_blank"
@@ -50,7 +50,9 @@ export default async function RepoPage({ params }: PageProps) {
               {fullName}
             </Link>
           </h1>
-          <ExportAllData fullName={fullName} repoId={repoInfo.id} />
+          <div className="hidden md:block">
+            <ExportAllData fullName={fullName} repoId={repoInfo.id} />
+          </div>
         </div>
         {repoInfo.description && (
           <p className="text-muted-foreground">{repoInfo.description}</p>

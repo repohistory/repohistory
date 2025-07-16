@@ -95,7 +95,7 @@ export function ReleaseChart({ releasesData }: ReleaseChartProps) {
           </span>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pl-0">
         <TimestampZoomableChart
           data={data}
           chartConfig={chartConfig}
