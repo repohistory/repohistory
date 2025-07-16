@@ -9,7 +9,7 @@ export function RepoCard({ repo }: {
 }) {
   return (
     <Link href={`/${repo.full_name}`}>
-      <Card className="h-56 w-full cursor-pointer transition-colors hover:bg-accent">
+      <Card className="h-56 w-full cursor-pointer transition-all duration-200 hover:bg-accent active:scale-98">
         <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <CardTitle className="text-lg font-semibold">{repo.full_name}</CardTitle>
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
