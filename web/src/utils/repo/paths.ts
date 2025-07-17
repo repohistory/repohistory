@@ -66,11 +66,11 @@ export async function getRepoPaths(
     const paths = Array.from(pathMap.entries()).map(([path, pathInfo]) => {
       const sortedData = Array.from(pathInfo.data.entries()).sort((a, b) => a[0].localeCompare(b[0]));
       const data = [];
-      
+
       if (sortedData.length > 0) {
         const startDate = new Date(sortedData[0][0]);
         const endDate = new Date();
-        
+
         for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
           const dateStr = d.toISOString().split('T')[0];
           const existingData = pathInfo.data.get(dateStr);
@@ -81,7 +81,7 @@ export async function getRepoPaths(
           });
         }
       }
-      
+
       return { path, title: pathInfo.title, data };
     });
 
@@ -92,7 +92,17 @@ export async function getRepoPaths(
       return bTotal - aTotal;
     });
 
-    return { paths };
+    const cleanedPaths = paths.map(pathItem => {
+      // Use regex to match and remove the first two path segments (owner/repo)
+      const cleanedPath = pathItem.path.replace(/^\/[^\/]+\/[^\/]+(.*)$/, '$1') || '/';
+
+      return {
+        ...pathItem,
+        path: cleanedPath
+      };
+    });
+
+    return { paths: cleanedPaths };
   } catch (error) {
     console.error("Error fetching paths data:", error);
     return { paths: [] };
