@@ -14,7 +14,7 @@ export function ExportAllData({ fullName, repoId }: ExportAllDataProps) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant="secondary" size="icon" className="size-9">
+          <Button variant="outline" size="icon" className="size-9">
             <a
               href={`/api/export/${repoId}?format=csv&repo=${encodeURIComponent(fullName)}`}
               download={`${repoSlug}-data.zip`}

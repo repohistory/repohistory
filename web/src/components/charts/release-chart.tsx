@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Area } from "recharts";
 import { ChartConfig, ChartTooltip } from "@/components/ui/chart";
-import { TimestampZoomableChart } from "./timestamp-zoomable-chart";
+import { TimestampChart } from "./timestamp-chart";
 import { RepoReleaseData } from "@/utils/repo/releases";
 
 interface ReleaseChartProps {
@@ -19,7 +19,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ReleaseChart({ releasesData }: ReleaseChartProps) {
-  const [zoomedData, setZoomedData] = useState<Array<{ date: string; timestamp: number; downloads: number }>>([]);
+  const [filteredData, setFilteredData] = useState<Array<{ date: string; timestamp: number; downloads: number }>>([]);
 
   const data = useMemo(() => {
     if (!releasesData.releases || releasesData.releases.length === 0) {
@@ -36,14 +36,14 @@ export function ReleaseChart({ releasesData }: ReleaseChartProps) {
       }));
   }, [releasesData.releases]);
 
-  const handleDataChange = useCallback((newZoomedData: Array<{ date: string; timestamp: number;[key: string]: string | number }>) => {
-    setZoomedData(newZoomedData as Array<{ date: string; timestamp: number; downloads: number }>);
+  const handleDataChange = useCallback((newFilteredData: Array<{ date: string; timestamp: number;[key: string]: string | number }>) => {
+    setFilteredData(newFilteredData as Array<{ date: string; timestamp: number; downloads: number }>);
   }, []);
 
   const total = useMemo(() => {
-    const dataToUse = zoomedData.length > 0 ? zoomedData : data;
+    const dataToUse = filteredData.length > 0 ? filteredData : data;
     return dataToUse.reduce((acc, curr) => acc + curr.downloads, 0);
-  }, [zoomedData, data]);
+  }, [filteredData, data]);
 
   const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ payload: { tagName: string; downloads: number } }>; label?: string }) => {
     if (active && payload && payload.length) {
@@ -96,7 +96,7 @@ export function ReleaseChart({ releasesData }: ReleaseChartProps) {
         </div>
       </CardHeader>
       <CardContent className="pl-0">
-        <TimestampZoomableChart
+        <TimestampChart
           data={data}
           chartConfig={chartConfig}
           className="h-64 w-full"
@@ -128,7 +128,7 @@ export function ReleaseChart({ releasesData }: ReleaseChartProps) {
             dot={{ fill: "var(--color-downloads)", strokeWidth: 0, r: 3 }}
             activeDot={{ r: 4, stroke: "var(--color-downloads)", strokeWidth: 2 }}
           />
-        </TimestampZoomableChart>
+        </TimestampChart>
       </CardContent>
     </Card>
   );

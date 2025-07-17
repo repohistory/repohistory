@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Area } from "recharts";
 import { ChartConfig } from "@/components/ui/chart";
-import { ZoomableChart } from "./zoomable-chart";
+import { Chart } from "./chart";
 import { RepoStarsData } from "@/utils/repo/stars";
 
 interface StarsChartProps {
@@ -25,26 +25,27 @@ const chartConfig = {
 
 
 export function StarsChart({ starsData, fullName }: StarsChartProps) {
-  const [viewType, setViewType] = useState<"cumulative" | "daily">("cumulative");
-  const [zoomedData, setZoomedData] = useState<Array<{ date: string; stars: number }>>([]);
+  const [viewType, setViewType] = useState<"cumulative" | "daily">("daily");
+  const [filteredData, setFilteredData] = useState<Array<{ date: string; stars: number }>>([]);
 
   const data = useMemo(() => starsData.starsHistory.map((item) => ({
     date: item.date,
     stars: viewType === "cumulative" ? item.cumulative : item.daily,
   })), [starsData.starsHistory, viewType]);
 
-  const handleDataChange = useCallback((newZoomedData: Array<{ date: string;[key: string]: string | number }>) => {
-    setZoomedData(newZoomedData as Array<{ date: string; stars: number }>);
+  const handleDataChange = useCallback((newFilteredData: Array<{ date: string;[key: string]: string | number }>) => {
+    setFilteredData(newFilteredData as Array<{ date: string; stars: number }>);
   }, []);
 
   const total = useMemo(() => {
-    const dataToUse = zoomedData.length > 0 ? zoomedData : data;
+    if (filteredData.length === 0) return 0;
+    
     if (viewType === "cumulative") {
-      return dataToUse.length > 0 ? dataToUse[dataToUse.length - 1].stars : 0;
+      return filteredData[filteredData.length - 1].stars;
     } else {
-      return dataToUse.reduce((acc, curr) => acc + curr.stars, 0);
+      return filteredData.reduce((acc, curr) => acc + curr.stars, 0);
     }
-  }, [zoomedData, data, viewType]);
+  }, [filteredData, viewType]);
 
 
   return (
@@ -66,7 +67,7 @@ export function StarsChart({ starsData, fullName }: StarsChartProps) {
         </div>
       </CardHeader>
       <CardContent className="pl-0">
-        <ZoomableChart
+        <Chart
           data={data}
           chartConfig={chartConfig}
           className="h-64 w-full"
@@ -104,12 +105,12 @@ export function StarsChart({ starsData, fullName }: StarsChartProps) {
             stroke="var(--color-stars)"
             strokeWidth={2}
           />
-        </ZoomableChart>
+        </Chart>
         <div className="flex justify-center mt-6">
           <Tabs value={viewType} onValueChange={(value) => setViewType(value as "cumulative" | "daily")}>
             <TabsList>
-              <TabsTrigger value="cumulative" className="cursor-pointer">Cumulative</TabsTrigger>
               <TabsTrigger value="daily" className="cursor-pointer">Daily</TabsTrigger>
+              <TabsTrigger value="cumulative" className="cursor-pointer">Cumulative</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>

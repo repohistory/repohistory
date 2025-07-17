@@ -9,12 +9,12 @@ export function StarsChartSkeleton() {
         <div className="flex flex-col justify-center gap-1">
           <CardTitle>Stars Over Time</CardTitle>
           <CardDescription>
-            Repository star growth cumulative
+            Repository star growth daily
           </CardDescription>
         </div>
         <div className="flex flex-col items-end gap-1">
           <span className="text-xs text-muted-foreground">
-            Total Stars
+            Total Daily Stars
           </span>
           <Skeleton className="h-6 w-16 sm:h-8 sm:w-20" />
         </div>
@@ -29,10 +29,10 @@ export function StarsChartSkeleton() {
           </div>
         </div>
         <div className="flex justify-center mt-6">
-          <Tabs value="cumulative">
+          <Tabs value="daily">
             <TabsList>
-              <TabsTrigger value="cumulative" className="cursor-pointer">Cumulative</TabsTrigger>
               <TabsTrigger value="daily" className="cursor-pointer">Daily</TabsTrigger>
+              <TabsTrigger value="cumulative" className="cursor-pointer">Cumulative</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>

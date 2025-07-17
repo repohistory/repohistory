@@ -4,7 +4,7 @@ import { useMemo, useState, useCallback } from "react";
 import { Area } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig } from "@/components/ui/chart";
-import { ZoomableChart } from "./zoomable-chart";
+import { Chart } from "./chart";
 interface ViewChartProps {
   traffic: {
     views: {
@@ -32,7 +32,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ViewChart({ traffic }: ViewChartProps) {
-  const [zoomedData, setZoomedData] = useState<Array<{ date: string; unique: number; total: number }>>([]);
+  const [filteredData, setFilteredData] = useState<Array<{ date: string; unique: number; total: number }>>([]);
 
   // Track hidden series (opposite of visible)
   const [hiddenSeries, setHiddenSeries] = useState<Array<string>>([]);
@@ -51,14 +51,14 @@ export function ViewChart({ traffic }: ViewChartProps) {
     total: item.count,
   })), [traffic.views.views]);
 
-  const handleDataChange = useCallback((newZoomedData: Array<{ date: string;[key: string]: string | number }>) => {
-    setZoomedData(newZoomedData as Array<{ date: string; unique: number; total: number }>);
+  const handleDataChange = useCallback((newFilteredData: Array<{ date: string;[key: string]: string | number }>) => {
+    setFilteredData(newFilteredData as Array<{ date: string; unique: number; total: number }>);
   }, []);
 
   const totalViews = useMemo(() => {
-    const dataToUse = zoomedData.length > 0 ? zoomedData : data;
+    const dataToUse = filteredData.length > 0 ? filteredData : data;
     return dataToUse.reduce((acc, curr) => acc + curr.total, 0);
-  }, [zoomedData, data]);
+  }, [filteredData, data]);
 
 
   return (
@@ -80,7 +80,7 @@ export function ViewChart({ traffic }: ViewChartProps) {
         </div>
       </CardHeader>
       <CardContent className="pl-0">
-        <ZoomableChart
+        <Chart
           data={data}
           chartConfig={chartConfig}
           className="h-64 w-full"
@@ -134,7 +134,7 @@ export function ViewChart({ traffic }: ViewChartProps) {
             strokeWidth={2}
             hide={hiddenSeries.includes("unique")}
           />
-        </ZoomableChart>
+        </Chart>
       </CardContent>
     </Card>
   );

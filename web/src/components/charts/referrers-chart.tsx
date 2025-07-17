@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { Line } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig } from "@/components/ui/chart";
-import { ZoomableChart } from "./zoomable-chart";
+import { Chart } from "./chart";
 
 interface ReferrersChartProps {
   traffic: {
@@ -87,7 +87,7 @@ export function ReferrersChart({ traffic }: ReferrersChartProps) {
       </CardHeader>
       <CardContent className="pl-0">
         {data.length > 0 ? (
-          <ZoomableChart
+          <Chart
             data={data}
             chartConfig={chartConfig}
             className="h-64 w-full"
@@ -104,7 +104,7 @@ export function ReferrersChart({ traffic }: ReferrersChartProps) {
                 dot={false}
               />
             ))}
-          </ZoomableChart>
+          </Chart>
         ) : (
           <div className="flex items-center justify-center h-64 text-muted-foreground">
             No referrer data available
