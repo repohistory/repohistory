@@ -1,5 +1,4 @@
 import { Octokit } from "octokit";
-import { unstable_cache } from "next/cache";
 
 type StargazerResponse = {
   data: Array<{ starred_at: string }>;
@@ -8,24 +7,16 @@ type StargazerResponse = {
   };
 };
 
-function getStargazersPage(octokit: Octokit, fullName: string, page: number): Promise<StargazerResponse> {
-  return unstable_cache(
-    async (fullName: string, page: number) => {
-      const response = await octokit.request(`GET /repos/${fullName}/stargazers`, {
-        per_page: 100,
-        page,
-        headers: {
-          accept: 'application/vnd.github.v3.star+json',
-        },
-      });
-      return response;
+async function getStargazersPage(octokit: Octokit, fullName: string, page: number): Promise<StargazerResponse> {
+  const response = await octokit.request(`GET /repos/${fullName}/stargazers`, {
+    per_page: 100,
+    page,
+    headers: {
+      accept: 'application/vnd.github.v3.star+json',
     },
-    [],
-    {
-      tags: ['repo-stargazers'],
-      revalidate: 86400,
-    }
-  )(fullName, page);
+  });
+
+  return response;
 }
 
 export interface RepoStarsData {
