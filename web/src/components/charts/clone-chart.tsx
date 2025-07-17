@@ -5,6 +5,8 @@ import { Area } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig } from "@/components/ui/chart";
 import { Chart } from "./chart";
+import { calculateTrendPercentage } from "@/utils/chart-trends";
+import { TrendIndicator } from "./trend-indicator";
 interface CloneChartProps {
   traffic: {
     clones: {
@@ -60,6 +62,11 @@ export function CloneChart({ traffic }: CloneChartProps) {
     return dataToUse.reduce((acc, curr) => acc + curr.total, 0);
   }, [filteredData, data]);
 
+  const clonesTrend = useMemo(() => {
+    if (filteredData.length === 0) return null;
+    return calculateTrendPercentage(filteredData, data, "total");
+  }, [filteredData, data]);
+
 
   return (
     <Card className="w-full">
@@ -74,9 +81,10 @@ export function CloneChart({ traffic }: CloneChartProps) {
           <span className="text-xs text-muted-foreground">
             Total Clones
           </span>
-          <span className="text-lg font-bold leading-none sm:text-3xl">
+          <span className="text-lg font-bold leading-none sm:text-2xl">
             {totalClones.toLocaleString()}
           </span>
+          <TrendIndicator trend={clonesTrend} />
         </div>
       </CardHeader>
       <CardContent className="pl-0">

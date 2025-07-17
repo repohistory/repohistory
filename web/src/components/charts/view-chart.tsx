@@ -5,6 +5,8 @@ import { Area } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig } from "@/components/ui/chart";
 import { Chart } from "./chart";
+import { calculateTrendPercentage } from "@/utils/chart-trends";
+import { TrendIndicator } from "./trend-indicator";
 interface ViewChartProps {
   traffic: {
     views: {
@@ -60,6 +62,11 @@ export function ViewChart({ traffic }: ViewChartProps) {
     return dataToUse.reduce((acc, curr) => acc + curr.total, 0);
   }, [filteredData, data]);
 
+  const viewsTrend = useMemo(() => {
+    if (filteredData.length === 0) return null;
+    return calculateTrendPercentage(filteredData, data, "total");
+  }, [filteredData, data]);
+
 
   return (
     <Card className="w-full">
@@ -74,9 +81,10 @@ export function ViewChart({ traffic }: ViewChartProps) {
           <span className="text-xs text-muted-foreground">
             Total Views
           </span>
-          <span className="text-lg font-bold leading-none sm:text-3xl">
+          <span className="text-lg font-bold leading-none sm:text-2xl">
             {totalViews.toLocaleString()}
           </span>
+          <TrendIndicator trend={viewsTrend} />
         </div>
       </CardHeader>
       <CardContent className="pl-0">

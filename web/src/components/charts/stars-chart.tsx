@@ -9,6 +9,8 @@ import { Area } from "recharts";
 import { ChartConfig } from "@/components/ui/chart";
 import { Chart } from "./chart";
 import { RepoStarsData } from "@/utils/repo/stars";
+import { calculateTrendPercentage } from "@/utils/chart-trends";
+import { TrendIndicator } from "./trend-indicator";
 
 interface StarsChartProps {
   starsData: RepoStarsData;
@@ -39,13 +41,18 @@ export function StarsChart({ starsData, fullName }: StarsChartProps) {
 
   const total = useMemo(() => {
     if (filteredData.length === 0) return 0;
-    
+
     if (viewType === "cumulative") {
       return filteredData[filteredData.length - 1].stars;
     } else {
       return filteredData.reduce((acc, curr) => acc + curr.stars, 0);
     }
   }, [filteredData, viewType]);
+
+  const starsTrend = useMemo(() => {
+    if (filteredData.length === 0 || viewType === "cumulative") return null;
+    return calculateTrendPercentage(filteredData, data, "stars");
+  }, [filteredData, data, viewType]);
 
 
   return (
@@ -61,9 +68,10 @@ export function StarsChart({ starsData, fullName }: StarsChartProps) {
           <span className="text-xs text-muted-foreground">
             {viewType === "cumulative" ? "Total Stars" : "Total Daily Stars"}
           </span>
-          <span className="text-lg font-bold leading-none sm:text-3xl">
+          <span className="text-lg font-bold leading-none sm:text-2xl">
             {total.toLocaleString()}
           </span>
+          <TrendIndicator trend={starsTrend} />
         </div>
       </CardHeader>
       <CardContent className="pl-0">
