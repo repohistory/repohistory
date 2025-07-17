@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Area } from "recharts";
 import { ChartConfig, ChartTooltip } from "@/components/ui/chart";
 import { TimestampChart } from "./timestamp-chart";
 import { RepoReleaseData } from "@/utils/repo/releases";
+import { useDateRange } from "@/contexts/date-range-context";
 
 interface ReleaseChartProps {
   releasesData: RepoReleaseData;
@@ -19,7 +20,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ReleaseChart({ releasesData }: ReleaseChartProps) {
-  const [filteredData, setFilteredData] = useState<Array<{ date: string; timestamp: number; downloads: number }>>([]);
+  const { dateRange } = useDateRange();
 
   const data = useMemo(() => {
     if (!releasesData.releases || releasesData.releases.length === 0) {
@@ -36,14 +37,19 @@ export function ReleaseChart({ releasesData }: ReleaseChartProps) {
       }));
   }, [releasesData.releases]);
 
-  const handleDataChange = useCallback((newFilteredData: Array<{ date: string; timestamp: number;[key: string]: string | number }>) => {
-    setFilteredData(newFilteredData as Array<{ date: string; timestamp: number; downloads: number }>);
-  }, []);
+  const filteredData = useMemo(() => {
+    if (!dateRange.from || !dateRange.to) {
+      return data;
+    }
+    return data.filter((item) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= dateRange.from! && itemDate <= dateRange.to!;
+    });
+  }, [data, dateRange]);
 
   const total = useMemo(() => {
-    const dataToUse = filteredData.length > 0 ? filteredData : data;
-    return dataToUse.reduce((acc, curr) => acc + curr.downloads, 0);
-  }, [filteredData, data]);
+    return filteredData.reduce((acc, curr) => acc + curr.downloads, 0);
+  }, [filteredData]);
 
   const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ payload: { tagName: string; downloads: number } }>; label?: string }) => {
     if (active && payload && payload.length) {
@@ -97,10 +103,9 @@ export function ReleaseChart({ releasesData }: ReleaseChartProps) {
       </CardHeader>
       <CardContent className="pl-0">
         <TimestampChart
-          data={data}
+          data={filteredData}
           chartConfig={chartConfig}
           className="h-64 w-full"
-          onDataChange={handleDataChange}
           customTooltip={<ChartTooltip cursor={false} content={<CustomTooltip />} />}
         >
           <defs>

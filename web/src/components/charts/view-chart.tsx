@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState } from "react";
 import { Area } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig } from "@/components/ui/chart";
 import { Chart } from "./chart";
 import { calculateTrendPercentage } from "@/utils/chart-trends";
 import { TrendIndicator } from "./trend-indicator";
+import { useDateRange } from "@/contexts/date-range-context";
 interface ViewChartProps {
   traffic: {
     views: {
@@ -34,7 +35,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ViewChart({ traffic }: ViewChartProps) {
-  const [filteredData, setFilteredData] = useState<Array<{ date: string; unique: number; total: number }>>([]);
+  const { dateRange } = useDateRange();
 
   // Track hidden series (opposite of visible)
   const [hiddenSeries, setHiddenSeries] = useState<Array<string>>([]);
@@ -53,14 +54,19 @@ export function ViewChart({ traffic }: ViewChartProps) {
     total: item.count,
   })), [traffic.views.views]);
 
-  const handleDataChange = useCallback((newFilteredData: Array<{ date: string;[key: string]: string | number }>) => {
-    setFilteredData(newFilteredData as Array<{ date: string; unique: number; total: number }>);
-  }, []);
+  const filteredData = useMemo(() => {
+    if (!dateRange.from || !dateRange.to) {
+      return data;
+    }
+    return data.filter((item) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= dateRange.from! && itemDate <= dateRange.to!;
+    });
+  }, [data, dateRange]);
 
   const totalViews = useMemo(() => {
-    const dataToUse = filteredData.length > 0 ? filteredData : data;
-    return dataToUse.reduce((acc, curr) => acc + curr.total, 0);
-  }, [filteredData, data]);
+    return filteredData.reduce((acc, curr) => acc + curr.total, 0);
+  }, [filteredData]);
 
   const viewsTrend = useMemo(() => {
     if (filteredData.length === 0) return null;
@@ -89,10 +95,9 @@ export function ViewChart({ traffic }: ViewChartProps) {
       </CardHeader>
       <CardContent className="pl-0">
         <Chart
-          data={data}
+          data={filteredData}
           chartConfig={chartConfig}
           className="h-64 w-full"
-          onDataChange={handleDataChange}
           onLegendClick={handleLegendClick}
           hiddenSeries={hiddenSeries}
         >

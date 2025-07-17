@@ -1,17 +1,15 @@
 "use client";
 
-import { ReactNode, useMemo } from "react";
+import { ReactNode } from "react";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend } from "@/components/ui/chart";
 import { ComposedChart, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { Button } from "@/components/ui/button";
-import { useDateRange } from "@/contexts/date-range-context";
 
 interface ChartProps {
   data: Array<{ date: string;[key: string]: string | number }>;
   chartConfig: ChartConfig;
   children: ReactNode;
   className?: string;
-  onDataChange?: (filteredData: Array<{ date: string;[key: string]: string | number }>) => void;
   onLegendClick?: (dataKey: string) => void;
   hiddenSeries?: Array<string>;
   customTooltip?: ReactNode;
@@ -68,29 +66,12 @@ export function Chart({
   chartConfig,
   children,
   className = "h-64 w-full",
-  onDataChange,
   onLegendClick,
   hiddenSeries = [],
   customTooltip,
   hideZeroValues = false,
   extraButtons
 }: ChartProps) {
-  const { dateRange } = useDateRange();
-
-  const filteredData = useMemo(() => {
-    if (!dateRange.from || !dateRange.to) {
-      onDataChange?.(data);
-      return data;
-    }
-
-    const filtered = data.filter((item) => {
-      const itemDate = new Date(item.date);
-      return itemDate >= dateRange.from! && itemDate <= dateRange.to!;
-    });
-
-    onDataChange?.(filtered);
-    return filtered;
-  }, [data, dateRange, onDataChange]);
 
   return (
     <div className={className}>
@@ -101,7 +82,7 @@ export function Chart({
         <div className="h-full" style={{ touchAction: 'none', userSelect: 'none' }}>
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
-              data={filteredData}
+              data={data}
               margin={{
                 left: 0,
                 right: 0,

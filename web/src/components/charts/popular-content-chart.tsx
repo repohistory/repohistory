@@ -5,6 +5,7 @@ import { Line } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig } from "@/components/ui/chart";
 import { Chart } from "./chart";
+import { useDateRange } from "@/contexts/date-range-context";
 
 interface PopularContentChartProps {
   traffic: {
@@ -34,6 +35,7 @@ const COLORS = [
 ];
 
 export function PopularContentChart({ traffic }: PopularContentChartProps) {
+  const { dateRange } = useDateRange();
 
   const { data, chartConfig } = useMemo(() => {
     if (!traffic.paths.length) return { data: [], chartConfig: {} };
@@ -75,6 +77,16 @@ export function PopularContentChart({ traffic }: PopularContentChartProps) {
     return { data: chartData, chartConfig: config };
   }, [traffic.paths]);
 
+  const filteredData = useMemo(() => {
+    if (!dateRange.from || !dateRange.to) {
+      return data;
+    }
+    return data.filter((item) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= dateRange.from! && itemDate <= dateRange.to!;
+    });
+  }, [data, dateRange]);
+
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b">
@@ -86,9 +98,9 @@ export function PopularContentChart({ traffic }: PopularContentChartProps) {
         </div>
       </CardHeader>
       <CardContent className="pl-0">
-        {data.length > 0 ? (
+        {filteredData.length > 0 ? (
           <Chart
-            data={data}
+            data={filteredData}
             chartConfig={chartConfig}
             className="h-64 w-full"
             hideZeroValues

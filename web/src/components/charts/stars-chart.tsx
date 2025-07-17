@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { Chart } from "./chart";
 import { RepoStarsData } from "@/utils/repo/stars";
 import { calculateTrendPercentage } from "@/utils/chart-trends";
 import { TrendIndicator } from "./trend-indicator";
+import { useDateRange } from "@/contexts/date-range-context";
 
 interface StarsChartProps {
   starsData: RepoStarsData;
@@ -28,16 +29,22 @@ const chartConfig = {
 
 export function StarsChart({ starsData, fullName }: StarsChartProps) {
   const [viewType, setViewType] = useState<"cumulative" | "daily">("daily");
-  const [filteredData, setFilteredData] = useState<Array<{ date: string; stars: number }>>([]);
+  const { dateRange } = useDateRange();
 
   const data = useMemo(() => starsData.starsHistory.map((item) => ({
     date: item.date,
     stars: viewType === "cumulative" ? item.cumulative : item.daily,
   })), [starsData.starsHistory, viewType]);
 
-  const handleDataChange = useCallback((newFilteredData: Array<{ date: string;[key: string]: string | number }>) => {
-    setFilteredData(newFilteredData as Array<{ date: string; stars: number }>);
-  }, []);
+  const filteredData = useMemo(() => {
+    if (!dateRange.from || !dateRange.to) {
+      return data;
+    }
+    return data.filter((item) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= dateRange.from! && itemDate <= dateRange.to!;
+    });
+  }, [data, dateRange]);
 
   const total = useMemo(() => {
     if (filteredData.length === 0) return 0;
@@ -76,10 +83,9 @@ export function StarsChart({ starsData, fullName }: StarsChartProps) {
       </CardHeader>
       <CardContent className="pl-0">
         <Chart
-          data={data}
+          data={filteredData}
           chartConfig={chartConfig}
           className="h-64 w-full"
-          onDataChange={handleDataChange}
           extraButtons={
             fullName && (
               <Link target="_blank" href={`/star-history?owner=${fullName.split('/')[0]}&repo=${fullName.split('/')[1]}`}>
