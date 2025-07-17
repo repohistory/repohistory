@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button";
 import { useDateRange } from "@/contexts/date-range-context";
 
 interface ChartProps {
-  data: Array<{ date: string; [key: string]: string | number }>;
+  data: Array<{ date: string;[key: string]: string | number }>;
   chartConfig: ChartConfig;
   children: ReactNode;
   className?: string;
-  onDataChange?: (filteredData: Array<{ date: string; [key: string]: string | number }>) => void;
+  onDataChange?: (filteredData: Array<{ date: string;[key: string]: string | number }>) => void;
   onLegendClick?: (dataKey: string) => void;
   hiddenSeries?: Array<string>;
   customTooltip?: ReactNode;
@@ -63,17 +63,17 @@ function CustomLegendContent({ chartConfig, hiddenSeries, onLegendClick }: Custo
   );
 }
 
-export function Chart({ 
-  data, 
-  chartConfig, 
-  children, 
-  className = "h-64 w-full", 
-  onDataChange, 
-  onLegendClick, 
-  hiddenSeries = [], 
-  customTooltip, 
-  hideZeroValues = false, 
-  extraButtons 
+export function Chart({
+  data,
+  chartConfig,
+  children,
+  className = "h-64 w-full",
+  onDataChange,
+  onLegendClick,
+  hiddenSeries = [],
+  customTooltip,
+  hideZeroValues = false,
+  extraButtons
 }: ChartProps) {
   const { dateRange } = useDateRange();
 
@@ -103,8 +103,8 @@ export function Chart({
             <ComposedChart
               data={filteredData}
               margin={{
-                left: 12,
-                right: 12,
+                left: 0,
+                right: 0,
               }}
             >
               <XAxis

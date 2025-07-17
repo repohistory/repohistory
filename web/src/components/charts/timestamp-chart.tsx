@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button";
 import { useDateRange } from "@/contexts/date-range-context";
 
 interface TimestampChartProps {
-  data: Array<{ date: string; timestamp: number; [key: string]: string | number }>;
+  data: Array<{ date: string; timestamp: number;[key: string]: string | number }>;
   chartConfig: ChartConfig;
   children: ReactNode;
   className?: string;
-  onDataChange?: (filteredData: Array<{ date: string; timestamp: number; [key: string]: string | number }>) => void;
+  onDataChange?: (filteredData: Array<{ date: string; timestamp: number;[key: string]: string | number }>) => void;
   onLegendClick?: (dataKey: string) => void;
   hiddenSeries?: Array<string>;
   customTooltip?: ReactNode;
@@ -62,16 +62,16 @@ function CustomLegendContent({ chartConfig, hiddenSeries, onLegendClick }: Custo
   );
 }
 
-export function TimestampChart({ 
-  data, 
-  chartConfig, 
-  children, 
-  className = "h-64 w-full", 
-  onDataChange, 
-  onLegendClick, 
-  hiddenSeries = [], 
-  customTooltip, 
-  hideZeroValues = false 
+export function TimestampChart({
+  data,
+  chartConfig,
+  children,
+  className = "h-64 w-full",
+  onDataChange,
+  onLegendClick,
+  hiddenSeries = [],
+  customTooltip,
+  hideZeroValues = false
 }: TimestampChartProps) {
   const { dateRange } = useDateRange();
 
@@ -98,8 +98,8 @@ export function TimestampChart({
             <ComposedChart
               data={filteredData}
               margin={{
-                left: 12,
-                right: 12,
+                left: 0,
+                right: 0,
               }}
             >
               <XAxis
