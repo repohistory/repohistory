@@ -37,7 +37,7 @@ export default async function RepoPage({ params }: PageProps) {
   const repoInfo = await getRepoInfo(octokit, owner, repo);
 
   return (
-    <DateRangeProvider>
+    <DateRangeProvider fullName={repoInfo.full_name}>
       <div className="flex flex-col">
         <RepoHeader repoInfo={repoInfo} />
         <div className="container mx-auto p-4 sm:p-10 space-y-6">
