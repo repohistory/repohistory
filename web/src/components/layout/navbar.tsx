@@ -12,7 +12,7 @@ interface NavbarProps {
 
 export function Navbar({ user }: NavbarProps) {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-border bg-background/60 backdrop-blur-md backdrop-filter">
+    <nav className="h-16 border-b border-border bg-background/60 backdrop-blur-md backdrop-filter">
       <div className="flex h-full items-center justify-between px-4 sm:px-10">
         <Link href="/" className="hover:opacity-80 transition-opacity">
           <Image
