@@ -31,12 +31,7 @@ export function TrafficChartSkeleton({ type }: TrafficChartSkeletonProps) {
       </CardHeader>
       <CardContent>
         <div className="h-64 w-full">
-          <div className="h-8 flex justify-end items-center mb-4">
-            {/* Space for zoom reset button */}
-          </div>
-          <div className="h-[calc(100%-2.5rem)] w-full">
-            <Skeleton className="h-full w-full" />
-          </div>
+          <Skeleton className="h-full w-full" />
         </div>
       </CardContent>
     </Card>
