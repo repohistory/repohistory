@@ -8,15 +8,15 @@ import { replaceSVGContentFilterWithCamelcase, getBase64Image, getChartWidthWith
 import { getRepoStarsChart } from '@/utils/repo/stars';
 import { getRepoInfo } from '@/utils/repo/info';
 import { unstable_cache } from 'next/cache';
+import { getOptimalStrokeColor } from '@/utils/color';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
-  // API design: /svg?repo=owner/repo&type=Date&theme=light&transparent=false&size=laptop&color=ff6b6b
+  // API design: /svg?repo=owner/repo&type=Date&background=0D1117&size=laptop&color=ff6b6b
   const fullName = searchParams.get('repo') || '';
   const type = searchParams.get('type') || 'Date';
-  const theme = searchParams.get('theme') || 'light';
-  const transparent = searchParams.get('transparent') || 'false';
+  const background = searchParams.get('background') || 'FFFFFF';
   const size = searchParams.get('size') || 'laptop';
   const color = searchParams.get('color');
 
@@ -83,13 +83,20 @@ export async function GET(request: NextRequest) {
     svg.setAttribute("width", `${getChartWidthWithSize(size)}`);
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 
+    const normalizedBackground = background.startsWith('#') ? background : `#${background}`;
+    const strokeColor = getOptimalStrokeColor(normalizedBackground);
+    
     const chartOptions: {
       xTickLabelType: "Date" | "Number";
       chartWidth: number;
       dataColors?: string[];
+      backgroundColor?: string;
+      strokeColor?: string;
     } = {
       xTickLabelType: type === "Date" ? "Date" : "Number",
       chartWidth: getChartWidthWithSize(size),
+      backgroundColor: normalizedBackground,
+      strokeColor: strokeColor,
     };
 
     if (color && /^[0-9A-Fa-f]{6}$/.test(color)) {
@@ -104,8 +111,8 @@ export async function GET(request: NextRequest) {
         yLabel: "GitHub Stars",
         data: convertDataToChartData([repoData], type as "Date" | "Timeline"),
         showDots: false,
-        transparent: transparent.toLowerCase() === "true",
-        theme: theme === "dark" ? "dark" : "light",
+        transparent: false,
+        theme: strokeColor === "#ffffff" ? "dark" : "light",
       },
       chartOptions
     );

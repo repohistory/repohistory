@@ -22,6 +22,11 @@ const COLORS = [
   "#b562f8",
 ];
 
+const BACKGROUND_COLORS = [
+  "#0D1117", // GitHub dark
+  "#FFFFFF",
+];
+
 interface StarHistoryChartProps {
   initialOwner: string;
   initialRepo: string;
@@ -33,9 +38,8 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
   const [owner, setOwner] = useState(initialOwner);
   const [repo, setRepo] = useState(initialRepo);
   const [copied, setCopied] = useState(false);
-  const [theme, setTheme] = useState<string>("dark");
+  const [background, setBackground] = useState<string>("0D1117");
   const [type, setType] = useState<string>("Date");
-  const [transparent, setTransparent] = useState<string>("false");
   const [color, setColor] = useState<string>("f86262");
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [isCustomizing, setIsCustomizing] = useState(false);
@@ -58,7 +62,7 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
   };
 
   const isValidColor = color && /^[0-9A-Fa-f]{6}$/.test(color);
-  const imageUrl = `/api/svg?repo=${fullName}&type=${type}&theme=${theme}&transparent=${transparent}${isValidColor ? `&color=${color}` : ''}`;
+  const imageUrl = `/api/svg?repo=${fullName}&type=${type}&background=${background}${isValidColor ? `&color=${color}` : ''}`;
   const markdownCode = `[![Star History Chart](${process.env.NEXT_PUBLIC_SITE_URL}${imageUrl})](${process.env.NEXT_PUBLIC_SITE_URL}/star-history)`;
 
   const copyMarkdown = async () => {
@@ -173,53 +177,8 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="space-y-2">
-              <div className="text-muted-foreground text-sm">Theme</div>
-              <Select defaultValue={theme} onValueChange={(value) => {
-                setTheme(value);
-                setIsCustomizing(true);
-              }}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="light">Light</SelectItem>
-                  <SelectItem value="dark">Dark</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <div className="text-muted-foreground text-sm">Chart Type</div>
-              <Select defaultValue={type} onValueChange={(value) => {
-                setType(value);
-                setIsCustomizing(true);
-              }}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Date">Date</SelectItem>
-                  <SelectItem value="Timeline">Timeline</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <div className="text-muted-foreground text-sm">Transparent</div>
-              <Select defaultValue={transparent} onValueChange={(value) => {
-                setTransparent(value);
-                setIsCustomizing(true);
-              }}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="false">False</SelectItem>
-                  <SelectItem value="true">True</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
             <div className="space-y-4">
-              <div className="text-muted-foreground text-sm">Color (HEX)</div>
+              <div className="text-muted-foreground text-sm">Color</div>
               <Input
                 placeholder="#f86262"
                 type="text"
@@ -257,6 +216,61 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
                   );
                 })}
               </div>
+            </div>
+            <div className="space-y-4">
+              <div className="text-muted-foreground text-sm">Background Color</div>
+              <Input
+                placeholder="#0D1117"
+                type="text"
+                value={`#${background}`}
+                onChange={(e) => {
+                  const value = e.target.value.replace('#', '');
+                  const isValid = value.length === 6 && /^[0-9A-Fa-f]{6}$/.test(value);
+                  if (isValid) {
+                    setBackground(value);
+                    setIsCustomizing(true);
+                  } else if (value.length <= 6) {
+                    setBackground(value);
+                  }
+                }}
+                maxLength={7}
+              />
+              <div className="flex gap-2">
+                {BACKGROUND_COLORS.map((presetBackground) => {
+                  const isSelected = background === presetBackground.replace("#", "");
+                  return (
+                    <button
+                      key={presetBackground}
+                      onClick={() => {
+                        setBackground(presetBackground.replace("#", ""));
+                        setIsCustomizing(true);
+                      }}
+                      className="w-8 h-8 rounded-full cursor-pointer transition-all hover:scale-105 relative flex items-center justify-center border border-muted-foreground"
+                      style={{ backgroundColor: presetBackground }}
+                      title={presetBackground === "#0D1117" ? "GitHub Dark" : "White"}
+                    >
+                      {isSelected && (
+                        <Check className={`w-4 h-4 ${presetBackground === "#0D1117" ? "text-white" : "text-black"}`} />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-muted-foreground text-sm">Chart Type</div>
+              <Select defaultValue={type} onValueChange={(value) => {
+                setType(value);
+                setIsCustomizing(true);
+              }}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Date">Date</SelectItem>
+                  <SelectItem value="Timeline">Timeline</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </CardContent>
