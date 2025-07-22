@@ -7,7 +7,7 @@ import { TextAnimate } from "./magicui/text-animate";
 
 export function Hero() {
   return (
-    <section className="flex flex-col overflow-hidden justify-center min-h-screen items-center px-5 sm:px-10 pt-30 relative">
+    <section className="flex flex-col overflow-hidden justify-center min-h-screen items-center px-5 sm:px-10 pt-14 relative">
       <div className="z-10 max-w-4xl space-y-6 flex flex-col text-center md:text-start items-center md:items-start">
         <TextAnimate animation="blurInUp" duration={0.6} once by="word" as="h1" className="pb-1 text-6xl font-medium text-white">
           GitHub Repo Analytics Platform

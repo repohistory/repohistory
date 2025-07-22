@@ -3,10 +3,22 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMenuOpen]);
 
   return (
     <>
@@ -14,7 +26,7 @@ export function Navbar() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center space-x-2">
-              <Image src="/icons/transparent.png" alt="Repohistory" width={24} height={24} quality={100} />
+              <Image src="/icons/transparent.png" alt="Repohistory" priority width={24} height={24} quality={100} />
               <span className="text-lg font-semibold text-white">Repohistory</span>
             </Link>
             <div className="hidden md:flex items-center space-x-6">
