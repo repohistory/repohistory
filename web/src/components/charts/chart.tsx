@@ -14,7 +14,6 @@ interface ChartProps {
   hiddenSeries?: Array<string>;
   customTooltip?: ReactNode;
   hideZeroValues?: boolean;
-  extraButtons?: ReactNode;
 }
 
 interface CustomLegendContentProps {
@@ -69,18 +68,12 @@ export function Chart({
   onLegendClick,
   hiddenSeries = [],
   customTooltip,
-  hideZeroValues = false,
-  extraButtons
+  hideZeroValues = false
 }: ChartProps) {
 
   return (
     <div className={className}>
-      {extraButtons && (
-        <div className="h-8 flex justify-end items-center mb-4 gap-2">
-          {extraButtons}
-        </div>
-      )}
-      <ChartContainer config={chartConfig} className={extraButtons ? "h-[calc(100%-2.5rem)] w-full" : "h-full w-full"}>
+      <ChartContainer config={chartConfig} className="h-full w-full">
         <div className="h-full" style={{ touchAction: 'none', userSelect: 'none' }}>
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart

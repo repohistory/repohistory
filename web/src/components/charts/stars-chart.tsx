@@ -3,8 +3,6 @@
 import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { Area } from "recharts";
 import { ChartConfig } from "@/components/ui/chart";
 import { Chart } from "./chart";
@@ -16,7 +14,6 @@ import { useDateRange } from "@/contexts/date-range-context";
 interface StarsChartProps {
   starsData: RepoStarsData;
   repositoryName?: string;
-  fullName?: string;
 }
 
 const chartConfig = {
@@ -27,7 +24,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 
-export function StarsChart({ starsData, fullName }: StarsChartProps) {
+export function StarsChart({ starsData }: StarsChartProps) {
   const [viewType, setViewType] = useState<"cumulative" | "daily">("daily");
   const { dateRange } = useDateRange();
 
@@ -86,15 +83,6 @@ export function StarsChart({ starsData, fullName }: StarsChartProps) {
           data={filteredData}
           chartConfig={chartConfig}
           className="h-64 w-full"
-          extraButtons={
-            fullName && (
-              <Link target="_blank" href={`/star-history?owner=${fullName.split('/')[0]}&repo=${fullName.split('/')[1]}`}>
-                <Button variant="outline" size="sm" className="hidden md:inline-flex">
-                  Share Chart
-                </Button>
-              </Link>
-            )
-          }
         >
           <defs>
             <linearGradient id="fillStars" x1="0" y1="0" x2="0" y2="1">

@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { ExportAllData } from "@/components/export-all-data";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { MoreHorizontalIcon } from "lucide-react";
 
 interface RepoInfo {
   id: number;
@@ -28,7 +30,28 @@ export function RepoHeader({ repoInfo }: RepoHeaderProps) {
       <div className="flex items-center gap-2">
         <DateRangePicker />
         <div className="hidden md:block">
-          <ExportAllData fullName={repoInfo.full_name} repoId={repoInfo.id} />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" className="size-9">
+                <MoreHorizontalIcon className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link target="_blank" href={`/star-history?owner=${repoInfo.full_name.split('/')[0]}&repo=${repoInfo.full_name.split('/')[1]}`}>
+                  Generate star history chart
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a
+                  href={`/api/export/${repoInfo.id}?format=csv&repo=${encodeURIComponent(repoInfo.full_name)}`}
+                  download={`${repoInfo.full_name.replace('/', '-')}-data.zip`}
+                >
+                  Export all data
+                </a>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </div>
