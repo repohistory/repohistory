@@ -39,6 +39,16 @@ export default async function StarHistoryPage({ searchParams }: PageProps) {
   return (
     <div className="container mx-auto flex items-center justify-center min-h-dvh py-8 px-4">
       <div className="max-w-5xl mx-auto space-y-8">
+        <div className="text-center">
+          <p className="text-muted-foreground text-sm">
+            Want to see more detail chart? <a
+              href="https://repohistory.com"
+              className="underline hover:text-white transition-colors"
+            >
+              Try Repohistory
+            </a>
+          </p>
+        </div>
         <StarHistoryChart
           initialOwner={owner}
           initialRepo={repo}
