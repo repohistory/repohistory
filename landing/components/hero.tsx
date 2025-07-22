@@ -29,13 +29,11 @@ export function Hero() {
           </BlurFade>
           <BlurFade direction="up" delay={1} duration={0.6} blur="10px">
             <Link
-              href="https://github.com/repohistory/repohistory"
+              href="https://app.repohistory.com/demo"
               className="text-white px-4 py-2 hover:bg-neutral-900/60 active:scale-[0.98] transition-all rounded-lg font-medium inline-flex items-center gap-1"
               role="button"
-              target="_blank"
-              rel="noopener noreferrer"
             >
-              Star on GitHub <ChevronRight className="size-5" />
+              Live demo <ChevronRight className="size-5" />
             </Link>
           </BlurFade>
         </div>

@@ -42,6 +42,14 @@ export function Navbar() {
               >
                 Pricing
               </Link>
+              <Link
+                href="https://github.com/repohistory/repohistory"
+                className="text-sm text-muted-foreground hover:text-white transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                GitHub
+              </Link>
             </div>
             <div className="hidden md:block">
               <Button asChild size="sm">
@@ -90,6 +98,15 @@ export function Navbar() {
             onClick={() => setIsMenuOpen(false)}
           >
             Pricing
+          </Link>
+          <Link
+            href="https://github.com/repohistory/repohistory"
+            className="text-2xl text-white hover:text-neutral-300 transition-colors"
+            onClick={() => setIsMenuOpen(false)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub
           </Link>
         </div>
       </div>
