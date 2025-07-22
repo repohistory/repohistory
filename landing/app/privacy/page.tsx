@@ -13,16 +13,10 @@ export default async function PrivacyPage() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-16">
-        <div className="max-w-2xl mx-auto">
-          <div className="prose prose-gray dark:prose-invert max-w-none">
-            <ReactMarkdown>
-              {privacyContent}
-            </ReactMarkdown>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-background container mx-auto px-4 py-32 max-w-2xl prose prose-gray dark:prose-invert">
+      <ReactMarkdown>
+        {privacyContent}
+      </ReactMarkdown>
     </div>
   );
 }

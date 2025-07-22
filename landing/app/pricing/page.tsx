@@ -17,7 +17,7 @@ export default function PricingPage() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-8">
+          <div className="text-center my-8">
             <h1 className="text-3xl md:text-6xl font-medium pb-6 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
               Pricing
             </h1>

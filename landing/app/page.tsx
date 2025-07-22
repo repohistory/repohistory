@@ -5,7 +5,7 @@ import { CTA } from "@/components/cta";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white pt-16">
       <Hero />
       <SocialProof />
       <FeaturesBento />
