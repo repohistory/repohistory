@@ -29,7 +29,7 @@ export function calculateTrendPercentage(
     return itemDate >= previousStartDate && itemDate <= previousEndDate;
   });
 
-  if (previousPeriodData.length === 0) {
+  if (previousPeriodData.length === 0 || previousPeriodData.length < periodLength) {
     return null;
   }
 
