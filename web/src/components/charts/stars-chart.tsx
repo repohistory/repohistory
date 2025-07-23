@@ -72,10 +72,12 @@ export function StarsChart({ starsData }: StarsChartProps) {
           <span className="text-xs text-muted-foreground">
             {viewType === "cumulative" ? "Total Stars" : "Total Daily Stars"}
           </span>
-          <span className="text-lg font-bold leading-none sm:text-2xl">
-            {total.toLocaleString()}
-          </span>
-          <TrendIndicator trend={starsTrend} />
+          <div className="flex items-center gap-2">
+            <TrendIndicator trend={starsTrend} />
+            <span className="text-lg font-bold leading-none sm:text-2xl">
+              {total.toLocaleString()}
+            </span>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="pl-0">

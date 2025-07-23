@@ -87,10 +87,12 @@ export function ViewChart({ traffic }: ViewChartProps) {
           <span className="text-xs text-muted-foreground">
             Total Views
           </span>
-          <span className="text-lg font-bold leading-none sm:text-2xl">
-            {totalViews.toLocaleString()}
-          </span>
-          <TrendIndicator trend={viewsTrend} />
+          <div className="flex items-center gap-2">
+            <TrendIndicator trend={viewsTrend} />
+            <span className="text-lg font-bold leading-none sm:text-2xl">
+              {totalViews.toLocaleString()}
+            </span>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="pl-0">

@@ -87,10 +87,12 @@ export function CloneChart({ traffic }: CloneChartProps) {
           <span className="text-xs text-muted-foreground">
             Total Clones
           </span>
-          <span className="text-lg font-bold leading-none sm:text-2xl">
-            {totalClones.toLocaleString()}
-          </span>
-          <TrendIndicator trend={clonesTrend} />
+          <div className="flex items-center gap-2">
+            <TrendIndicator trend={clonesTrend} />
+            <span className="text-lg font-bold leading-none sm:text-2xl">
+              {totalClones.toLocaleString()}
+            </span>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="pl-0">
