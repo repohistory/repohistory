@@ -3,13 +3,14 @@
 import { useMemo, useState } from "react";
 import { Area } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ChartConfig } from "@/components/ui/chart";
 import { Chart } from "./chart";
 import { calculateTrendPercentage } from "@/utils/chart-trends";
 import { TrendIndicator } from "./trend-indicator";
 import { useDateRange } from "@/contexts/date-range-context";
 interface CloneChartProps {
-  traffic: {
+  traffic?: {
     clones: {
       count: number;
       uniques: number;
@@ -21,6 +22,7 @@ interface CloneChartProps {
     };
   };
   repositoryName?: string;
+  isLoading?: boolean;
 }
 
 const chartConfig = {
@@ -34,7 +36,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function CloneChart({ traffic }: CloneChartProps) {
+export function CloneChart({ traffic, isLoading = false }: CloneChartProps) {
   const { dateRange } = useDateRange();
 
   // Track hidden series (opposite of visible)
@@ -48,11 +50,14 @@ export function CloneChart({ traffic }: CloneChartProps) {
     }
   };
 
-  const data = useMemo(() => traffic.clones.clones.map((item) => ({
-    date: item.timestamp,
-    unique: item.uniques,
-    total: item.count,
-  })), [traffic.clones.clones]);
+  const data = useMemo(() => {
+    if (!traffic) return [];
+    return traffic.clones.clones.map((item) => ({
+      date: item.timestamp,
+      unique: item.uniques,
+      total: item.count,
+    }));
+  }, [traffic]);
 
   const filteredData = useMemo(() => {
     if (!dateRange.from || !dateRange.to) {
@@ -87,21 +92,26 @@ export function CloneChart({ traffic }: CloneChartProps) {
           <span className="text-xs text-muted-foreground">
             Total Clones
           </span>
-          <div className="flex items-center gap-2">
-            <TrendIndicator trend={clonesTrend} />
-            <span className="text-lg font-bold leading-none sm:text-2xl">
-              {totalClones.toLocaleString()}
-            </span>
-          </div>
+          {isLoading ? (
+            <Skeleton className="h-6 w-24" />
+          ) : (
+            <div className="h-6 flex items-center gap-2">
+              <TrendIndicator trend={clonesTrend} />
+              <span className="text-lg font-bold leading-none sm:text-2xl">
+                {totalClones.toLocaleString()}
+              </span>
+            </div>
+          )}
         </div>
       </CardHeader>
       <CardContent className="pl-0">
         <Chart
-          data={filteredData}
+          data={isLoading ? [] : filteredData}
           chartConfig={chartConfig}
           className="h-64 w-full"
-          onLegendClick={handleLegendClick}
+          onLegendClick={isLoading ? undefined : handleLegendClick}
           hiddenSeries={hiddenSeries}
+          isLoading={isLoading}
         >
           <defs>
             <linearGradient id="fillTotalClone" x1="0" y1="0" x2="0" y2="1">

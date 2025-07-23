@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Area } from "recharts";
 import { ChartConfig } from "@/components/ui/chart";
 import { Chart } from "./chart";
@@ -12,8 +13,9 @@ import { TrendIndicator } from "./trend-indicator";
 import { useDateRange } from "@/contexts/date-range-context";
 
 interface StarsChartProps {
-  starsData: RepoStarsData;
+  starsData?: RepoStarsData;
   repositoryName?: string;
+  isLoading?: boolean;
 }
 
 const chartConfig = {
@@ -24,14 +26,17 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 
-export function StarsChart({ starsData }: StarsChartProps) {
+export function StarsChart({ starsData, isLoading = false }: StarsChartProps) {
   const [viewType, setViewType] = useState<"cumulative" | "daily">("daily");
   const { dateRange } = useDateRange();
 
-  const data = useMemo(() => starsData.starsHistory.map((item) => ({
-    date: item.date,
-    stars: viewType === "cumulative" ? item.cumulative : item.daily,
-  })), [starsData.starsHistory, viewType]);
+  const data = useMemo(() => {
+    if (!starsData) return [];
+    return starsData.starsHistory.map((item) => ({
+      date: item.date,
+      stars: viewType === "cumulative" ? item.cumulative : item.daily,
+    }));
+  }, [starsData, viewType]);
 
   const filteredData = useMemo(() => {
     if (!dateRange.from || !dateRange.to) {
@@ -58,33 +63,37 @@ export function StarsChart({ starsData }: StarsChartProps) {
     return calculateTrendPercentage(filteredData, data, "stars");
   }, [filteredData, data, viewType]);
 
-
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b">
         <div className="flex flex-col justify-center gap-1">
           <CardTitle>Stars Over Time</CardTitle>
           <CardDescription>
-            Repository star growth {viewType === "cumulative" ? "cumulative" : "daily"}
+            Repository star growth {isLoading ? "daily" : (viewType === "cumulative" ? "cumulative" : "daily")}
           </CardDescription>
         </div>
         <div className="flex flex-col items-end gap-1">
           <span className="text-xs text-muted-foreground">
-            {viewType === "cumulative" ? "Total Stars" : "Total Daily Stars"}
+            {isLoading ? "Total Daily Stars" : (viewType === "cumulative" ? "Total Stars" : "Total Daily Stars")}
           </span>
-          <div className="flex items-center gap-2">
-            <TrendIndicator trend={starsTrend} />
-            <span className="text-lg font-bold leading-none sm:text-2xl">
-              {total.toLocaleString()}
-            </span>
-          </div>
+          {isLoading ? (
+            <Skeleton className="h-6 w-24" />
+          ) : (
+            <div className="h-6 flex items-center gap-2">
+              <TrendIndicator trend={starsTrend} />
+              <span className="text-lg font-bold leading-none sm:text-2xl">
+                {total.toLocaleString()}
+              </span>
+            </div>
+          )}
         </div>
       </CardHeader>
       <CardContent className="pl-0">
         <Chart
-          data={filteredData}
+          data={isLoading ? [] : filteredData}
           chartConfig={chartConfig}
           className="h-64 w-full"
+          isLoading={isLoading}
         >
           <defs>
             <linearGradient id="fillStars" x1="0" y1="0" x2="0" y2="1">
@@ -113,8 +122,8 @@ export function StarsChart({ starsData }: StarsChartProps) {
         <div className="flex justify-center mt-6">
           <Tabs value={viewType} onValueChange={(value) => setViewType(value as "cumulative" | "daily")}>
             <TabsList>
-              <TabsTrigger value="daily" className="cursor-pointer">Daily</TabsTrigger>
-              <TabsTrigger value="cumulative" className="cursor-pointer">Cumulative</TabsTrigger>
+              <TabsTrigger value="daily" className={isLoading ? "cursor-not-allowed" : "cursor-pointer"}>Daily</TabsTrigger>
+              <TabsTrigger value="cumulative" className={isLoading ? "cursor-not-allowed" : "cursor-pointer"}>Cumulative</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>

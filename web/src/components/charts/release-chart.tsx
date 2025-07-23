@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Area } from "recharts";
 import { ChartConfig, ChartTooltip } from "@/components/ui/chart";
 import { TimestampChart } from "./timestamp-chart";
@@ -9,7 +10,8 @@ import { RepoReleaseData } from "@/utils/repo/releases";
 import { useDateRange } from "@/contexts/date-range-context";
 
 interface ReleaseChartProps {
-  releasesData: RepoReleaseData;
+  releasesData?: RepoReleaseData;
+  isLoading?: boolean;
 }
 
 const chartConfig = {
@@ -19,11 +21,11 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ReleaseChart({ releasesData }: ReleaseChartProps) {
+export function ReleaseChart({ releasesData, isLoading = false }: ReleaseChartProps) {
   const { dateRange } = useDateRange();
 
   const data = useMemo(() => {
-    if (!releasesData.releases || releasesData.releases.length === 0) {
+    if (!releasesData || !releasesData.releases || releasesData.releases.length === 0) {
       return [];
     }
     return releasesData.releases
@@ -35,7 +37,7 @@ export function ReleaseChart({ releasesData }: ReleaseChartProps) {
         name: release.name,
         tagName: release.tagName,
       }));
-  }, [releasesData.releases]);
+  }, [releasesData]);
 
   const filteredData = useMemo(() => {
     if (!dateRange.from || !dateRange.to) {
@@ -78,8 +80,8 @@ export function ReleaseChart({ releasesData }: ReleaseChartProps) {
     return null;
   };
 
-  // Don't render if there are no releases
-  if (!releasesData.releases || releasesData.releases.length === 0) {
+  // Don't render if there are no releases and not loading
+  if (!isLoading && (!releasesData || !releasesData.releases || releasesData.releases.length === 0)) {
     return null;
   }
 
@@ -96,17 +98,22 @@ export function ReleaseChart({ releasesData }: ReleaseChartProps) {
           <span className="text-xs text-muted-foreground">
             Total Downloads
           </span>
-          <span className="text-lg font-bold leading-none sm:text-3xl">
-            {total.toLocaleString()}
-          </span>
+          {isLoading ? (
+            <Skeleton className="h-6 w-24" />
+          ) : (
+            <span className="text-lg font-bold leading-none sm:text-3xl">
+              {total.toLocaleString()}
+            </span>
+          )}
         </div>
       </CardHeader>
       <CardContent className="pl-0">
         <TimestampChart
-          data={filteredData}
+          data={isLoading ? [] : filteredData}
           chartConfig={chartConfig}
           className="h-64 w-full"
           customTooltip={<ChartTooltip cursor={false} content={<CustomTooltip />} />}
+          isLoading={isLoading}
         >
           <defs>
             <linearGradient id="fillDownloads" x1="0" y1="0" x2="0" y2="1">

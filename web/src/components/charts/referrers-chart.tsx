@@ -8,7 +8,7 @@ import { Chart } from "./chart";
 import { useDateRange } from "@/contexts/date-range-context";
 
 interface ReferrersChartProps {
-  traffic: {
+  traffic?: {
     referrers: Array<{
       referrer: string;
       data: Array<{
@@ -19,6 +19,7 @@ interface ReferrersChartProps {
     }>;
   };
   repositoryName?: string;
+  isLoading?: boolean;
 }
 
 const COLORS = [
@@ -33,11 +34,11 @@ const COLORS = [
   "#6278f8",
 ];
 
-export function ReferrersChart({ traffic }: ReferrersChartProps) {
+export function ReferrersChart({ traffic, isLoading = false }: ReferrersChartProps) {
   const { dateRange } = useDateRange();
 
   const { data, chartConfig } = useMemo(() => {
-    if (!traffic.referrers.length) return { data: [], chartConfig: {} };
+    if (!traffic || !traffic.referrers || !traffic.referrers.length) return { data: [], chartConfig: {} };
 
     // Use all referrers
     const topReferrers = traffic.referrers;
@@ -73,7 +74,7 @@ export function ReferrersChart({ traffic }: ReferrersChartProps) {
     });
 
     return { data: chartData, chartConfig: config };
-  }, [traffic.referrers]);
+  }, [traffic]);
 
   const filteredData = useMemo(() => {
     if (!dateRange.from || !dateRange.to) {
@@ -98,12 +99,13 @@ export function ReferrersChart({ traffic }: ReferrersChartProps) {
         </div>
       </CardHeader>
       <CardContent className="pl-0">
-        {filteredData.length > 0 ? (
+        {isLoading || filteredData.length > 0 ? (
           <Chart
-            data={filteredData}
+            data={isLoading ? [] : filteredData}
             chartConfig={chartConfig}
             className="h-64 w-full"
             hideZeroValues
+            isLoading={isLoading}
           >
             {Object.keys(chartConfig).map(referrer => (
               <Line

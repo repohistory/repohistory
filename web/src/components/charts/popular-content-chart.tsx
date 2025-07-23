@@ -8,7 +8,7 @@ import { Chart } from "./chart";
 import { useDateRange } from "@/contexts/date-range-context";
 
 interface PopularContentChartProps {
-  traffic: {
+  traffic?: {
     paths: Array<{
       path: string;
       title: string;
@@ -20,6 +20,7 @@ interface PopularContentChartProps {
     }>;
   };
   repositoryName?: string;
+  isLoading?: boolean;
 }
 
 const COLORS = [
@@ -34,11 +35,11 @@ const COLORS = [
   "#6278f8",
 ];
 
-export function PopularContentChart({ traffic }: PopularContentChartProps) {
+export function PopularContentChart({ traffic, isLoading = false }: PopularContentChartProps) {
   const { dateRange } = useDateRange();
 
   const { data, chartConfig } = useMemo(() => {
-    if (!traffic.paths.length) return { data: [], chartConfig: {} };
+    if (!traffic || !traffic.paths.length) return { data: [], chartConfig: {} };
 
     // Use all paths
     const topPaths = traffic.paths;
@@ -75,7 +76,7 @@ export function PopularContentChart({ traffic }: PopularContentChartProps) {
     });
 
     return { data: chartData, chartConfig: config };
-  }, [traffic.paths]);
+  }, [traffic]);
 
   const filteredData = useMemo(() => {
     if (!dateRange.from || !dateRange.to) {
@@ -98,12 +99,13 @@ export function PopularContentChart({ traffic }: PopularContentChartProps) {
         </div>
       </CardHeader>
       <CardContent className="pl-0">
-        {filteredData.length > 0 ? (
+        {isLoading || filteredData.length > 0 ? (
           <Chart
-            data={filteredData}
+            data={isLoading ? [] : filteredData}
             chartConfig={chartConfig}
             className="h-64 w-full"
             hideZeroValues
+            isLoading={isLoading}
           >
             {Object.keys(chartConfig).map(path => (
               <Line

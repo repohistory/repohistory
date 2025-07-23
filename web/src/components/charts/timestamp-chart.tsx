@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend } from "@/components/ui/chart";
 import { ComposedChart, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { Button } from "@/components/ui/button";
+import { Loader } from "lucide-react";
 
 interface TimestampChartProps {
   data: Array<{ date: string; timestamp: number;[key: string]: string | number }>;
@@ -14,6 +15,7 @@ interface TimestampChartProps {
   hiddenSeries?: Array<string>;
   customTooltip?: ReactNode;
   hideZeroValues?: boolean;
+  isLoading?: boolean;
 }
 
 interface CustomLegendContentProps {
@@ -68,11 +70,17 @@ export function TimestampChart({
   onLegendClick,
   hiddenSeries = [],
   customTooltip,
-  hideZeroValues = false
+  hideZeroValues = false,
+  isLoading = false
 }: TimestampChartProps) {
 
   return (
-    <div className={className}>
+    <div className={`relative ${className}`}>
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          <Loader className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      )}
       <ChartContainer config={chartConfig} className="h-full w-full">
         <div className="h-full" style={{ touchAction: 'none', userSelect: 'none' }}>
           <ResponsiveContainer width="100%" height="100%">
