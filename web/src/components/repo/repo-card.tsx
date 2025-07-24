@@ -3,6 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Star } from "lucide-react";
 import { Repo } from "@/types";
+import { Suspense } from "react";
+import { RepoCardContent } from "./repo-card-content";
+import { RepoCardContentSkeleton } from "./repo-card-skeleton";
 
 export function RepoCard({ repo }: {
   repo: Repo;
@@ -18,12 +21,13 @@ export function RepoCard({ repo }: {
           </div>
         </CardHeader>
         <Separator />
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
-            {repo.description}
-          </p>
+        <CardContent className="flex flex-col gap-2">
+          <Suspense fallback={<RepoCardContentSkeleton />}>
+            <RepoCardContent repo={repo} />
+          </Suspense>
         </CardContent>
       </Card>
     </Link>
   );
 }
+
