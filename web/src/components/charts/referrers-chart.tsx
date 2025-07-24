@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { Line } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig } from "@/components/ui/chart";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { Chart } from "./chart";
 import { useDateRange } from "@/contexts/date-range-context";
 
@@ -86,7 +87,7 @@ export function ReferrersChart({ traffic, isLoading = false }: ReferrersChartPro
     });
   }, [data, dateRange]);
 
-
+  const showHint = filteredData.length === 1;
 
   return (
     <Card className="w-full">
@@ -94,9 +95,14 @@ export function ReferrersChart({ traffic, isLoading = false }: ReferrersChartPro
         <div className="flex flex-1 flex-col justify-center gap-1">
           <CardTitle>Referring Sites</CardTitle>
           <CardDescription>
-            Sources driving traffic to your repository over time
+            Sources driving traffic to your repository
           </CardDescription>
         </div>
+        {showHint && (
+          <div className="hidden md:block text-sm text-muted-foreground">
+            💡 Come back in a few days to see trends over time
+          </div>
+        )}
       </CardHeader>
       <CardContent className="pl-0">
         {isLoading || filteredData.length > 0 ? (

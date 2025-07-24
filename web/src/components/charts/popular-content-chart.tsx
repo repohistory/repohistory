@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { Line } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig } from "@/components/ui/chart";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { Chart } from "./chart";
 import { useDateRange } from "@/contexts/date-range-context";
 
@@ -88,15 +89,22 @@ export function PopularContentChart({ traffic, isLoading = false }: PopularConte
     });
   }, [data, dateRange]);
 
+  const showHint = filteredData.length === 1;
+
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b">
         <div className="flex flex-1 flex-col justify-center gap-1">
           <CardTitle>Popular Content</CardTitle>
           <CardDescription>
-            Most visited pages in your repository over time
+            Most visited pages in your repository
           </CardDescription>
         </div>
+        {showHint && (
+          <div className="hidden md:block text-sm text-muted-foreground">
+            💡 Come back in a few days to see trends over time
+          </div>
+        )}
       </CardHeader>
       <CardContent className="pl-0">
         {isLoading || filteredData.length > 0 ? (
