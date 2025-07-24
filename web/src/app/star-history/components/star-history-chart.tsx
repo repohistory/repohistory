@@ -43,6 +43,7 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
   const [color, setColor] = useState<string>("f86262");
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [isCustomizing, setIsCustomizing] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const handleGenerate = () => {
     if (owner && repo) {
@@ -52,6 +53,7 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
       router.push(newUrl.toString());
 
       setIsImageLoading(true);
+      setImageError(false);
     }
   };
 
@@ -110,37 +112,49 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
         <CardContent>
           <div className="space-y-6">
             <div className="relative">
-              {isImageLoading && (
+              {isImageLoading && !imageError && (
                 <div className="absolute bg-[#0D1116] inset-0 w-full aspect-[800/533] border rounded-lg flex items-center justify-center z-10">
                   <div className="flex flex-col items-center gap-2">
                     <Loader className="h-5 w-5 animate-spin text-white" />
                   </div>
                 </div>
               )}
-              {isCustomizing && !isImageLoading && (
+              {imageError && (
+                <div className="w-full aspect-[800/533] border rounded-lg flex items-center justify-center bg-muted">
+                  <div className="text-center">
+                    <p className="text-muted-foreground">
+                      Repo not found 🥲 Please check your spelling
+                    </p>
+                  </div>
+                </div>
+              )}
+              {isCustomizing && !isImageLoading && !imageError && (
                 <div className="absolute inset-0 bg-black/50 border rounded-lg flex items-center justify-center z-10">
                   <div className="flex flex-col items-center gap-2">
                     <Loader className="h-5 w-5 animate-spin text-white" />
                   </div>
                 </div>
               )}
-              <Image
-                src={imageUrl}
-                unoptimized
-                alt="Star History Chart"
-                width={800}
-                height={533}
-                className={`w-full border rounded-lg transition-all duration-300 ${isImageLoading ? 'opacity-0' : isCustomizing ? 'opacity-100 brightness-50' : 'opacity-100'
-                  }`}
-                onLoad={() => {
-                  setIsImageLoading(false);
-                  setIsCustomizing(false);
-                }}
-                onError={() => {
-                  setIsImageLoading(false);
-                  setIsCustomizing(false);
-                }}
-              />
+              {!imageError && (
+                <Image
+                  src={imageUrl}
+                  unoptimized
+                  alt="Star History Chart"
+                  width={800}
+                  height={533}
+                  className={`w-full border rounded-lg transition-all duration-300 ${isImageLoading ? 'opacity-0' : isCustomizing ? 'opacity-100 brightness-50' : 'opacity-100'
+                    }`}
+                  onLoad={() => {
+                    setIsImageLoading(false);
+                    setIsCustomizing(false);
+                  }}
+                  onError={() => {
+                    setIsImageLoading(false);
+                    setIsCustomizing(false);
+                    setImageError(true);
+                  }}
+                />
+              )}
             </div>
             <div className="space-y-4">
               <div className="flex items-center justify-between mb-2">
