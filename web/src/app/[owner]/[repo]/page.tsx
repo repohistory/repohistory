@@ -2,9 +2,11 @@ import { Suspense } from "react";
 import { DateRangeProvider } from "@/contexts/date-range-context";
 import type { Metadata } from "next";
 import { StarsChartWrapper, ViewChartWrapper, CloneChartWrapper, ReferrersChartWrapper, PopularContentChartWrapper, ReleaseChartWrapper } from "@/components/charts/chart-wrappers";
-import { RepoHeader } from "@/components/repo/repo-header";
+import { Navbar } from "@/components/layout/navbar";
 import { getRepoInfo } from "@/utils/repo/info";
 import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 import { StarsChart } from "@/components/charts/stars-chart";
 import { ViewChart } from "@/components/charts/view-chart";
 import { CloneChart } from "@/components/charts/clone-chart";
@@ -34,14 +36,21 @@ export default async function RepoPage({ params }: PageProps) {
     return;
   }
 
+  const supabase = await createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (!session?.user) {
+    redirect("/signin");
+  }
+
   const fullName = `${owner}/${repo}`;
   const octokit = await getUserOctokit();
   const repoInfo = await getRepoInfo(octokit, owner, repo);
 
   return (
     <DateRangeProvider fullName={repoInfo.full_name}>
-      <div className="flex flex-col">
-        <RepoHeader repoInfo={repoInfo} />
+      <div className="flex flex-col min-h-screen">
+        <Navbar user={session.user} repoInfo={repoInfo} />
         <div className="container mx-auto p-4 sm:p-10 space-y-6">
           <Suspense fallback={<StarsChart isLoading />}>
             <StarsChartWrapper fullName={repoInfo.full_name} stargazersCount={repoInfo.stargazers_count} />
