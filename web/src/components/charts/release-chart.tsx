@@ -8,6 +8,7 @@ import { ChartConfig, ChartTooltip } from "@/components/ui/chart";
 import { TimestampChart } from "./timestamp-chart";
 import { RepoReleaseData } from "@/utils/repo/releases";
 import { useDateRange } from "@/contexts/date-range-context";
+import { NoDataMessage } from "./no-data-message";
 
 interface ReleaseChartProps {
   releasesData?: RepoReleaseData;
@@ -80,7 +81,7 @@ export function ReleaseChart({ releasesData, isLoading = false }: ReleaseChartPr
     return null;
   };
 
-  // Don't render if there are no releases and not loading
+  // Don't render if there are no releases at all
   if (!isLoading && (!releasesData || !releasesData.releases || releasesData.releases.length === 0)) {
     return null;
   }
@@ -108,39 +109,43 @@ export function ReleaseChart({ releasesData, isLoading = false }: ReleaseChartPr
         </div>
       </CardHeader>
       <CardContent className="pl-0">
-        <TimestampChart
-          data={isLoading ? [] : filteredData}
-          chartConfig={chartConfig}
-          className="h-64 w-full"
-          customTooltip={<ChartTooltip cursor={false} content={<CustomTooltip />} />}
-          isLoading={isLoading}
-        >
-          <defs>
-            <linearGradient id="fillDownloads" x1="0" y1="0" x2="0" y2="1">
-              <stop
-                offset="5%"
-                stopColor="var(--color-downloads)"
-                stopOpacity={0.8}
-              />
-              <stop
-                offset="95%"
-                stopColor="var(--color-downloads)"
-                stopOpacity={0.1}
-              />
-            </linearGradient>
-          </defs>
-          <Area
-            isAnimationActive={false}
-            dataKey="downloads"
-            type="monotone"
-            fill="url(#fillDownloads)"
-            fillOpacity={1}
-            stroke="var(--color-downloads)"
-            strokeWidth={2}
-            dot={{ fill: "var(--color-downloads)", strokeWidth: 0, r: 3 }}
-            activeDot={{ r: 4, stroke: "var(--color-downloads)", strokeWidth: 2 }}
-          />
-        </TimestampChart>
+        {isLoading || filteredData.length > 0 ? (
+          <TimestampChart
+            data={isLoading ? [] : filteredData}
+            chartConfig={chartConfig}
+            className="h-64 w-full"
+            customTooltip={<ChartTooltip cursor={false} content={<CustomTooltip />} />}
+            isLoading={isLoading}
+          >
+            <defs>
+              <linearGradient id="fillDownloads" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-downloads)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-downloads)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+            </defs>
+            <Area
+              isAnimationActive={false}
+              dataKey="downloads"
+              type="monotone"
+              fill="url(#fillDownloads)"
+              fillOpacity={1}
+              stroke="var(--color-downloads)"
+              strokeWidth={2}
+              dot={{ fill: "var(--color-downloads)", strokeWidth: 0, r: 3 }}
+              activeDot={{ r: 4, stroke: "var(--color-downloads)", strokeWidth: 2 }}
+            />
+          </TimestampChart>
+        ) : (
+          <NoDataMessage dataType="releases" />
+        )}
       </CardContent>
     </Card>
   );

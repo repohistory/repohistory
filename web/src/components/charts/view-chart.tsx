@@ -9,6 +9,7 @@ import { Chart } from "./chart";
 import { calculateTrendPercentage } from "@/utils/chart-trends";
 import { TrendIndicator } from "./trend-indicator";
 import { useDateRange } from "@/contexts/date-range-context";
+import { NoDataMessage } from "./no-data-message";
 interface ViewChartProps {
   traffic?: {
     views: {
@@ -105,61 +106,65 @@ export function ViewChart({ traffic, isLoading = false }: ViewChartProps) {
         </div>
       </CardHeader>
       <CardContent className="pl-0">
-        <Chart
-          data={isLoading ? [] : filteredData}
-          chartConfig={chartConfig}
-          className="h-64 w-full"
-          onLegendClick={isLoading ? undefined : handleLegendClick}
-          hiddenSeries={hiddenSeries}
-          isLoading={isLoading}
-        >
-          <defs>
-            <linearGradient id="fillTotal" x1="0" y1="0" x2="0" y2="1">
-              <stop
-                offset="5%"
-                stopColor="var(--color-total)"
-                stopOpacity={0.8}
-              />
-              <stop
-                offset="95%"
-                stopColor="var(--color-total)"
-                stopOpacity={0.1}
-              />
-            </linearGradient>
-            <linearGradient id="fillUnique" x1="0" y1="0" x2="0" y2="1">
-              <stop
-                offset="5%"
-                stopColor="var(--color-unique)"
-                stopOpacity={0.8}
-              />
-              <stop
-                offset="95%"
-                stopColor="var(--color-unique)"
-                stopOpacity={0.1}
-              />
-            </linearGradient>
-          </defs>
-          <Area
-            isAnimationActive={false}
-            dataKey="total"
-            type="monotone"
-            fill="url(#fillTotal)"
-            fillOpacity={1}
-            stroke="var(--color-total)"
-            strokeWidth={2}
-            hide={hiddenSeries.includes("total")}
-          />
-          <Area
-            isAnimationActive={false}
-            dataKey="unique"
-            type="monotone"
-            fill="url(#fillUnique)"
-            fillOpacity={1}
-            stroke="var(--color-unique)"
-            strokeWidth={2}
-            hide={hiddenSeries.includes("unique")}
-          />
-        </Chart>
+        {isLoading || filteredData.length > 0 ? (
+          <Chart
+            data={isLoading ? [] : filteredData}
+            chartConfig={chartConfig}
+            className="h-64 w-full"
+            onLegendClick={isLoading ? undefined : handleLegendClick}
+            hiddenSeries={hiddenSeries}
+            isLoading={isLoading}
+          >
+            <defs>
+              <linearGradient id="fillTotal" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-total)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-total)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+              <linearGradient id="fillUnique" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-unique)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-unique)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+            </defs>
+            <Area
+              isAnimationActive={false}
+              dataKey="total"
+              type="monotone"
+              fill="url(#fillTotal)"
+              fillOpacity={1}
+              stroke="var(--color-total)"
+              strokeWidth={2}
+              hide={hiddenSeries.includes("total")}
+            />
+            <Area
+              isAnimationActive={false}
+              dataKey="unique"
+              type="monotone"
+              fill="url(#fillUnique)"
+              fillOpacity={1}
+              stroke="var(--color-unique)"
+              strokeWidth={2}
+              hide={hiddenSeries.includes("unique")}
+            />
+          </Chart>
+        ) : (
+          <NoDataMessage dataType="views" />
+        )}
       </CardContent>
     </Card>
   );

@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ChartConfig } from "@/components/ui/chart";
 import { Chart } from "./chart";
 import { useDateRange } from "@/contexts/date-range-context";
+import { NoDataMessage } from "./no-data-message";
 
 interface ReferrersChartProps {
   traffic?: {
@@ -88,6 +89,7 @@ export function ReferrersChart({ traffic, isLoading = false }: ReferrersChartPro
 
   const showHint = filteredData.length === 1;
 
+
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b">
@@ -125,9 +127,7 @@ export function ReferrersChart({ traffic, isLoading = false }: ReferrersChartPro
             ))}
           </Chart>
         ) : (
-          <div className="flex items-center justify-center h-64 text-muted-foreground">
-            No referrer data available
-          </div>
+          <NoDataMessage dataType="referrer data" />
         )}
       </CardContent>
     </Card>

@@ -11,6 +11,7 @@ import { RepoStarsData } from "@/utils/repo/stars";
 import { calculateTrendPercentage } from "@/utils/chart-trends";
 import { TrendIndicator } from "./trend-indicator";
 import { useDateRange } from "@/contexts/date-range-context";
+import { NoDataMessage } from "./no-data-message";
 
 interface StarsChartProps {
   starsData?: RepoStarsData;
@@ -63,6 +64,7 @@ export function StarsChart({ starsData, isLoading = false }: StarsChartProps) {
     return calculateTrendPercentage(filteredData, data, "stars");
   }, [filteredData, data, viewType]);
 
+
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b">
@@ -89,44 +91,50 @@ export function StarsChart({ starsData, isLoading = false }: StarsChartProps) {
         </div>
       </CardHeader>
       <CardContent className="pl-0">
-        <Chart
-          data={isLoading ? [] : filteredData}
-          chartConfig={chartConfig}
-          className="h-64 w-full"
-          isLoading={isLoading}
-        >
-          <defs>
-            <linearGradient id="fillStars" x1="0" y1="0" x2="0" y2="1">
-              <stop
-                offset="5%"
-                stopColor="var(--color-stars)"
-                stopOpacity={0.8}
-              />
-              <stop
-                offset="95%"
-                stopColor="var(--color-stars)"
-                stopOpacity={0.1}
-              />
-            </linearGradient>
-          </defs>
-          <Area
-            isAnimationActive={false}
-            dataKey="stars"
-            type="monotone"
-            fill="url(#fillStars)"
-            fillOpacity={1}
-            stroke="var(--color-stars)"
-            strokeWidth={2}
-          />
-        </Chart>
-        <div className="flex justify-center mt-6">
-          <Tabs value={viewType} onValueChange={(value) => setViewType(value as "cumulative" | "daily")}>
-            <TabsList>
-              <TabsTrigger value="daily" className={isLoading ? "cursor-not-allowed" : "cursor-pointer"}>Daily</TabsTrigger>
-              <TabsTrigger value="cumulative" className={isLoading ? "cursor-not-allowed" : "cursor-pointer"}>Cumulative</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+        {isLoading || filteredData.length > 0 ? (
+          <Chart
+            data={isLoading ? [] : filteredData}
+            chartConfig={chartConfig}
+            className="h-64 w-full"
+            isLoading={isLoading}
+          >
+            <defs>
+              <linearGradient id="fillStars" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-stars)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-stars)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+            </defs>
+            <Area
+              isAnimationActive={false}
+              dataKey="stars"
+              type="monotone"
+              fill="url(#fillStars)"
+              fillOpacity={1}
+              stroke="var(--color-stars)"
+              strokeWidth={2}
+            />
+          </Chart>
+        ) : (
+          <NoDataMessage dataType="stars" />
+        )}
+        {(isLoading || filteredData.length > 0) && (
+          <div className="flex justify-center mt-6">
+            <Tabs value={viewType} onValueChange={(value) => setViewType(value as "cumulative" | "daily")}>
+              <TabsList>
+                <TabsTrigger value="daily" className={isLoading ? "cursor-not-allowed" : "cursor-pointer"}>Daily</TabsTrigger>
+                <TabsTrigger value="cumulative" className={isLoading ? "cursor-not-allowed" : "cursor-pointer"}>Cumulative</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
