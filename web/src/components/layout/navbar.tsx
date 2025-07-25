@@ -32,7 +32,7 @@ export function Navbar({ user, repoInfo }: NavbarProps) {
           />
         </Link>
         {repoInfo && (
-          <h1 className="text-md truncate font-semibold sm:font-bold hidden sm:block">
+          <h1 className="text-md truncate max-w-xs font-semibold sm:font-bold hidden sm:block">
             <Link
               href={`https://github.com/${repoInfo.full_name}`}
               target="_blank"
