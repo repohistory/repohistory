@@ -4,12 +4,13 @@ import { useMemo, useState } from "react";
 import { Area } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChartConfig } from "@/components/ui/chart";
+import { ChartConfig, ChartTooltip } from "@/components/ui/chart";
 import { Chart } from "./chart";
 import { calculateTrendPercentage } from "@/utils/chart-trends";
 import { TrendIndicator } from "./trend-indicator";
 import { useDateRange } from "@/contexts/date-range-context";
 import { NoDataMessage } from "./no-data-message";
+import { ChartCustomTooltip } from "./chart-custom-tooltip";
 interface CloneChartProps {
   traffic?: {
     clones: {
@@ -53,11 +54,24 @@ export function CloneChart({ traffic, isLoading = false }: CloneChartProps) {
 
   const data = useMemo(() => {
     if (!traffic) return [];
-    return traffic.clones.clones.map((item) => ({
-      date: item.timestamp,
-      unique: item.uniques,
-      total: item.count,
-    }));
+    return traffic.clones.clones.map((item, index, array) => {
+      const result: { date: string; unique: number; total: number;[key: string]: string | number } = {
+        date: item.timestamp,
+        unique: item.uniques,
+        total: item.count,
+      };
+
+      if (index < array.length - 1) {
+        result.solidUnique = item.uniques;
+        result.solidTotal = item.count;
+      }
+      if (index >= array.length - 2) {
+        result.dashedUnique = item.uniques;
+        result.dashedTotal = item.count;
+      }
+
+      return result;
+    });
   }, [traffic]);
 
   const filteredData = useMemo(() => {
@@ -114,6 +128,31 @@ export function CloneChart({ traffic, isLoading = false }: CloneChartProps) {
             onLegendClick={isLoading ? undefined : handleLegendClick}
             hiddenSeries={hiddenSeries}
             isLoading={isLoading}
+            customTooltip={
+              <ChartTooltip
+                cursor={false}
+                content={({ active, payload, label }) => (
+                  <ChartCustomTooltip
+                    active={active}
+                    payload={payload}
+                    label={label}
+                    entries={[
+                      {
+                        dataKey: 'total',
+                        label: 'Total',
+                        color: '#315c72'
+                      },
+                      {
+                        dataKey: 'unique',
+                        label: 'Unique',
+                        color: '#62C3F8'
+                      }
+                    ]}
+                    hiddenSeries={hiddenSeries}
+                  />
+                )}
+              />
+            }
           >
             <defs>
               <linearGradient id="fillTotalClone" x1="0" y1="0" x2="0" y2="1">
@@ -144,21 +183,57 @@ export function CloneChart({ traffic, isLoading = false }: CloneChartProps) {
             <Area
               isAnimationActive={false}
               dataKey="total"
-              type="monotone"
               fill="url(#fillTotalClone)"
               fillOpacity={1}
+              stroke="transparent"
+              strokeWidth={0}
+              hide={hiddenSeries.includes("total")}
+            />
+            <Area
+              isAnimationActive={false}
+              dataKey="unique"
+              fill="url(#fillUniqueClone)"
+              fillOpacity={1}
+              stroke="transparent"
+              strokeWidth={0}
+              hide={hiddenSeries.includes("unique")}
+            />
+            <Area
+              isAnimationActive={false}
+              dataKey="solidTotal"
+              fill="transparent"
+              fillOpacity={0}
               stroke="var(--color-total)"
               strokeWidth={2}
               hide={hiddenSeries.includes("total")}
             />
             <Area
               isAnimationActive={false}
-              dataKey="unique"
-              type="monotone"
-              fill="url(#fillUniqueClone)"
-              fillOpacity={1}
+              dataKey="dashedTotal"
+              fill="transparent"
+              fillOpacity={0}
+              stroke="var(--color-total)"
+              strokeWidth={2}
+              strokeDasharray="5,5"
+              hide={hiddenSeries.includes("total")}
+            />
+            <Area
+              isAnimationActive={false}
+              dataKey="solidUnique"
+              fill="transparent"
+              fillOpacity={0}
               stroke="var(--color-unique)"
               strokeWidth={2}
+              hide={hiddenSeries.includes("unique")}
+            />
+            <Area
+              isAnimationActive={false}
+              dataKey="dashedUnique"
+              fill="transparent"
+              fillOpacity={0}
+              stroke="var(--color-unique)"
+              strokeWidth={2}
+              strokeDasharray="5,5"
               hide={hiddenSeries.includes("unique")}
             />
           </Chart>

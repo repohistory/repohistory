@@ -5,13 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Area } from "recharts";
-import { ChartConfig } from "@/components/ui/chart";
+import { ChartConfig, ChartTooltip } from "@/components/ui/chart";
 import { Chart } from "./chart";
 import { RepoStarsData } from "@/utils/repo/stars";
 import { calculateTrendPercentage } from "@/utils/chart-trends";
 import { TrendIndicator } from "./trend-indicator";
 import { useDateRange } from "@/contexts/date-range-context";
 import { NoDataMessage } from "./no-data-message";
+import { ChartCustomTooltip } from "./chart-custom-tooltip";
 
 interface StarsChartProps {
   starsData?: RepoStarsData;
@@ -33,10 +34,22 @@ export function StarsChart({ starsData, isLoading = false }: StarsChartProps) {
 
   const data = useMemo(() => {
     if (!starsData) return [];
-    return starsData.starsHistory.map((item) => ({
-      date: item.date,
-      stars: viewType === "cumulative" ? item.cumulative : item.daily,
-    }));
+    return starsData.starsHistory.map((item, index, array) => {
+      const stars = viewType === "cumulative" ? item.cumulative : item.daily;
+      const result: { date: string; stars: number;[key: string]: string | number } = {
+        date: item.date,
+        stars,
+      };
+
+      if (index < array.length - 1) {
+        result.solidStars = stars;
+      }
+      if (index >= array.length - 2) {
+        result.dashedStars = stars;
+      }
+
+      return result;
+    });
   }, [starsData, viewType]);
 
   const filteredData = useMemo(() => {
@@ -97,6 +110,25 @@ export function StarsChart({ starsData, isLoading = false }: StarsChartProps) {
             chartConfig={chartConfig}
             className="h-64 w-full"
             isLoading={isLoading}
+            customTooltip={
+              <ChartTooltip
+                cursor={false}
+                content={({ active, payload, label }) => (
+                  <ChartCustomTooltip
+                    active={active}
+                    payload={payload}
+                    label={label}
+                    entries={[
+                      {
+                        dataKey: 'stars',
+                        label: 'Stars',
+                        color: '#62C3F8'
+                      }
+                    ]}
+                  />
+                )}
+              />
+            }
           >
             <defs>
               <linearGradient id="fillStars" x1="0" y1="0" x2="0" y2="1">
@@ -115,11 +147,23 @@ export function StarsChart({ starsData, isLoading = false }: StarsChartProps) {
             <Area
               isAnimationActive={false}
               dataKey="stars"
-              type="monotone"
               fill="url(#fillStars)"
               fillOpacity={1}
+            />
+            <Area
+              isAnimationActive={false}
+              dataKey="solidStars"
+              fill="transparent"
               stroke="var(--color-stars)"
               strokeWidth={2}
+            />
+            <Area
+              isAnimationActive={false}
+              dataKey="dashedStars"
+              fill="transparent"
+              stroke="var(--color-stars)"
+              strokeWidth={2}
+              strokeDasharray="5,5"
             />
           </Chart>
         ) : (
