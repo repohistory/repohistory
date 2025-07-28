@@ -15,6 +15,7 @@ export default function SignInPage() {
             <Image
               src="/icons/general.png"
               alt="Repohistory Logo"
+              priority
               width={82}
               height={82}
             />

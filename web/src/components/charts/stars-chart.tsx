@@ -148,6 +148,8 @@ export function StarsChart({ starsData, isLoading = false }: StarsChartProps) {
               isAnimationActive={false}
               dataKey="stars"
               fill="url(#fillStars)"
+              stroke="transparent"
+              strokeWidth={0}
               fillOpacity={1}
             />
             <Area

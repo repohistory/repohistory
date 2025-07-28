@@ -20,7 +20,6 @@ export function RepoPreviewChart({ data }: RepoPreviewChartProps) {
           </linearGradient>
         </defs>
         <Area
-          type="monotone"
           dataKey="total"
           stroke="#62C3F8"
           fill="url(#viewsGradient)"
