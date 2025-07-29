@@ -134,13 +134,11 @@ export function ReleaseChart({ releasesData, isLoading = false }: ReleaseChartPr
             <Area
               isAnimationActive={false}
               dataKey="downloads"
-              type="monotone"
               fill="url(#fillDownloads)"
               fillOpacity={1}
               stroke="var(--color-downloads)"
               strokeWidth={2}
               dot={{ fill: "var(--color-downloads)", strokeWidth: 0, r: 3 }}
-              activeDot={{ r: 4, stroke: "var(--color-downloads)", strokeWidth: 2 }}
             />
           </TimestampChart>
         ) : (
