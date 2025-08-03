@@ -5,8 +5,6 @@
 Repohistory is an analytics platform for tracking GitHub repo traffic history longer than 14 days<br/>
 **[repohistory.com »](https://repohistory.com)**
 
-<a href="https://www.producthunt.com/products/repohistory/launches/repohistory-2-0" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=996557&theme=light&t=1754119140881" alt="Repohistory&#0032;2&#0046;0 - GitHub&#0032;repo&#0032;analytics | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
-
 </div>
 <br/>
 
