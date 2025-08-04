@@ -13,12 +13,19 @@ interface RepoInfo {
   description: string | null;
 }
 
+interface OwnerInfo {
+  name: string;
+  totalRepositories: number;
+  totalStars: number;
+}
+
 interface NavbarProps {
   user: User;
   repoInfo?: RepoInfo;
+  ownerInfo?: OwnerInfo;
 }
 
-export function Navbar({ user, repoInfo }: NavbarProps) {
+export function Navbar({ user, repoInfo, ownerInfo }: NavbarProps) {
   return (
     <nav className="sticky top-0 z-50 h-16 border-b border-border bg-background/60 backdrop-blur-md backdrop-filter flex items-center justify-between px-4 sm:px-10">
       <div className="flex items-center gap-6">
@@ -43,36 +50,46 @@ export function Navbar({ user, repoInfo }: NavbarProps) {
             </Link>
           </h1>
         )}
+        {ownerInfo && (
+          <h1 className="text-md truncate max-w-xs font-semibold sm:font-bold hidden sm:block">
+            <Link
+              href={`https://github.com/${ownerInfo.name}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline decoration-1"
+            >
+              {ownerInfo.name}
+            </Link>
+          </h1>
+        )}
       </div>
       <div className="flex items-center gap-2">
+        {(repoInfo || ownerInfo) && <DateRangePicker />}
         {repoInfo && (
-          <>
-            <DateRangePicker />
-            <div className="hidden md:block">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon" className="size-9">
-                    <MoreHorizontalIcon className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem asChild>
-                    <Link target="_blank" href={`/star-history?owner=${repoInfo.full_name.split('/')[0]}&repo=${repoInfo.full_name.split('/')[1]}`}>
-                      Generate star history chart
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <a
-                      href={`/api/export/${repoInfo.id}?format=csv&repo=${encodeURIComponent(repoInfo.full_name)}`}
-                      download={`${repoInfo.full_name.replace('/', '-')}-data.zip`}
-                    >
-                      Export all data
-                    </a>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </>
+          <div className="hidden md:block">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon" className="size-9">
+                  <MoreHorizontalIcon className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link target="_blank" href={`/star-history?owner=${repoInfo.full_name.split('/')[0]}&repo=${repoInfo.full_name.split('/')[1]}`}>
+                    Generate star history chart
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a
+                    href={`/api/export/${repoInfo.id}?format=csv&repo=${encodeURIComponent(repoInfo.full_name)}`}
+                    download={`${repoInfo.full_name.replace('/', '-')}-data.zip`}
+                  >
+                    Export all data
+                  </a>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         )}
         <DropdownWrapper user={user} />
       </div>
