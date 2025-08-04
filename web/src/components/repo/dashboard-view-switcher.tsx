@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Props {
@@ -10,13 +10,20 @@ interface Props {
 }
 
 export function DashboardViewSwitcher({ shouldShowOwnerView, repoView, ownerView }: Props) {
-  const [viewMode, setViewMode] = useState<'repos' | 'owners'>('repos');
+  const searchParams = useSearchParams();
+  const viewMode = (searchParams.get('view') === 'owners' ? 'owners' : 'repos');
+
+  const handleViewChange = (value: 'repos' | 'owners') => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('view', value);
+    window.history.pushState(null, '', `?${params.toString()}`);
+  };
 
   return (
     <>
       {shouldShowOwnerView && (
         <div className="container mx-auto px-4 pt-8">
-          <Select value={viewMode} onValueChange={(value: 'repos' | 'owners') => setViewMode(value)}>
+          <Select value={viewMode} onValueChange={handleViewChange}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
