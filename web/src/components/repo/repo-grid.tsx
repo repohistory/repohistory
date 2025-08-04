@@ -1,20 +1,19 @@
-import { getRepos } from "@/utils/octokit/get-repos";
 import { Repo } from "@/types";
 import { RepoCard } from "./repo-card";
-import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
-export async function RepoGrid() {
-  const octokit = await getUserOctokit();
-  const repos = await getRepos(octokit);
+interface Props {
+  repos: Repo[];
+}
 
+export function RepoGrid({ repos }: Props) {
   return (
     <div className="container mx-auto p-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
         {repos
-          .sort((a, b) => b.stargazers_count - a.stargazers_count)
+          .sort((a: Repo, b: Repo) => b.stargazers_count - a.stargazers_count)
           .map((repo: Repo) => (
             <RepoCard key={repo.id} repo={repo} />
           ))}
