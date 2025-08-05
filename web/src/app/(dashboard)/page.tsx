@@ -5,6 +5,7 @@ import { OwnerGrid } from "@/components/repo/owner-grid";
 import { RepoCardSkeletonGrid } from "@/components/repo/repo-card-skeleton";
 import { getRepos } from "@/utils/octokit/get-repos";
 import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
+import { SetupActionToast } from "@/components/setup-action-toast";
 
 export default async function Home() {
   const octokit = await getUserOctokit();
@@ -23,10 +24,15 @@ export default async function Home() {
   );
 
   return (
-    <DashboardViewSwitcher
-      shouldShowOwnerView={shouldShowOwnerView}
-      repoView={repoView}
-      ownerView={ownerView}
-    />
+    <>
+      <Suspense>
+        <SetupActionToast />
+      </Suspense>
+      <DashboardViewSwitcher
+        shouldShowOwnerView={shouldShowOwnerView}
+        repoView={repoView}
+        ownerView={ownerView}
+      />
+    </>
   );
 }
