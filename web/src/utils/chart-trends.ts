@@ -5,9 +5,23 @@ export interface TrendData {
   isIncrease: boolean;
 }
 
+function isToday(dateString: string): boolean {
+  const today = new Date();
+  const todayString = today.toISOString().split('T')[0];
+  return dateString === todayString;
+}
+
+function getCurrentDayCompletionFraction(): number {
+  const now = new Date();
+  const startOfDayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const msInDay = 24 * 60 * 60 * 1000;
+  const msSinceStartOfDayUTC = now.getTime() - startOfDayUTC.getTime();
+  return Math.min(msSinceStartOfDayUTC / msInDay, 1);
+}
+
 export function calculateTrendPercentage(
-  currentData: Array<{ date: string; [key: string]: string | number }>,
-  allData: Array<{ date: string; [key: string]: string | number }>,
+  currentData: Array<{ date: string;[key: string]: string | number }>,
+  allData: Array<{ date: string;[key: string]: string | number }>,
   valueKey: string
 ): TrendData | null {
   if (currentData.length === 0 || allData.length === 0) {
@@ -16,11 +30,15 @@ export function calculateTrendPercentage(
 
   const currentPeriodSum = currentData.reduce((sum, item) => sum + Number(item[valueKey]), 0);
 
+  const lastDateInCurrent = currentData[currentData.length - 1].date;
+  const isLastDayToday = isToday(lastDateInCurrent);
+  let completionFraction = 1;
+
   const currentStartDate = new Date(currentData[0].date);
   const currentEndDate = new Date(currentData[currentData.length - 1].date);
-  
+
   const periodLength = Math.floor((currentEndDate.getTime() - currentStartDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-  
+
   const previousEndDate = new Date(currentStartDate.getTime() - 24 * 60 * 60 * 1000);
   const previousStartDate = new Date(previousEndDate.getTime() - (periodLength - 1) * 24 * 60 * 60 * 1000);
 
@@ -33,7 +51,17 @@ export function calculateTrendPercentage(
     return null;
   }
 
-  const previousPeriodSum = previousPeriodData.reduce((sum, item) => sum + Number(item[valueKey]), 0);
+  let previousPeriodSum = previousPeriodData.reduce((sum, item) => sum + Number(item[valueKey]), 0);
+
+  if (isLastDayToday) {
+    completionFraction = getCurrentDayCompletionFraction();
+
+    const firstDateInPrevious = previousPeriodData[0];
+    if (firstDateInPrevious) {
+      const firstDayValue = Number(firstDateInPrevious[valueKey]);
+      previousPeriodSum = previousPeriodSum - firstDayValue + (firstDayValue * completionFraction);
+    }
+  }
 
   if (previousPeriodSum === 0) {
     return {
@@ -45,7 +73,7 @@ export function calculateTrendPercentage(
   }
 
   const percentage = ((currentPeriodSum - previousPeriodSum) / previousPeriodSum) * 100;
-  
+
   return {
     current: currentPeriodSum,
     previous: previousPeriodSum,
@@ -56,6 +84,6 @@ export function calculateTrendPercentage(
 
 export function formatTrendPercentage(trend: TrendData | null): string {
   if (!trend) return "";
-  
+
   return `${trend.percentage.toFixed(1)}%`;
 }
