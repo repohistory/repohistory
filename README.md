@@ -2,7 +2,7 @@
   
 ![github-banner](https://github.com/user-attachments/assets/ed888af7-14fa-42cc-9695-2bc887b7531a)
 
-Repohistory is an analytics platform for tracking GitHub repo traffic history longer than 14 days<br/>
+Repohistory is an analytics tool for tracking GitHub repo traffic history longer than 14 days<br/>
 **[repohistory.com »](https://repohistory.com)**
 
 </div>
