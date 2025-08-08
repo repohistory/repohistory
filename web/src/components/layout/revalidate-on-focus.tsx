@@ -1,22 +1,30 @@
 "use client";
 
-import { useEffect } from "react";
-import { revalidateHomePage } from "@/actions/revalidate";
+import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
+import { revalidatePage } from "@/actions/revalidate";
 
 export function RevalidateOnFocus() {
+  const pathname = usePathname();
+  const lastRevalidateTime = useRef<number>(0);
+
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        revalidateHomePage();
+    const handleWindowFocus = () => {
+      const now = Date.now();
+      const oneMinute = 60 * 1000;
+
+      if (now - lastRevalidateTime.current >= oneMinute) {
+        revalidatePage(pathname);
+        lastRevalidateTime.current = now;
       }
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleWindowFocus);
 
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleWindowFocus);
     };
-  }, []);
+  }, [pathname]);
 
   return null;
 }
