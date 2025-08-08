@@ -35,7 +35,7 @@ export function Navbar({ user, repoInfo, ownerInfo }: NavbarProps) {
             height={28}
             alt="logo"
             src="/icons/transparent.png"
-            unoptimized
+            quality={100}
           />
         </Link>
         {repoInfo && (
