@@ -1,4 +1,5 @@
 import { Octokit } from "octokit";
+import { unstable_cache } from "next/cache";
 
 type StargazerResponse = {
   data: Array<{ starred_at: string }>;
@@ -7,7 +8,7 @@ type StargazerResponse = {
   };
 };
 
-async function getStargazersPage(octokit: Octokit, fullName: string, page: number): Promise<StargazerResponse> {
+async function getStargazersPageUncached(octokit: Octokit, fullName: string, page: number): Promise<StargazerResponse> {
   const response = await octokit.request(`GET /repos/${fullName}/stargazers`, {
     per_page: 100,
     page,
@@ -15,6 +16,25 @@ async function getStargazersPage(octokit: Octokit, fullName: string, page: numbe
       accept: 'application/vnd.github.v3.star+json',
     },
   });
+
+  return response;
+}
+
+async function getStargazersPage(octokit: Octokit, fullName: string, page: number): Promise<StargazerResponse> {
+  const response = await getStargazersPageUncached(octokit, fullName, page);
+
+  // Only cache pages that have full data (100 stargazers), as these won't change
+  if (response.data.length === 100) {
+    const cachedFn = unstable_cache(
+      async () => getStargazersPageUncached(octokit, fullName, page),
+      [fullName, page.toString()],
+      {
+        revalidate: 86400, // Cache for 24 hours
+        tags: [`stargazers-${fullName}`]
+      }
+    );
+    return await cachedFn();
+  }
 
   return response;
 }
@@ -149,7 +169,7 @@ function processStarsDataFull(stargazers: Array<{ starred_at?: string }>, repo: 
   // Process data up to the last known stargazer date
   const lastStarDate = sortedDates[sortedDates.length - 1];
   const endProcessingDate = new Date(lastStarDate);
-  
+
   for (let d = new Date(startDate); d <= endProcessingDate; d.setDate(d.getDate() + 1)) {
     const dateStr = d.toISOString().split('T')[0];
     const daily = dailyStars[dateStr] || 0;
@@ -168,23 +188,23 @@ function processStarsDataFull(stargazers: Array<{ starred_at?: string }>, repo: 
   const lastTrackedStars = cumulative;
   const missingStars = totalStars - lastTrackedStars;
   let hasEstimatedData = false;
-  
+
   if (missingStars > 0) {
     hasEstimatedData = true;
     const startInterpolationDate = new Date(lastStarDate);
     startInterpolationDate.setDate(startInterpolationDate.getDate() + 1);
     const endDate = new Date(today);
-    
+
     const daysBetween = Math.ceil((endDate.getTime() - startInterpolationDate.getTime()) / (1000 * 60 * 60 * 24));
-    
+
     if (daysBetween > 0) {
       const starsPerDay = missingStars / daysBetween;
       let interpolatedCumulative = lastTrackedStars;
-      
+
       for (let d = new Date(startInterpolationDate); d <= endDate; d.setDate(d.getDate() + 1)) {
         const dateStr = d.toISOString().split('T')[0];
         const isToday = dateStr === today;
-        
+
         if (isToday) {
           // Final day gets exact total - not estimated since it's the real current total
           completeData.push({
