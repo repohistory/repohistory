@@ -20,11 +20,9 @@ async function getStargazersPageUncached(octokit: Octokit, fullName: string, pag
   return response;
 }
 
-async function getStargazersPage(octokit: Octokit, fullName: string, page: number): Promise<StargazerResponse> {
-  const response = await getStargazersPageUncached(octokit, fullName, page);
-
-  // Only cache pages that have full data (100 stargazers), as these won't change
-  if (response.data.length === 100) {
+async function getStargazersPage(octokit: Octokit, fullName: string, page: number, isLastPage = false): Promise<StargazerResponse> {
+  // If this is not the last page, it will definitely have 100 stargazers - use cache
+  if (!isLastPage) {
     const cachedFn = unstable_cache(
       async () => getStargazersPageUncached(octokit, fullName, page),
       [fullName, page.toString()],
@@ -36,7 +34,8 @@ async function getStargazersPage(octokit: Octokit, fullName: string, page: numbe
     return await cachedFn();
   }
 
-  return response;
+  // Last page might be partial - always fetch fresh
+  return await getStargazersPageUncached(octokit, fullName, page);
 }
 
 export interface RepoStarsData {
@@ -60,7 +59,8 @@ export async function getRepoStars(
 
     const fetchPromises: Promise<StargazerResponse>[] = [];
     for (let page = 1; page <= pagesToFetch; page += 1) {
-      fetchPromises.push(getStargazersPage(octokit, repo.fullName, page));
+      const isLastPage = page === pagesToFetch;
+      fetchPromises.push(getStargazersPage(octokit, repo.fullName, page, isLastPage));
     }
 
     const responses = await Promise.all(fetchPromises);
@@ -93,7 +93,7 @@ export async function getRepoStarsChart(
 ): Promise<RepoStarsData> {
   try {
     const maxRequestAmount = 15;
-    const initialResponse = await getStargazersPage(octokit, repo.fullName, 1);
+    const initialResponse = await getStargazersPage(octokit, repo.fullName, 1, true); // First page in chart might be last
 
     const headerLink = initialResponse.headers.link || '';
     let pageCount = 1;
@@ -122,7 +122,8 @@ export async function getRepoStarsChart(
 
     const fetchPromises: Promise<StargazerResponse>[] = [];
     for (const page of requestPages) {
-      fetchPromises.push(getStargazersPage(octokit, repo.fullName, page));
+      const isLastPage = page === Math.max(...requestPages);
+      fetchPromises.push(getStargazersPage(octokit, repo.fullName, page, isLastPage));
     }
 
     const responses = await Promise.all(fetchPromises);
