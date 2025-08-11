@@ -9,7 +9,7 @@ interface TooltipEntry {
 
 interface ChartCustomTooltipProps {
   active?: boolean;
-  payload?: Array<{ dataKey: string; value?: number }>;
+  payload?: Array<{ dataKey: string; value?: number; payload?: { isEstimated?: boolean } }>;
   label?: string | number;
   entries: TooltipEntry[];
   hiddenSeries?: Array<string>;
@@ -39,6 +39,8 @@ export function ChartCustomTooltip({
             const payloadData = payload.find(p => p.dataKey === entry.dataKey);
             if (!payloadData) return null;
 
+            const isEstimated = payloadData.payload?.isEstimated;
+
             return (
               <div key={entry.dataKey} className="flex w-full flex-wrap items-stretch gap-2">
                 <div className="flex flex-1 gap-2">
@@ -49,7 +51,7 @@ export function ChartCustomTooltip({
                         style={{ backgroundColor: entry.color }}
                       />
                       <span className="text-[0.70rem] text-muted-foreground">
-                        {entry.label}
+                        {entry.label}{isEstimated ? ' (estimated)' : ''}
                       </span>
                     </div>
                   </div>

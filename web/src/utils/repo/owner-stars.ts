@@ -16,11 +16,13 @@ export async function getOwnerStars(
   const allRepoStars = await Promise.all(repoStarsPromises);
   
   const totalStars = allRepoStars.reduce((sum, repoStars) => sum + repoStars.totalStars, 0);
+  const hasEstimatedData = allRepoStars.some(repoStars => repoStars.hasEstimatedData);
   
   const aggregatedHistory = aggregateStarsHistory(allRepoStars);
 
   return {
     totalStars,
+    hasEstimatedData,
     starsHistory: aggregatedHistory
   };
 }
@@ -29,19 +31,21 @@ function aggregateStarsHistory(allRepoStars: RepoStarsData[]): Array<{
   date: string;
   cumulative: number;
   daily: number;
+  isEstimated?: boolean;
 }> {
-  const dateMap = new Map<string, { cumulative: number; daily: number }>();
+  const dateMap = new Map<string, { cumulative: number; daily: number; isEstimated?: boolean }>();
 
   allRepoStars.forEach(repoStars => {
-    repoStars.starsHistory.forEach(({ date, cumulative, daily }) => {
+    repoStars.starsHistory.forEach(({ date, cumulative, daily, isEstimated }) => {
       const existing = dateMap.get(date);
       if (existing) {
         dateMap.set(date, {
           cumulative: existing.cumulative + cumulative,
-          daily: existing.daily + daily
+          daily: existing.daily + daily,
+          isEstimated: existing.isEstimated || isEstimated
         });
       } else {
-        dateMap.set(date, { cumulative, daily });
+        dateMap.set(date, { cumulative, daily, isEstimated });
       }
     });
   });
@@ -51,12 +55,13 @@ function aggregateStarsHistory(allRepoStars: RepoStarsData[]): Array<{
   );
 
   let runningCumulative = 0;
-  return sortedEntries.map(([date, { daily }]) => {
+  return sortedEntries.map(([date, { daily, isEstimated }]) => {
     runningCumulative += daily;
     return {
       date,
       daily,
-      cumulative: runningCumulative
+      cumulative: runningCumulative,
+      isEstimated
     };
   });
 }

@@ -21,10 +21,12 @@ async function getStargazersPage(octokit: Octokit, fullName: string, page: numbe
 
 export interface RepoStarsData {
   totalStars: number;
+  hasEstimatedData: boolean;
   starsHistory: Array<{
     date: string;
     cumulative: number;
     daily: number;
+    isEstimated?: boolean;
   }>;
 }
 
@@ -48,16 +50,18 @@ export async function getRepoStars(
       stargazers.push(...response.data);
     });
 
-    const starsHistory = processStarsDataFull(stargazers, repo);
+    const { starsHistory, hasEstimatedData } = processStarsDataFull(stargazers, repo);
 
     return {
       totalStars: repo.stargazersCount,
+      hasEstimatedData,
       starsHistory,
     };
   } catch (error) {
     console.error("Error fetching stars data:", error);
     return {
       totalStars: 0,
+      hasEstimatedData: false,
       starsHistory: [],
     };
   }
@@ -104,16 +108,18 @@ export async function getRepoStarsChart(
     const responses = await Promise.all(fetchPromises);
     const responseData = responses.map(response => response.data);
 
-    const starsHistory = processStarsDataSampled(responseData, repo, requestPages, pageCount <= maxRequestAmount);
+    const { starsHistory, hasEstimatedData } = processStarsDataSampled(responseData, repo, requestPages, pageCount <= maxRequestAmount);
 
     return {
       totalStars: repo.stargazersCount,
+      hasEstimatedData,
       starsHistory,
     };
   } catch (error) {
     console.error("Error fetching stars data:", error);
     return {
       totalStars: 0,
+      hasEstimatedData: false,
       starsHistory: [],
     };
   }
@@ -131,17 +137,20 @@ function processStarsDataFull(stargazers: Array<{ starred_at?: string }>, repo: 
 
   const sortedDates = Object.keys(dailyStars).sort();
   if (sortedDates.length === 0) {
-    return [];
+    return { starsHistory: [], hasEstimatedData: false };
   }
 
   const startDate = new Date(sortedDates[0]);
   startDate.setDate(startDate.getDate() - 1);
   const today = new Date().toISOString().split('T')[0];
-  const endDate = new Date(today);
   const completeData = [];
   let cumulative = 0;
 
-  for (let d = new Date(startDate); d < endDate; d.setDate(d.getDate() + 1)) {
+  // Process data up to the last known stargazer date
+  const lastStarDate = sortedDates[sortedDates.length - 1];
+  const endProcessingDate = new Date(lastStarDate);
+  
+  for (let d = new Date(startDate); d <= endProcessingDate; d.setDate(d.getDate() + 1)) {
     const dateStr = d.toISOString().split('T')[0];
     const daily = dailyStars[dateStr] || 0;
     cumulative += daily;
@@ -150,19 +159,73 @@ function processStarsDataFull(stargazers: Array<{ starred_at?: string }>, repo: 
       date: dateStr,
       daily,
       cumulative,
+      isEstimated: false,
     });
   }
 
+  // If we hit the 40k limit and there are missing stars, create a straight line
   const totalStars = repo.stargazersCount;
-  const lastCumulative = completeData.length > 0 ? completeData[completeData.length - 1].cumulative : 0;
-  const dailyToday = totalStars - lastCumulative;
-  completeData.push({
-    date: today,
-    daily: Math.max(0, dailyToday),
-    cumulative: totalStars,
-  });
+  const lastTrackedStars = cumulative;
+  const missingStars = totalStars - lastTrackedStars;
+  let hasEstimatedData = false;
+  
+  if (missingStars > 0) {
+    hasEstimatedData = true;
+    const startInterpolationDate = new Date(lastStarDate);
+    startInterpolationDate.setDate(startInterpolationDate.getDate() + 1);
+    const endDate = new Date(today);
+    
+    const daysBetween = Math.ceil((endDate.getTime() - startInterpolationDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysBetween > 0) {
+      const starsPerDay = missingStars / daysBetween;
+      let interpolatedCumulative = lastTrackedStars;
+      
+      for (let d = new Date(startInterpolationDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+        const dateStr = d.toISOString().split('T')[0];
+        const isToday = dateStr === today;
+        
+        if (isToday) {
+          // Final day gets exact total - not estimated since it's the real current total
+          completeData.push({
+            date: dateStr,
+            daily: totalStars - interpolatedCumulative,
+            cumulative: totalStars,
+            isEstimated: false,
+          });
+        } else {
+          // Intermediate days get proportional stars - these are estimated
+          interpolatedCumulative += starsPerDay;
+          completeData.push({
+            date: dateStr,
+            daily: starsPerDay,
+            cumulative: Math.round(interpolatedCumulative),
+            isEstimated: true,
+          });
+        }
+      }
+    } else {
+      // Same day, just add today with all missing stars - not estimated since it's current total
+      completeData.push({
+        date: today,
+        daily: missingStars,
+        cumulative: totalStars,
+        isEstimated: false,
+      });
+    }
+  } else {
+    // No missing stars, just add today if not already included
+    if (lastStarDate !== today) {
+      completeData.push({
+        date: today,
+        daily: 0,
+        cumulative: totalStars,
+        isEstimated: false,
+      });
+    }
+  }
 
-  return completeData;
+  return { starsHistory: completeData, hasEstimatedData };
 }
 
 function processStarsDataSampled(
@@ -173,6 +236,7 @@ function processStarsDataSampled(
 ) {
   const starRecordsMap: Map<string, number> = new Map();
   const today = new Date().toISOString().split('T')[0];
+  let hasEstimatedData = false;
 
   if (hasFullData) {
     const allStargazers: Array<{ starred_at?: string }> = [];
@@ -191,6 +255,7 @@ function processStarsDataSampled(
       }
     }
   } else {
+    hasEstimatedData = true;
     const perPage = 100;
 
     responses.forEach((response, index) => {
@@ -208,7 +273,7 @@ function processStarsDataSampled(
 
   starRecordsMap.set(today, repo.stargazersCount);
 
-  const starRecords: Array<{ date: string; cumulative: number; daily: number }> = [];
+  const starRecords: Array<{ date: string; cumulative: number; daily: number; isEstimated?: boolean }> = [];
   const sortedEntries = Array.from(starRecordsMap.entries()).sort((a, b) =>
     new Date(a[0]).getTime() - new Date(b[0]).getTime()
   );
@@ -222,8 +287,9 @@ function processStarsDataSampled(
       date,
       cumulative,
       daily: Math.max(0, daily),
+      isEstimated: hasEstimatedData,
     });
   }
 
-  return starRecords;
+  return { starsHistory: starRecords, hasEstimatedData };
 }

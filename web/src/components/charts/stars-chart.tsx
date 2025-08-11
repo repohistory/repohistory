@@ -29,16 +29,18 @@ const chartConfig = {
 
 
 export function StarsChart({ starsData, isLoading = false }: StarsChartProps) {
-  const [viewType, setViewType] = useState<"cumulative" | "daily">("daily");
+  const isOver40kStars = (starsData?.totalStars || 0) > 40000;
+  const [viewType, setViewType] = useState<"cumulative" | "daily">(isOver40kStars ? "cumulative" : "daily");
   const { dateRange } = useDateRange();
 
   const data = useMemo(() => {
     if (!starsData) return [];
     return starsData.starsHistory.map((item, index, array) => {
       const stars = viewType === "cumulative" ? item.cumulative : item.daily;
-      const result: { date: string; stars: number;[key: string]: string | number } = {
+      const result: { date: string; stars: number; isEstimated?: boolean; solidStars?: number; dashedStars?: number } = {
         date: item.date,
         stars,
+        isEstimated: item.isEstimated,
       };
 
       if (index < array.length - 1) {
@@ -74,7 +76,10 @@ export function StarsChart({ starsData, isLoading = false }: StarsChartProps) {
 
   const starsTrend = useMemo(() => {
     if (filteredData.length === 0 || viewType === "cumulative") return null;
-    return calculateTrendPercentage(filteredData, data, "stars");
+    // Cast to the expected type for calculateTrendPercentage
+    const filteredDataForTrend = filteredData.map(item => ({ date: item.date, stars: item.stars }));
+    const dataForTrend = data.map(item => ({ date: item.date, stars: item.stars }));
+    return calculateTrendPercentage(filteredDataForTrend, dataForTrend, "stars");
   }, [filteredData, data, viewType]);
 
 
@@ -106,27 +111,44 @@ export function StarsChart({ starsData, isLoading = false }: StarsChartProps) {
       <CardContent className="pl-0">
         {isLoading || filteredData.length > 0 ? (
           <Chart
-            data={isLoading ? [] : filteredData}
+            data={isLoading ? [] : filteredData.map(item => {
+              const result: { [key: string]: string | number; date: string } = { 
+                date: item.date, 
+                stars: item.stars
+              };
+              if (item.solidStars !== undefined) result.solidStars = item.solidStars;
+              if (item.dashedStars !== undefined) result.dashedStars = item.dashedStars;
+              return result;
+            })}
             chartConfig={chartConfig}
             className="h-64 w-full"
             isLoading={isLoading}
             customTooltip={
               <ChartTooltip
                 cursor={false}
-                content={({ active, payload, label }) => (
-                  <ChartCustomTooltip
-                    active={active}
-                    payload={payload}
-                    label={label}
-                    entries={[
-                      {
-                        dataKey: 'stars',
-                        label: 'Stars',
-                        color: '#62C3F8'
-                      }
-                    ]}
-                  />
-                )}
+                content={({ active, payload, label }) => {
+                  // Find the original data point to get isEstimated info
+                  const originalDataPoint = filteredData.find(item => item.date === label);
+                  const enhancedPayload = payload?.map(p => ({
+                    ...p,
+                    payload: { ...p.payload, isEstimated: originalDataPoint?.isEstimated }
+                  }));
+                  
+                  return (
+                    <ChartCustomTooltip
+                      active={active}
+                      payload={enhancedPayload}
+                      label={label}
+                      entries={[
+                        {
+                          dataKey: 'stars',
+                          label: 'Stars',
+                          color: '#62C3F8'
+                        }
+                      ]}
+                    />
+                  );
+                }}
               />
             }
           >
@@ -171,7 +193,7 @@ export function StarsChart({ starsData, isLoading = false }: StarsChartProps) {
         ) : (
           <NoDataMessage dataType="stars" />
         )}
-        {(isLoading || filteredData.length > 0) && (
+        {(isLoading || filteredData.length > 0) && !isOver40kStars && (
           <div className="flex justify-center mt-6">
             <Tabs value={viewType} onValueChange={(value) => setViewType(value as "cumulative" | "daily")}>
               <TabsList>
