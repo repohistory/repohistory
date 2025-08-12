@@ -56,16 +56,16 @@ export default async function RepoPage({ params }: PageProps) {
             <StarsChartWrapper fullName={repoInfo.full_name} stargazersCount={repoInfo.stargazers_count} />
           </Suspense>
           <Suspense fallback={<ViewChart isLoading />}>
-            <ViewChartWrapper fullName={fullName} repoId={repoInfo.id} />
+            <ViewChartWrapper fullName={fullName} repoId={repoInfo.id} supabase={supabase} />
           </Suspense>
           <Suspense fallback={<CloneChart isLoading />}>
-            <CloneChartWrapper fullName={fullName} repoId={repoInfo.id} />
+            <CloneChartWrapper fullName={fullName} repoId={repoInfo.id} supabase={supabase} />
           </Suspense>
           <Suspense fallback={<ReferrersChart isLoading />}>
-            <ReferrersChartWrapper fullName={fullName} repoId={repoInfo.id} />
+            <ReferrersChartWrapper fullName={fullName} repoId={repoInfo.id} supabase={supabase} />
           </Suspense>
           <Suspense fallback={<PopularContentChart isLoading />}>
-            <PopularContentChartWrapper fullName={fullName} repoId={repoInfo.id} />
+            <PopularContentChartWrapper fullName={fullName} repoId={repoInfo.id} supabase={supabase} />
           </Suspense>
           <Suspense fallback={<ReleaseChart isLoading />}>
             <ReleaseChartWrapper fullName={fullName} />
