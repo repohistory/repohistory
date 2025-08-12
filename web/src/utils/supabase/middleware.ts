@@ -1,10 +1,26 @@
 import { NextResponse, type NextRequest } from 'next/server'
+import { createClient } from '@/utils/supabase/server'
 import { refreshProviderToken } from '@/utils/auth/refresh-token'
 
 export async function updateSession(request: NextRequest) {
   const response = NextResponse.next({
     request,
   })
+
+  const supabase = await createClient()
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (!session?.user) {
+    response.cookies.delete('provider_token')
+    response.cookies.delete('provider_refresh_token')
+
+    if (!request.nextUrl.pathname.startsWith('/signin') && !request.nextUrl.pathname.startsWith('/auth')) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/signin'
+      return NextResponse.redirect(url)
+    }
+    return response
+  }
 
   let providerToken = request.cookies.get('provider_token')?.value;
   const providerRefreshToken = request.cookies.get('provider_refresh_token')?.value;
