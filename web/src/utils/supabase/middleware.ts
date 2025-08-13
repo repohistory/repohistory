@@ -63,7 +63,16 @@ export async function updateSession(request: NextRequest) {
     const tokenData = await refreshProviderToken(providerRefreshToken);
     if (tokenData) {
       providerToken = tokenData.access_token;
-      supabaseResponse.cookies.set('provider_token', tokenData.access_token, {
+
+      // Use rewrite to ensure cookies are properly set
+      const rewriteResponse = NextResponse.rewrite(request.url, { request });
+
+      // Copy existing cookies from supabaseResponse
+      supabaseResponse.cookies.getAll().forEach(cookie => {
+        rewriteResponse.cookies.set(cookie.name, cookie.value, cookie);
+      });
+
+      rewriteResponse.cookies.set('provider_token', tokenData.access_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -71,13 +80,15 @@ export async function updateSession(request: NextRequest) {
       });
 
       if (tokenData.refresh_token) {
-        supabaseResponse.cookies.set('provider_refresh_token', tokenData.refresh_token, {
+        rewriteResponse.cookies.set('provider_refresh_token', tokenData.refresh_token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',
           maxAge: 60 * 60 * 24 * 30 * 5 // 5 months
         });
       }
+
+      return rewriteResponse;
     }
   }
 
