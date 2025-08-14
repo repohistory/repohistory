@@ -10,7 +10,13 @@ export async function RepoCardContent({ repo }: {
   const octokit = await getUserOctokit();
   const [owner, repoName] = repo.full_name.split("/");
 
-  const githubViews = await octokit.rest.repos.getViews({ owner, repo: repoName });
+  let githubViews;
+  try {
+    githubViews = await octokit.rest.repos.getViews({ owner, repo: repoName });
+  } catch (error) {
+    console.error(error)
+    return null;
+  }
 
   const viewsData = githubViews.data.views?.map(item => ({
     date: item.timestamp.split('T')[0],

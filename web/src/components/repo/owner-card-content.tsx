@@ -14,7 +14,13 @@ interface ViewData {
 async function fetchRepoViews(repo: Repo, octokit: Octokit) {
   const [owner, repoName] = repo.full_name.split("/");
 
-  const githubViews = await octokit.rest.repos.getViews({ owner, repo: repoName });
+  let githubViews;
+  try {
+    githubViews = await octokit.rest.repos.getViews({ owner, repo: repoName });
+  } catch (error) {
+    console.error(error)
+    return [];
+  }
 
   const viewsData = githubViews.data.views?.map(item => ({
     date: item.timestamp.split('T')[0],
