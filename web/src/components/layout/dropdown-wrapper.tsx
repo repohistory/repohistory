@@ -1,7 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import { User } from "@supabase/supabase-js";
+import { createClient } from "@/utils/supabase/server";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -17,11 +15,11 @@ import {
 import { LogOut, Settings, MessageSquare, Bug, Lightbulb } from "lucide-react";
 import { signout } from "@/actions/auth";
 
-interface DropdownWrapperProps {
-  user: User;
-}
+export async function DropdownWrapper() {
+  const supabase = await createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session!.user;
 
-export function DropdownWrapper({ user }: DropdownWrapperProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

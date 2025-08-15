@@ -19,18 +19,10 @@ interface PageProps {
 }
 
 export default async function OwnerPage({ params }: PageProps) {
-  const { owner } = await params;
-
-  const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
-
-  if (!session?.user) {
-    redirect("/signin");
-  }
-
   const octokit = await getUserOctokit();
   const { reposByOwner } = await getRepos(octokit);
 
+  const { owner } = await params;
   const ownerRepos = reposByOwner[owner];
   if (!ownerRepos || ownerRepos.length === 0) {
     redirect("/");
@@ -43,10 +35,12 @@ export default async function OwnerPage({ params }: PageProps) {
     totalStars,
   };
 
+  const supabase = await createClient();
+
   return (
     <DateRangeProvider fullName={owner}>
       <div className="flex flex-col min-h-screen">
-        <Navbar user={session.user} ownerInfo={ownerInfo} />
+        <Navbar ownerInfo={ownerInfo} />
         <div className="container mx-auto p-4 sm:p-10 space-y-6">
           <Suspense fallback={<StarsChart isLoading />}>
             <OwnerStarsChartWrapper owner={owner} repos={ownerRepos} />

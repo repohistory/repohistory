@@ -1,11 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import { User } from "@supabase/supabase-js";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { MoreHorizontalIcon } from "lucide-react";
 import { DropdownWrapper } from "./dropdown-wrapper";
+import { Suspense } from "react";
 
 interface RepoInfo {
   id: number;
@@ -20,12 +20,11 @@ interface OwnerInfo {
 }
 
 interface NavbarProps {
-  user: User;
   repoInfo?: RepoInfo;
   ownerInfo?: OwnerInfo;
 }
 
-export function Navbar({ user, repoInfo, ownerInfo }: NavbarProps) {
+export function Navbar({ repoInfo, ownerInfo }: NavbarProps) {
   return (
     <nav className="sticky top-0 z-50 h-16 border-b border-border bg-background/60 backdrop-blur-md backdrop-filter flex items-center justify-between px-4 sm:px-10">
       <div className="flex items-center gap-6">
@@ -91,7 +90,9 @@ export function Navbar({ user, repoInfo, ownerInfo }: NavbarProps) {
             </DropdownMenu>
           </div>
         )}
-        <DropdownWrapper user={user} />
+        <Suspense>
+          <DropdownWrapper />
+        </Suspense>
       </div>
     </nav>
   );

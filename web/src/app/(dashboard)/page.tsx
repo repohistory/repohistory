@@ -7,7 +7,9 @@ import DashboardContent from "@/components/dashboard-content";
 export default async function Home() {
   return (
     <>
-      <DashboardViewSwitcher />
+      <Suspense>
+        <DashboardViewSwitcher />
+      </Suspense>
       <Suspense fallback={<RepoCardSkeletonGrid />}>
         <DashboardContent />
       </Suspense>
