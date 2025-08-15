@@ -1,10 +1,9 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
 
 export function RepoCardSkeleton() {
   return (
-    <Card className="h-56 w-full">
+    <Card className="h-52 gap-2 w-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
         <Skeleton className="h-7 w-48" />
         <div className="flex items-center gap-1">
@@ -12,7 +11,6 @@ export function RepoCardSkeleton() {
           <Skeleton className="h-4 w-8" />
         </div>
       </CardHeader>
-      <Separator />
       <CardContent className="flex flex-col gap-2">
         <RepoCardContentSkeleton />
       </CardContent>
@@ -23,7 +21,7 @@ export function RepoCardSkeleton() {
 export function RepoCardContentSkeleton() {
   return (
     <>
-      <Skeleton className="h-16 w-full" />
+      <Skeleton className="h-24 w-full" />
       <div className="flex items-center justify-between">
         <Skeleton className="h-4 w-32" />
         <div className="flex items-center gap-1">

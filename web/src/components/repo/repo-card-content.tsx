@@ -47,7 +47,7 @@ export async function RepoCardContent({ repo }: {
 
   return (
     <>
-      <div className="h-16 w-full pointer-events-none">
+      <div className="h-24 w-full pointer-events-none">
         <RepoPreviewChart data={last7Days} />
       </div>
       <div className="flex items-center justify-between">

@@ -18,7 +18,7 @@ export function RepoGrid({ repos }: Props) {
             <RepoCard key={repo.id} repo={repo} />
           ))}
         <Link href="https://github.com/apps/repohistory/installations/new" rel="noopener noreferrer">
-          <Card className="h-56 w-full cursor-pointer transition-all duration-200 hover:bg-accent active:scale-98 border-2 border-dashed border-muted-foreground/50 flex items-center justify-center">
+          <Card className="h-52 w-full cursor-pointer transition-all duration-200 hover:bg-accent active:scale-99 border-2 border-dashed border-muted-foreground/50 flex items-center justify-center">
             <CardContent className="flex flex-col items-center justify-center gap-2">
               <Plus className="h-6 w-6 text-muted-foreground" />
             </CardContent>
