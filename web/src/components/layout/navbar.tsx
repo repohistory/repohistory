@@ -6,6 +6,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { MoreHorizontalIcon } from "lucide-react";
 import { DropdownWrapper } from "./dropdown-wrapper";
 import { Suspense } from "react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface RepoInfo {
   id: number;
@@ -90,7 +91,11 @@ export function Navbar({ repoInfo, ownerInfo }: NavbarProps) {
             </DropdownMenu>
           </div>
         )}
-        <Suspense>
+        <Suspense fallback={
+          <Avatar>
+            <AvatarFallback />
+          </Avatar>
+        }>
           <DropdownWrapper />
         </Suspense>
       </div>
