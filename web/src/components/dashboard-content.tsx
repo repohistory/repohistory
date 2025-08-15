@@ -1,14 +1,11 @@
-import { Octokit } from "octokit";
 import { DashboardViews } from "@/components/repo/dashboard-views";
+import { getUserOctokit } from "@/utils/octokit/get-user-octokit";
 import { RepoGrid } from "@/components/repo/repo-grid";
 import { OwnerGrid } from "@/components/repo/owner-grid";
 import { getRepos } from "@/utils/octokit/get-repos";
 
-interface DashboardContentProps {
-  octokit: Octokit;
-}
-
-export default async function DashboardContent({ octokit }: DashboardContentProps) {
+export default async function DashboardContent() {
+  const octokit = await getUserOctokit();
   const { repos, reposByOwner } = await getRepos(octokit);
 
   return (
