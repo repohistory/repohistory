@@ -1,62 +1,62 @@
 [
   {
+    "fullName": "scrapy/scrapy",
+    "starCount": 57954
+  },
+  {
     "fullName": "motiondivision/motion",
-    "starCount": 29294
+    "starCount": 29501
   },
   {
     "fullName": "danny-avila/LibreChat",
-    "starCount": 28528
+    "starCount": 29110
   },
   {
     "fullName": "Lissy93/web-check",
-    "starCount": 25969
+    "starCount": 26126
   },
   {
     "fullName": "KwaiVGI/LivePortrait",
-    "starCount": 16683
+    "starCount": 16839
   },
   {
-    "fullName": "ZachGoldberg/Startup-CTO-Handbook",
-    "starCount": 13766
-  },
-  {
-    "fullName": "aishwaryanr/awesome-generative-ai-guide",
-    "starCount": 13607
+    "fullName": "SimulatedGREG/electron-vue",
+    "starCount": 15484
   },
   {
     "fullName": "grokability/snipe-it",
-    "starCount": 12515
-  },
-  {
-    "fullName": "mage-ai/mage-ai",
-    "starCount": 8428
+    "starCount": 12594
   },
   {
     "fullName": "skypilot-org/skypilot",
-    "starCount": 8424
+    "starCount": 8516
   },
   {
     "fullName": "mobile-dev-inc/Maestro",
-    "starCount": 8320
+    "starCount": 8453
+  },
+  {
+    "fullName": "mage-ai/mage-ai",
+    "starCount": 8445
   },
   {
     "fullName": "rybbit-io/rybbit",
-    "starCount": 7621
+    "starCount": 7806
   },
   {
     "fullName": "codexu/note-gen",
-    "starCount": 7173
+    "starCount": 7618
   },
   {
     "fullName": "topoteretes/cognee",
-    "starCount": 6504
+    "starCount": 6720
   },
   {
     "fullName": "WeblateOrg/weblate",
-    "starCount": 5264
+    "starCount": 5302
   },
   {
     "fullName": "nuxt/ui",
-    "starCount": 5136
+    "starCount": 5207
   }
 ]
