@@ -147,31 +147,45 @@ export async function getRepoStarsChart(
 }
 
 function processStarsDataFull(stargazers: Array<{ starred_at?: string }>, repo: { stargazersCount: number }) {
-  const dailyStars: Record<string, number> = {};
-
-  stargazers.forEach(({ starred_at }) => {
-    if (starred_at) {
-      const date = new Date(starred_at).toISOString().split('T')[0];
-      dailyStars[date] = (dailyStars[date] || 0) + 1;
-    }
-  });
-
+  const dailyStars = groupStargazersByDate(stargazers);
   const sortedDates = Object.keys(dailyStars).sort();
+  
   if (sortedDates.length === 0) {
     return { starsHistory: [], hasEstimatedData: false };
   }
 
+  const completeData = fillMissingDates(dailyStars, sortedDates);
+  const hasEstimatedData = repo.stargazersCount > 40000;
+  
+  if (hasEstimatedData) {
+    interpolateMissingStars(completeData, dailyStars, sortedDates, repo.stargazersCount);
+  }
+
+  return { starsHistory: completeData, hasEstimatedData };
+}
+
+function groupStargazersByDate(stargazers: Array<{ starred_at?: string }>): Record<string, number> {
+  const dailyStars: Record<string, number> = {};
+  
+  stargazers.forEach(({ starred_at }) => {
+    if (!starred_at) return;
+    
+    const date = new Date(starred_at).toISOString().split('T')[0];
+    dailyStars[date] = (dailyStars[date] || 0) + 1;
+  });
+  
+  return dailyStars;
+}
+
+function fillMissingDates(dailyStars: Record<string, number>, sortedDates: string[]) {
+  const today = new Date().toISOString().split('T')[0];
   const startDate = new Date(sortedDates[0]);
   startDate.setDate(startDate.getDate() - 1);
-  const today = new Date().toISOString().split('T')[0];
+  
   const completeData = [];
   let cumulative = 0;
 
-  // Process data up to the last known stargazer date
-  const lastStarDate = sortedDates[sortedDates.length - 1];
-  const endProcessingDate = new Date(lastStarDate);
-
-  for (let d = new Date(startDate); d <= endProcessingDate; d.setDate(d.getDate() + 1)) {
+  for (let d = new Date(startDate); d.toISOString().split('T')[0] <= today; d.setDate(d.getDate() + 1)) {
     const dateStr = d.toISOString().split('T')[0];
     const daily = dailyStars[dateStr] || 0;
     cumulative += daily;
@@ -183,70 +197,54 @@ function processStarsDataFull(stargazers: Array<{ starred_at?: string }>, repo: 
       isEstimated: false,
     });
   }
+  
+  return completeData;
+}
 
-  // If we hit the 40k limit and there are missing stars, create a straight line
-  const totalStars = repo.stargazersCount;
-  const lastTrackedStars = cumulative;
-  const missingStars = totalStars - lastTrackedStars;
-  let hasEstimatedData = false;
+function interpolateMissingStars(
+  completeData: Array<{ date: string; daily: number; cumulative: number; isEstimated: boolean }>,
+  dailyStars: Record<string, number>,
+  sortedDates: string[],
+  totalStars: number
+) {
+  const lastStarDate = sortedDates[sortedDates.length - 1];
+  const actualStarsCount = Object.values(dailyStars).reduce((sum, count) => sum + count, 0);
+  const missingStars = totalStars - actualStarsCount;
+  
+  if (missingStars <= 0) return;
+  
+  const lastStarDateObj = new Date(lastStarDate);
+  const estimatedDays = completeData.filter(item => new Date(item.date) > lastStarDateObj);
+  
+  if (estimatedDays.length === 0) return;
+  
+  distributeStarsEvenly(estimatedDays, missingStars);
+  recalculateCumulativeValues(completeData, totalStars);
+}
 
-  if (missingStars > 0) {
-    hasEstimatedData = true;
-    const startInterpolationDate = new Date(lastStarDate);
-    startInterpolationDate.setDate(startInterpolationDate.getDate() + 1);
-    const endDate = new Date(today);
+function distributeStarsEvenly(
+  days: Array<{ date: string; daily: number; cumulative: number; isEstimated: boolean }>,
+  totalStars: number
+) {
+  const baseStarsPerDay = Math.floor(totalStars / days.length);
+  const remainder = totalStars % days.length;
+  
+  days.forEach((day, index) => {
+    day.isEstimated = true;
+    day.daily += baseStarsPerDay + (index < remainder ? 1 : 0);
+  });
+}
 
-    const daysBetween = Math.ceil((endDate.getTime() - startInterpolationDate.getTime()) / (1000 * 60 * 60 * 24));
-
-    if (daysBetween > 0) {
-      const starsPerDay = missingStars / daysBetween;
-      let interpolatedCumulative = lastTrackedStars;
-
-      for (let d = new Date(startInterpolationDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-        const dateStr = d.toISOString().split('T')[0];
-        const isToday = dateStr === today;
-
-        if (isToday) {
-          // Final day gets exact total - not estimated since it's the real current total
-          completeData.push({
-            date: dateStr,
-            daily: totalStars - interpolatedCumulative,
-            cumulative: totalStars,
-            isEstimated: false,
-          });
-        } else {
-          // Intermediate days get proportional stars - these are estimated
-          interpolatedCumulative += starsPerDay;
-          completeData.push({
-            date: dateStr,
-            daily: starsPerDay,
-            cumulative: Math.round(interpolatedCumulative),
-            isEstimated: true,
-          });
-        }
-      }
-    } else {
-      // Same day, just add today with all missing stars - not estimated since it's current total
-      completeData.push({
-        date: today,
-        daily: missingStars,
-        cumulative: totalStars,
-        isEstimated: false,
-      });
-    }
-  } else {
-    // No missing stars, just add today if not already included
-    if (lastStarDate !== today) {
-      completeData.push({
-        date: today,
-        daily: 0,
-        cumulative: totalStars,
-        isEstimated: false,
-      });
-    }
-  }
-
-  return { starsHistory: completeData, hasEstimatedData };
+function recalculateCumulativeValues(
+  completeData: Array<{ date: string; daily: number; cumulative: number; isEstimated: boolean }>,
+  totalStars: number
+) {
+  let runningTotal = 0;
+  
+  completeData.forEach((item, index) => {
+    runningTotal += item.daily;
+    item.cumulative = index === completeData.length - 1 ? totalStars : runningTotal;
+  });
 }
 
 function processStarsDataSampled(
