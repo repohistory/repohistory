@@ -30,7 +30,7 @@ export function SocialProof() {
   const secondRow = repos.slice(repos.length / 2);
 
   return (
-    <section className="py-16 px-8 space-y-5 bg-black relative z-0">
+    <section className="py-16 space-y-5 bg-black relative z-0">
       <h2 className="mx-auto text-center text-neutral-300 font-medium">Trusted by open-source maintainers worldwide</h2>
       <div className="relative">
         <Marquee pauseOnHover className="[--duration:30s]">
@@ -43,8 +43,8 @@ export function SocialProof() {
             <RepoCard key={repo.fullName} fullName={repo.fullName} starCount={repo.starCount} />
           ))}
         </Marquee>
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-1/6 bg-gradient-to-r from-black"></div>
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-1/6 bg-gradient-to-l from-black"></div>
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-1/20 sm:w-1/6 bg-gradient-to-r from-black"></div>
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-1/20 sm:w-1/6 bg-gradient-to-l from-black"></div>
       </div>
     </section>
   );
