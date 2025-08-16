@@ -8,8 +8,9 @@ export function ProCard() {
   const [isYearly, setIsYearly] = useState(true);
 
   const proFeatures = [
+    { text: "All features in Free plan" },
     { text: "Track unlimited repositories" },
-    { text: "All features in Free" },
+    { text: "User/org traffic overview" },
     { text: "Priority support" }
   ];
 
@@ -22,8 +23,8 @@ export function ProCard() {
       buttonVariant="default"
       middleSection={
         <div className="flex items-center gap-2">
-          <Switch 
-            checked={isYearly} 
+          <Switch
+            checked={isYearly}
             onCheckedChange={setIsYearly}
             className="cursor-pointer"
           />

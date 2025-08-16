@@ -103,7 +103,7 @@ const features = [
               alt={`Star history chart ${idx + 1}`}
               width={300}
               height={300}
-              className="border rounded-lg opacity-70 group-hover:opacity-100 transition-opacity"
+              className="border rounded-lg shrink-0 opacity-70 group-hover:opacity-100 transition-opacity"
             />
           ))}
         </Marquee>
@@ -138,7 +138,7 @@ export function FeaturesBento() {
         <BlurFade delay={0.2} inView>
           <div className="flex flex-col items-center text-center mb-16 space-y-4">
             <h2 id="features" className="scroll-mt-32 max-w-2xl text-3xl text-center sm:text-4xl font-semibold bg-gradient-to-br from-white to-neutral-400 bg-clip-text text-transparent">
-              A complete GitHub repo analytics solution with all the features you need
+              A complete GitHub repo analytics with all the features you need
             </h2>
             <div className="text-muted-foreground max-w-xl">
               Repohistory is packed with amazing features that enable you to better understand your repo traffic.

@@ -10,7 +10,7 @@ export function Hero() {
     <section className="flex flex-col overflow-hidden justify-center min-h-screen items-center px-5 sm:px-10 pt-14 relative">
       <div className="z-10 max-w-4xl space-y-6 flex flex-col text-center md:text-start items-center md:items-start">
         <TextAnimate animation="blurInUp" duration={0.6} once by="word" as="h1" className="pb-1 text-6xl font-medium text-white">
-          GitHub Repo Analytics Platform
+          GitHub Repo Analytics Tool
         </TextAnimate>
         <BlurFade direction="up" delay={0.6} duration={0.6} blur="20px">
           <h2 className="text-lg font-medium text-neutral-300 max-w-lg">
