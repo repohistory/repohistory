@@ -1,7 +1,4 @@
 import { Repo } from "@/types";
-import { Card, CardContent } from "@/components/ui/card";
-import { Plus } from "lucide-react";
-import Link from "next/link";
 import { OwnerCard } from "./owner-card";
 
 interface OwnerData {
@@ -30,13 +27,6 @@ export function OwnerGrid({ reposByOwner }: Props) {
             <OwnerCard key={ownerData.owner} ownerData={ownerData} />
           ))
         }
-        <Link href="https://github.com/apps/repohistory/installations/new" rel="noopener noreferrer">
-          <Card className="h-52 w-full cursor-pointer transition-all duration-200 hover:bg-accent active:scale-99 border-2 border-dashed border-muted-foreground/50 flex items-center justify-center">
-            <CardContent className="flex flex-col items-center justify-center gap-2">
-              <Plus className="h-6 w-6 text-muted-foreground" />
-            </CardContent>
-          </Card>
-        </Link>
       </div>
     </div>
   );

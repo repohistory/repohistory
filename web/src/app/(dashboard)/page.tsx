@@ -1,14 +1,14 @@
 import { Suspense } from "react";
 import { RepoCardSkeletonGrid } from "@/components/repo/repo-card-skeleton";
 import { SetupActionToast } from "@/components/setup-action-toast";
-import { DashboardViewSwitcher } from "@/components/repo/dashboard-view-switcher";
+import { DashboardHeader } from "@/components/repo/dashboard-header";
 import DashboardContent from "@/components/dashboard-content";
 
 export default async function Home() {
   return (
     <>
       <Suspense>
-        <DashboardViewSwitcher />
+        <DashboardHeader />
       </Suspense>
       <Suspense fallback={<RepoCardSkeletonGrid />}>
         <DashboardContent />
