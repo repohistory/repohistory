@@ -6,7 +6,7 @@ import DashboardContent from "@/components/dashboard-content";
 
 export default async function Home() {
   return (
-    <div className="container flex flex-col gap-4 mx-auto pt-6">
+    <div className="container flex flex-col gap-4 mx-auto p-4 pt-6">
       <Suspense>
         <DashboardHeader />
       </Suspense>
