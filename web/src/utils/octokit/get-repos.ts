@@ -13,7 +13,7 @@ export async function getRepos(octokit: Octokit) {
   const repos: Repo[] = [];
   const reposByOwner: Record<string, Repo[]> = {};
 
-  for (const installation of installations) {
+  await Promise.all(installations.map(async (installation) => {
     const ownerRepos: Repo[] = [];
     await app.eachRepository({ installationId: installation.id }, ({ repository }) => {
       repos.push(repository);
@@ -24,7 +24,7 @@ export async function getRepos(octokit: Octokit) {
       const owner = 'login' in installation.account ? installation.account.login : installation.account.name;
       reposByOwner[owner] = ownerRepos;
     }
-  }
+  }));
 
   return {
     repos,
