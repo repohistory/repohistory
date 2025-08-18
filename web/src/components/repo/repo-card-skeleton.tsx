@@ -29,6 +29,9 @@ export function RepoCardContentSkeleton() {
           <Skeleton className="h-3 w-8" />
         </div>
       </div>
+      <div className="opacity-0">
+        Some extra content with opacity 0 to make size over 1kb
+      </div>
     </>
   );
 }
@@ -39,13 +42,6 @@ export function RepoCardSkeletonGrid() {
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
         {Array.from({ length: 9 }).map((_, i) => (
           <RepoCardSkeleton key={i} />
-        ))}
-      </div>
-      <div>
-        {Array(6).fill(0).map((_, i) => (
-          <span key={i} className="opacity-0">
-            Safari streaming fallback padding content
-          </span>
         ))}
       </div>
     </div>
