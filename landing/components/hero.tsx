@@ -44,7 +44,7 @@ export function Hero() {
           <ImageTiltWrapper imageIndex={1}>
             <div className="p-1.5 w-[600px] sm:w-[800px] md:w-[1200px] bg-muted/60 border rounded-xl drop-shadow-[-8px_8px_16px_rgba(0,0,0,0.6)]">
               <Image
-                src="/screenshot1.jpeg"
+                src="/screenshot1.png"
                 quality={100}
                 width={1200}
                 height={600}
@@ -62,7 +62,7 @@ export function Hero() {
           <ImageTiltWrapper imageIndex={2}>
             <div className="p-1.5 w-[600px] sm:w-[800px] md:w-[1200px] bg-muted/60 border rounded-xl drop-shadow-[-8px_8px_16px_rgba(0,0,0,0.6)]">
               <Image
-                src="/screenshot2.jpeg"
+                src="/screenshot2.png"
                 quality={100}
                 width={1200}
                 height={600}
@@ -80,7 +80,7 @@ export function Hero() {
           <ImageTiltWrapper imageIndex={3}>
             <div className="p-1.5 w-[600px] sm:w-[800px] md:w-[1200px] bg-muted/60 border rounded-xl drop-shadow-[-8px_8px_16px_rgba(0,0,0,0.6)]">
               <Image
-                src="/screenshot3.jpeg"
+                src="/screenshot3.png"
                 quality={100}
                 width={1200}
                 height={600}
