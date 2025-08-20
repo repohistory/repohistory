@@ -1,5 +1,5 @@
 import { StarHistoryForm } from "./components/star-history-form";
-import { StarHistoryChart } from "./components/star-history-chart";
+import { StarHistoryGenerator } from "./components/star-history-generator";
 import { BackgroundCharts } from "./components/background-charts";
 import { Metadata } from "next";
 
@@ -49,7 +49,7 @@ export default async function StarHistoryPage({ searchParams }: PageProps) {
             </a>
           </p>
         </div>
-        <StarHistoryChart
+        <StarHistoryGenerator
           initialOwner={owner}
           initialRepo={repo}
           fullName={fullName}

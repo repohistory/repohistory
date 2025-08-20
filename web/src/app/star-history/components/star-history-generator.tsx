@@ -27,13 +27,13 @@ const BACKGROUND_COLORS = [
   "#FFFFFF",
 ];
 
-interface StarHistoryChartProps {
+interface StarHistoryGeneratorProps {
   initialOwner: string;
   initialRepo: string;
   fullName: string;
 }
 
-export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHistoryChartProps) {
+export function StarHistoryGenerator({ initialOwner, initialRepo, fullName }: StarHistoryGeneratorProps) {
   const router = useRouter();
   const [owner, setOwner] = useState(initialOwner);
   const [repo, setRepo] = useState(initialRepo);
@@ -72,7 +72,9 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
       await navigator.clipboard.writeText(markdownCode);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-      toast.success("Copied to clipboard! You can now paste it to your README.md");
+      toast.success("Copied to clipboard! You can now paste it to your README.md", {
+        duration: 10000,
+      });
     } catch (err) {
       console.error('Failed to copy:', err);
       toast.error("Failed to copy to clipboard");
@@ -155,31 +157,6 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
                   }}
                 />
               )}
-            </div>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="text-sm font-medium">Click to copy markdown</h4>
-              </div>
-              <div className="flex items-center">
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  onClick={copyMarkdown}
-                  className="w-full cursor-copy"
-                  asChild
-                >
-                  <div className="bg-muted px-3 rounded">
-                    <div className="text-xs overflow-hidden">
-                      <code className="whitespace-nowrap">{markdownCode}</code>
-                    </div>
-                    {copied ? (
-                      <Check className="h-4 w-4 animate-in fade-in-0 zoom-in-95 duration-200" />
-                    ) : (
-                      <Clipboard className="h-4 w-4 animate-in fade-in-0 zoom-in-95 duration-200" />
-                    )}
-                  </div>
-                </Button>
-              </div>
             </div>
           </div>
         </CardContent>
@@ -289,6 +266,33 @@ export function StarHistoryChart({ initialOwner, initialRepo, fullName }: StarHi
           </div>
         </CardContent>
       </Card>
+
+      {!imageError && (
+        <Card className="lg:col-span-3">
+          <CardContent className="flex flex-col gap-2">
+            <h4 className="text-sm font-medium text-center">👇 click to copy markdown 👇</h4>
+            <Button
+              variant="secondary"
+              size="icon"
+              onClick={copyMarkdown}
+              className="w-full cursor-copy active:scale-none"
+              asChild
+            >
+              <div className="bg-muted px-3 rounded">
+                <div className="text-xs overflow-hidden">
+                  <code className="whitespace-nowrap">{markdownCode}</code>
+                </div>
+                {copied ? (
+                  <Check className="h-4 w-4 animate-in fade-in-0 zoom-in-95 duration-200" />
+                ) : (
+                  <Clipboard className="h-4 w-4 animate-in fade-in-0 zoom-in-95 duration-200" />
+                )}
+              </div>
+            </Button>
+
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
