@@ -96,7 +96,7 @@ export function ReferrersChart({ traffic, isLoading = false }: ReferrersChartPro
         <div className="flex flex-1 flex-col justify-center gap-1">
           <CardTitle>Referring Sites</CardTitle>
           <CardDescription>
-            Sources driving traffic to your repository
+            Sources driving traffic to your repo (14d avg)
           </CardDescription>
         </div>
         {showHint && (

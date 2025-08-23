@@ -98,7 +98,7 @@ export function PopularContentChart({ traffic, isLoading = false }: PopularConte
         <div className="flex flex-1 flex-col justify-center gap-1">
           <CardTitle>Popular Content</CardTitle>
           <CardDescription>
-            Most visited pages in your repository
+            Most visited pages in your repo (14d avg)
           </CardDescription>
         </div>
         {showHint && (

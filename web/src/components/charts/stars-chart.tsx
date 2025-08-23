@@ -89,7 +89,7 @@ export function StarsChart({ starsData, isLoading = false }: StarsChartProps) {
         <div className="flex flex-col justify-center gap-1">
           <CardTitle>Stars Over Time</CardTitle>
           <CardDescription>
-            Repository star growth {isLoading ? "daily" : (viewType === "cumulative" ? "cumulative" : "daily")}
+            Repo star growth {isLoading ? "daily" : (viewType === "cumulative" ? "cumulative" : "daily")}
           </CardDescription>
         </div>
         <div className="flex flex-col items-end gap-1">

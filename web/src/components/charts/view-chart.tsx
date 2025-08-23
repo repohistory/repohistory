@@ -98,7 +98,7 @@ export function ViewChart({ traffic, isLoading = false }: ViewChartProps) {
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b">
         <div className="flex flex-1 flex-col justify-center gap-1">
-          <CardTitle>Repository Views</CardTitle>
+          <CardTitle>Repo Views</CardTitle>
           <CardDescription>
             Daily views and unique visitors
           </CardDescription>

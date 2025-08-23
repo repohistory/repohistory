@@ -98,7 +98,7 @@ export function CloneChart({ traffic, isLoading = false }: CloneChartProps) {
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b">
         <div className="flex flex-1 flex-col justify-center gap-1">
-          <CardTitle>Repository Clones</CardTitle>
+          <CardTitle>Repo Clones</CardTitle>
           <CardDescription>
             Daily clones and unique cloners
           </CardDescription>
