@@ -92,17 +92,7 @@ export async function getRepoPaths(
       return bTotal - aTotal;
     });
 
-    const cleanedPaths = paths.map(pathItem => {
-      // Use regex to match and remove the first two path segments (owner/repo)
-      const cleanedPath = pathItem.path.replace(/^\/[^\/]+\/[^\/]+(.*)$/, '$1') || '/';
-
-      return {
-        ...pathItem,
-        path: cleanedPath
-      };
-    });
-
-    return { paths: cleanedPaths };
+    return { paths };
   } catch (error) {
     console.error("Error fetching paths data:", error);
     return { paths: [] };
