@@ -52,17 +52,35 @@ export async function updateTraffic(installationId: number) {
         },
       );
 
+      const pathsMap = new Map<string, { repo_id: number; path: string; total: number; unique: number }>();
+
+      popularPathsData.forEach((path: { path: string; count: number; uniques: number }) => {
+        const strippedPath = path.path.replace(/^\/[^/]+\/[^/]+/, '') || '/';
+
+        if (pathsMap.has(strippedPath)) {
+          const existing = pathsMap.get(strippedPath)!;
+          existing.total += path.count;
+          existing.unique += path.uniques;
+        } else {
+          pathsMap.set(strippedPath, {
+            repo_id: repository.id,
+            path: strippedPath,
+            total: path.count,
+            unique: path.uniques,
+          });
+        }
+      });
+
+      const pathsData = Array.from(pathsMap.values());
+
       const { error: pathsError } = await supabase.from('paths').upsert(
-        popularPathsData.map((path: { path: string; count: number; uniques: number }) => ({
-          repo_id: repository.id,
-          path: path.path,
-          total: path.count,
-          unique: path.uniques,
-        })),
+        pathsData,
         {
           onConflict: 'repo_id, path, date',
         },
       );
+
+      console.log(repository.full_name, pathsData);
 
       const { error: referrersError } = await supabase.from('referrers').upsert(
         popularReferrersData.map((referrer: { referrer: string; count: number; uniques: number }) => ({
