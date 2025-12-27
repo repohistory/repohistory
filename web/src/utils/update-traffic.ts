@@ -80,7 +80,7 @@ export async function updateTraffic(installationId: number) {
         },
       );
 
-      console.log(repository.full_name, pathsData);
+      // console.log(repository.full_name, pathsData);
 
       const { error: referrersError } = await supabase.from('referrers').upsert(
         popularReferrersData.map((referrer: { referrer: string; count: number; uniques: number }) => ({
