@@ -29,7 +29,7 @@ export async function getRepoPaths(
     // Process GitHub data
     const githubData = githubResult.status === 'fulfilled'
       ? githubResult.value.data?.map(item => ({
-        path: item.path,
+        path: item.path.replace(/^\/[^/]+\/[^/]+/, '') || '/',
         title: item.title,
         count: item.count,
         uniques: item.uniques,
