@@ -30,7 +30,7 @@ async function fetchRepoViews(repo: Repo, octokit: Octokit) {
   const today = new Date();
   const complete14Days = [];
 
-  for (let i = 13; i >= 0; i--) {
+  for (let i = 14; i >= 1; i--) {
     const date = new Date(today);
     date.setDate(date.getDate() - i);
     const dateStr = date.toISOString().split('T')[0];

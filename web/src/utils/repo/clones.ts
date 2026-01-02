@@ -59,7 +59,8 @@ export async function getRepoClones(
     if (sortedClones.length > 0) {
       const startDate = new Date(sortedClones[0].timestamp);
       const endDate = new Date();
-      
+      endDate.setDate(endDate.getDate() - 1);
+
       for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
         const dateStr = d.toISOString().split('T')[0];
         const existingData = dataMap.get(dateStr);

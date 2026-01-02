@@ -56,18 +56,19 @@ export async function getRepoViews(
     // Fill missing dates with 0 values
     const sortedViews = Array.from(dataMap.values()).sort((a, b) => a.timestamp.localeCompare(b.timestamp));
     const views = [];
-    
+
     if (sortedViews.length > 0) {
       const startDate = new Date(sortedViews[0].timestamp);
       const endDate = new Date();
-      
+      endDate.setDate(endDate.getDate() - 1);
+
       for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
         const dateStr = d.toISOString().split('T')[0];
         const existingData = dataMap.get(dateStr);
         views.push(existingData || { timestamp: dateStr, count: 0, uniques: 0 });
       }
     }
-    
+
     const count = views.reduce((sum, item) => sum + item.count, 0);
     const uniques = views.reduce((sum, item) => sum + item.uniques, 0);
 
