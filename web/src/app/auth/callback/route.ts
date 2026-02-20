@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url)
+  const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
   // if "next" is in param, use it as the redirect URL
   let next = searchParams.get('next') ?? '/'
@@ -37,9 +37,9 @@ export async function GET(request: Request) {
         })
       }
 
-      return NextResponse.redirect(`${origin}${next}`)
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}${next}`)
     }
   }
 
-  return NextResponse.redirect(`${origin}/`)
+  return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/`)
 }
