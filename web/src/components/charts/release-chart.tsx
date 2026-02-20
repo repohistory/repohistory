@@ -3,12 +3,12 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Area } from "recharts";
-import { ChartConfig, ChartTooltip } from "@/components/ui/chart";
-import { TimestampChart } from "./timestamp-chart";
+import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import { ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { RepoReleaseData } from "@/utils/repo/releases";
 import { useDateRange } from "@/contexts/date-range-context";
 import { NoDataMessage } from "./no-data-message";
+import { Loader } from "lucide-react";
 
 interface ReleaseChartProps {
   releasesData?: RepoReleaseData;
@@ -54,23 +54,20 @@ export function ReleaseChart({ releasesData, isLoading = false }: ReleaseChartPr
     return filteredData.reduce((acc, curr) => acc + curr.downloads, 0);
   }, [filteredData]);
 
-  const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ payload: { tagName: string; downloads: number } }>; label?: string }) => {
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: { tagName: string; downloads: number; date: string } }> }) => {
     if (active && payload && payload.length) {
-      const data = payload[0].payload;
+      const item = payload[0].payload;
       return (
         <div className="border-border/50 bg-background grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl">
-          <div className="font-medium">
-            {label ? new Date(Number(label)).toLocaleDateString() : ''}
-          </div>
+          <div className="font-medium">{item.tagName}</div>
+          <div className="text-muted-foreground">{new Date(item.date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}</div>
           <div className="grid gap-1.5">
             <div className="flex w-full items-center gap-2">
               <div className="h-2.5 w-2.5 shrink-0 rounded-[2px]" style={{ backgroundColor: "#62C3F8" }} />
               <div className="flex flex-1 justify-between items-center leading-none">
-                <span className="text-muted-foreground">
-                  {data.tagName}
-                </span>
+                <span className="text-muted-foreground">Downloads</span>
                 <span className="font-mono font-medium tabular-nums text-foreground ml-2">
-                  {data.downloads.toLocaleString()}
+                  {item.downloads.toLocaleString()}
                 </span>
               </div>
             </div>
@@ -110,37 +107,44 @@ export function ReleaseChart({ releasesData, isLoading = false }: ReleaseChartPr
       </CardHeader>
       <CardContent className="pl-0">
         {isLoading || filteredData.length > 0 ? (
-          <TimestampChart
-            data={isLoading ? [] : filteredData}
-            chartConfig={chartConfig}
-            className="h-64 w-full"
-            customTooltip={<ChartTooltip cursor={false} content={<CustomTooltip />} />}
-            isLoading={isLoading}
-          >
-            <defs>
-              <linearGradient id="fillDownloads" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="var(--color-downloads)"
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="var(--color-downloads)"
-                  stopOpacity={0.1}
-                />
-              </linearGradient>
-            </defs>
-            <Area
-              isAnimationActive={false}
-              dataKey="downloads"
-              fill="url(#fillDownloads)"
-              fillOpacity={1}
-              stroke="var(--color-downloads)"
-              strokeWidth={2}
-              dot={{ fill: "var(--color-downloads)", strokeWidth: 0, r: 3 }}
-            />
-          </TimestampChart>
+          <div className="relative h-64 w-full">
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center z-10">
+                <Loader className="h-6 w-6 animate-spin text-muted-foreground" />
+              </div>
+            )}
+            <ChartContainer config={chartConfig} className="h-full w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={isLoading ? [] : filteredData}
+                  margin={{ left: 0, right: 0 }}
+                >
+                  <XAxis
+                    dataKey="tagName"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    style={{ fontSize: '12px', userSelect: 'none' }}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    style={{ fontSize: '12px', userSelect: 'none' }}
+                    allowDecimals={false}
+                    tickFormatter={(value) => value.toLocaleString()}
+                  />
+                  <ChartTooltip cursor={false} content={<CustomTooltip />} />
+                  <Bar
+                    isAnimationActive={false}
+                    dataKey="downloads"
+                    fill="var(--color-downloads)"
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </div>
         ) : (
           <NoDataMessage dataType="releases" />
         )}
