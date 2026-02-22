@@ -17,16 +17,15 @@ import { signout } from "@/actions/auth";
 
 export async function DropdownWrapper() {
   const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  const user = session!.user;
+  const { data: { user } } = await supabase.auth.getUser();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer">
-          <AvatarImage src={user.user_metadata?.avatar_url} />
+          <AvatarImage src={user?.user_metadata?.avatar_url} />
           <AvatarFallback>
-            {user.email?.charAt(0).toUpperCase() || "U"}
+            {user?.email?.charAt(0).toUpperCase() || "U"}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
