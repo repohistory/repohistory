@@ -1,66 +1,70 @@
 [
   {
     "fullName": "scrapy/scrapy",
-    "starCount": 59660
+    "starCount": 60521
   },
   {
     "fullName": "tldraw/tldraw",
-    "starCount": 45072
+    "starCount": 45624
   },
   {
     "fullName": "danny-avila/LibreChat",
-    "starCount": 33665
+    "starCount": 34308
   },
   {
     "fullName": "Lissy93/web-check",
-    "starCount": 31898
+    "starCount": 32185
   },
   {
     "fullName": "motiondivision/motion",
-    "starCount": 30942
+    "starCount": 31126
+  },
+  {
+    "fullName": "handsontable/handsontable",
+    "starCount": 21812
   },
   {
     "fullName": "usestrix/strix",
-    "starCount": 19800
-  },
-  {
-    "fullName": "oraios/serena",
-    "starCount": 19773
+    "starCount": 20713
   },
   {
     "fullName": "yorukot/superfile",
-    "starCount": 16576
+    "starCount": 16813
   },
   {
-    "fullName": "winapps-org/winapps",
-    "starCount": 14202
+    "fullName": "topoteretes/cognee",
+    "starCount": 12886
   },
   {
     "fullName": "rybbit-io/rybbit",
-    "starCount": 11146
+    "starCount": 11697
   },
   {
     "fullName": "codexu/note-gen",
-    "starCount": 10718
+    "starCount": 10979
   },
   {
-    "fullName": "mobile-dev-inc/Maestro",
-    "starCount": 10536
+    "fullName": "iflytek/astron-agent",
+    "starCount": 9724
   },
   {
     "fullName": "AutoMQ/automq",
-    "starCount": 9462
+    "starCount": 9573
   },
   {
     "fullName": "skypilot-org/skypilot",
-    "starCount": 9429
+    "starCount": 9527
   },
   {
     "fullName": "mage-ai/mage-ai",
-    "starCount": 8641
+    "starCount": 8661
+  },
+  {
+    "fullName": "growthbook/growthbook",
+    "starCount": 7366
   },
   {
     "fullName": "nuxt/ui",
-    "starCount": 6209
+    "starCount": 6317
   }
 ]
