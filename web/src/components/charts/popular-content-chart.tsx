@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Line } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig } from "@/components/ui/chart";
-import { Chart } from "./chart";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Chart, YScale } from "./chart";
 import { useDateRange } from "@/contexts/date-range-context";
 import { NoDataMessage } from "./no-data-message";
 
@@ -38,6 +39,7 @@ const COLORS = [
 
 export function PopularContentChart({ traffic, isLoading = false }: PopularContentChartProps) {
   const { dateRange } = useDateRange();
+  const [yScale, setYScale] = useState<YScale>("linear");
 
   const { data, chartConfig } = useMemo(() => {
     if (!traffic || !traffic.paths.length) return { data: [], chartConfig: {} };
@@ -115,6 +117,7 @@ export function PopularContentChart({ traffic, isLoading = false }: PopularConte
             className="h-64 w-full"
             hideZeroValues
             isLoading={isLoading}
+            yScale={yScale}
           >
             {Object.keys(chartConfig).map(path => (
               <Line
@@ -130,6 +133,16 @@ export function PopularContentChart({ traffic, isLoading = false }: PopularConte
           </Chart>
         ) : (
           <NoDataMessage dataType="content data" />
+        )}
+        {(isLoading || filteredData.length > 0) && (
+          <div className="flex justify-center mt-6">
+            <Tabs value={yScale} onValueChange={(value) => setYScale(value as YScale)}>
+              <TabsList>
+                <TabsTrigger value="linear" className={isLoading ? "cursor-not-allowed" : "cursor-pointer"}>Linear</TabsTrigger>
+                <TabsTrigger value="log" className={isLoading ? "cursor-not-allowed" : "cursor-pointer"}>Logarithmic</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
         )}
       </CardContent>
     </Card>
