@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend } from "@/components/ui/chart";
 import { ComposedChart, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { Button } from "@/components/ui/button";
@@ -16,15 +16,20 @@ interface ChartProps {
   customTooltip?: ReactNode;
   hideZeroValues?: boolean;
   isLoading?: boolean;
+  yScale?: YScale;
+  legendActions?: ReactNode;
 }
+
+export type YScale = "linear" | "log";
 
 interface CustomLegendContentProps {
   chartConfig: ChartConfig;
   hiddenSeries: Array<string>;
   onLegendClick: (dataKey: string) => void;
+  legendActions?: ReactNode;
 }
 
-function CustomLegendContent({ chartConfig, hiddenSeries, onLegendClick }: CustomLegendContentProps) {
+function CustomLegendContent({ chartConfig, hiddenSeries, onLegendClick, legendActions }: CustomLegendContentProps) {
   const legendEntries = Object.entries(chartConfig)
     .filter(([key]) => key !== "visitors")
     .map(([dataKey, config]) => ({
@@ -36,7 +41,7 @@ function CustomLegendContent({ chartConfig, hiddenSeries, onLegendClick }: Custo
   if (legendEntries.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap gap-2 justify-center pt-3">
+    <div className="flex flex-wrap gap-2 items-center justify-center pt-3">
       {legendEntries.map((entry) => {
         const isHidden = hiddenSeries.includes(entry.dataKey);
 
@@ -58,8 +63,21 @@ function CustomLegendContent({ chartConfig, hiddenSeries, onLegendClick }: Custo
           </Button>
         );
       })}
+      {legendActions}
     </div>
   );
+}
+
+function getLogTicks(data: ChartProps["data"]): Array<number> {
+  const max = Math.max(
+    1,
+    ...data.flatMap((item) => Object.values(item).filter((value): value is number => typeof value === "number"))
+  );
+  const ticks = [0, 10];
+  for (let tick = 100; tick < max * 10; tick *= 10) {
+    ticks.push(tick);
+  }
+  return ticks;
 }
 
 export function Chart({
@@ -71,8 +89,11 @@ export function Chart({
   hiddenSeries = [],
   customTooltip,
   hideZeroValues = false,
-  isLoading = false
+  isLoading = false,
+  yScale = "linear",
+  legendActions
 }: ChartProps) {
+  const logTicks = useMemo(() => (yScale === "log" ? getLogTicks(data) : undefined), [data, yScale]);
 
   return (
     <div className={`relative ${className}`}>
@@ -112,6 +133,9 @@ export function Chart({
                 tickMargin={8}
                 style={{ fontSize: '12px', userSelect: 'none' }}
                 allowDecimals={false}
+                scale={yScale === "log" ? "symlog" : "auto"}
+                ticks={logTicks}
+                domain={logTicks ? [0, logTicks[logTicks.length - 1]] : undefined}
                 tickFormatter={(value) => value.toLocaleString()}
               />
               {customTooltip || (
@@ -129,6 +153,7 @@ export function Chart({
                       chartConfig={chartConfig}
                       hiddenSeries={hiddenSeries}
                       onLegendClick={onLegendClick}
+                      legendActions={legendActions}
                     />
                   }
                 />

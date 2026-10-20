@@ -5,7 +5,8 @@ import { Area } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChartConfig, ChartTooltip } from "@/components/ui/chart";
-import { Chart } from "./chart";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Chart, YScale } from "./chart";
 import { calculateTrendPercentage } from "@/utils/chart-trends";
 import { TrendIndicator } from "./trend-indicator";
 import { useDateRange } from "@/contexts/date-range-context";
@@ -43,6 +44,7 @@ export function ViewChart({ traffic, isLoading = false }: ViewChartProps) {
 
   // Track hidden series (opposite of visible)
   const [hiddenSeries, setHiddenSeries] = useState<Array<string>>([]);
+  const [yScale, setYScale] = useState<YScale>("linear");
 
   const handleLegendClick = (dataKey: string) => {
     if (hiddenSeries.includes(dataKey)) {
@@ -128,6 +130,15 @@ export function ViewChart({ traffic, isLoading = false }: ViewChartProps) {
             onLegendClick={isLoading ? undefined : handleLegendClick}
             hiddenSeries={hiddenSeries}
             isLoading={isLoading}
+            yScale={yScale}
+            legendActions={
+              <Tabs value={yScale} onValueChange={(value) => setYScale(value as YScale)}>
+                <TabsList>
+                  <TabsTrigger value="linear" className="cursor-pointer">Linear</TabsTrigger>
+                  <TabsTrigger value="log" className="cursor-pointer">Logarithmic</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            }
             customTooltip={
               <ChartTooltip
                 cursor={false}
